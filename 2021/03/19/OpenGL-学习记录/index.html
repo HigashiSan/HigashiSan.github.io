@@ -17,7 +17,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://example.com/2021/03/19/OpenGL-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/tube.png">
 <meta property="article:published_time" content="2021-03-19T09:04:17.000Z">
-<meta property="article:modified_time" content="2021-03-19T12:10:18.718Z">
+<meta property="article:modified_time" content="2021-03-19T13:05:16.717Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="OpenGL">
 <meta name="twitter:card" content="summary">
@@ -190,7 +190,20 @@
 <h3 id="图形渲染管线"><a href="#图形渲染管线" class="headerlink" title="图形渲染管线"></a>图形渲染管线</h3><p>　　图形渲染管线其实就是把一大堆3D的数据转化为屏幕上的2D像素，所有的渲染都是通过这个管线将你想让它出现的东西最终出现在屏幕上。图形渲染管线有几个阶段，每个阶段都把前一个阶段的结果（输入）拿来操作，并且这些操作具有并行性，所以大多数显卡都有成千上万的小处理核心，它们在GPU上为每一个（渲染管线）阶段运行各自的小程序，从而在图形渲染管线中快速处理数据。这些小程序就叫做着色器(Shader)，它们运行在GPU上，并且有的着色器可以由我们来编程控制。</p>
 <img src="/2021/03/19/OpenGL-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/tube.png" class="">
 
-<p>　　为了让OpenGL知道我们的坐标和颜色值构成的到底是什么，OpenGL需要你去指定这些数据所表示的渲染类型。做出的这些提示叫做图元(Primitive)，任何一个绘制指令的调用都将把图元传递给OpenGL。这是其中的几个：GL_POINTS、GL_TRIANGLES、GL_LINE_STRIP。</p>
+<blockquote>
+<p>　　为了让OpenGL知道我们的坐标和颜色值构成的到底是什么，OpenGL需要你去指定这些数据所表示的渲染类型。做出的这些提示叫做图元(Primitive)，任何一个绘制指令的调用都将把图元传递给OpenGL。这是其中的几个：<code>GL_POINTS、GL_TRIANGLES、GL_LINE_STRIP</code>。</p>
+</blockquote>
+<h4 id="顶点着色器-Vertex-Shader"><a href="#顶点着色器-Vertex-Shader" class="headerlink" title="顶点着色器 Vertex Shader"></a>顶点着色器 Vertex Shader</h4><p>　　所有的顶点数据都会进入Vertex Shader中，它的功能是把输入的数据进行矩阵变换位置，计算光照公式生成逐顶点颜⾊，⽣成/变换纹理坐标。并为所输入的数据确定属性，把它们具体区分为点的空间位置、面的法向量、纹理坐标或者颜色。</p>
+<h4 id="光栅化-Rasterization"><a href="#光栅化-Rasterization" class="headerlink" title="光栅化 Rasterization"></a>光栅化 Rasterization</h4><p>　　就是通过坐标变换将3D的数据转化成像素在屏幕上显示。</p>
+<h4 id="片段着色器-Fragment-Shader"><a href="#片段着色器-Fragment-Shader" class="headerlink" title="片段着色器 Fragment Shader"></a>片段着色器 Fragment Shader</h4><p>　　主要目的是计算一个像素的最终颜色，片段着色器包含3D场景的数据（比如光照、阴影、光的颜色等等），这些数据都会被用来计算最终像素的颜色，很多高级的效果都在这里实现。</p>
+<hr>
+<h3 id="VBO-amp-VAO"><a href="#VBO-amp-VAO" class="headerlink" title="VBO&amp;VAO"></a><strong>VBO&amp;VAO</strong></h3><p>　　CPU在得到.obj的顶点数据之后，就进入了顶点着色器的阶段，CPU会把这些数据送给GPU，GPU就会创建内存去存储这些数据，而VBO(Vertex Buffer Objects)就是用来存储的Buffer，它会在GPU内存中储存大量顶点。使用这些缓冲对象的好处是可以一次性的发送一大批数据到显卡上，而不是每个顶点发送一次。</p>
+<p>　　VAO(Vertex Array Object)顶点数组对象就相当于是一个索引，它用于对这些顶点数据进行解析，分析出里面哪些是描述的空间位置，哪些描述的是法线或者颜色。</p>
+<blockquote>
+<p>ＯpenGL的核心模式要求我们必须使用VAO，它知道该如何处理顶点输入。如果绑定VAO失败，OpenGL会拒绝绘制任何东西。</p>
+<p>VAO和VBO是一一对应的，一个模型的数据输入（一套完整独立的数据）对应一个VAO</p>
+</blockquote>
+<p>​    </p>
 <p>​        </p>
 <p>​                                              </p>
 
