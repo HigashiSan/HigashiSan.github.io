@@ -6,15 +6,27 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Tag: OpenGL | Hexo</title>
+  <title>混合&amp;面剔除 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://example.com/tags/OpenGL/index.html">
+  <meta name="description" content="混合混合主要用来做透明度，一个物体透明的意思其实就是它显示出来的颜色一部分由它自己的颜色提供，另一部分由它后面的颜色提供，我们通过对纹理的alpha值进行设置，就可以做出透明效果。 丢弃片段有些图片并不需要半透明，只需要根据纹理颜色值，显示一部分，或者不显示一部分，没有中间情况。比如说草，如果想不太费劲地创建草这种东西，你需要将一个草的纹理贴在一个2D四边形上，然后将这个四边形放到场景中。然而，草">
+<meta property="og:type" content="article">
+<meta property="og:title" content="混合&amp;面剔除">
+<meta property="og:url" content="http://example.com/2021/04/04/%E6%B7%B7%E5%90%88-%E9%9D%A2%E5%89%94%E9%99%A4/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="混合混合主要用来做透明度，一个物体透明的意思其实就是它显示出来的颜色一部分由它自己的颜色提供，另一部分由它后面的颜色提供，我们通过对纹理的alpha值进行设置，就可以做出透明效果。 丢弃片段有些图片并不需要半透明，只需要根据纹理颜色值，显示一部分，或者不显示一部分，没有中间情况。比如说草，如果想不太费劲地创建草这种东西，你需要将一个草的纹理贴在一个2D四边形上，然后将这个四边形放到场景中。然而，草">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2021/04/04/%E6%B7%B7%E5%90%88-%E9%9D%A2%E5%89%94%E9%99%A4/1.png">
+<meta property="og:image" content="http://example.com/2021/04/04/%E6%B7%B7%E5%90%88-%E9%9D%A2%E5%89%94%E9%99%A4/2.png">
+<meta property="og:image" content="http://example.com/2021/04/04/%E6%B7%B7%E5%90%88-%E9%9D%A2%E5%89%94%E9%99%A4/3.png">
+<meta property="og:image" content="http://example.com/2021/04/04/%E6%B7%B7%E5%90%88-%E9%9D%A2%E5%89%94%E9%99%A4/4.png">
+<meta property="og:image" content="http://example.com/2021/04/04/%E6%B7%B7%E5%90%88-%E9%9D%A2%E5%89%94%E9%99%A4/5.png">
+<meta property="og:image" content="http://example.com/2021/04/04/%E6%B7%B7%E5%90%88-%E9%9D%A2%E5%89%94%E9%99%A4/6.png">
+<meta property="article:published_time" content="2021-04-04T12:49:53.000Z">
+<meta property="article:modified_time" content="2021-04-09T13:07:43.284Z">
 <meta property="article:author" content="John Doe">
+<meta property="article:tag" content="混合&amp;面剔除">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2021/04/04/%E6%B7%B7%E5%90%88-%E9%9D%A2%E5%89%94%E9%99%A4/1.png">
   
     <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -150,60 +162,226 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-混合-面剔除" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2021" class="archive-year">2021</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/03/19/OpenGL-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" class="archive-article-date">
-  	<time datetime="2021-03-19T09:04:17.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-19</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/03/19/OpenGL-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/">OpenGL学习记录--入门章节</a>
+    <h1 class="article-title" itemprop="name">
+      混合&amp;面剔除
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2021/04/04/%E6%B7%B7%E5%90%88-%E9%9D%A2%E5%89%94%E9%99%A4/" class="archive-article-date">
+  	<time datetime="2021-04-04T12:49:53.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-04</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="混合"><a href="#混合" class="headerlink" title="混合"></a>混合</h3><p>混合主要用来做透明度，一个物体透明的意思其实就是它显示出来的颜色一部分由它自己的颜色提供，另一部分由它后面的颜色提供，我们通过对纹理的alpha值进行设置，就可以做出透明效果。</p>
+<h4 id="丢弃片段"><a href="#丢弃片段" class="headerlink" title="丢弃片段"></a>丢弃片段</h4><p>有些图片并不需要半透明，只需要根据纹理颜色值，显示一部分，或者不显示一部分，没有中间情况。比如说草，如果想不太费劲地创建草这种东西，你需要将一个草的纹理贴在一个2D四边形上，然后将这个四边形放到场景中。然而，草的形状和2D四边形的形状并不完全相同，所以你只想显示草纹理的某些部分，而忽略剩下的部分。</p>
+<p>我们在载入图片的时候需要告诉OpenGL去使用alpha通道，然后去获取它的四个通道，具体代码如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//绑定相应的VAO，存储数据</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> transparentVAO, transparentVBO;</span><br><span class="line">glGenBuffers(<span class="number">1</span>, &amp;transparentVBO);</span><br><span class="line">glGenVertexArrays(<span class="number">1</span>, &amp;transparentVAO);</span><br><span class="line">glBindBuffer(GL_ARRAY_BUFFER, transparentVBO);</span><br><span class="line">glBindVertexArray(transparentVAO);</span><br><span class="line">glBufferData(GL_ARRAY_BUFFER, <span class="keyword">sizeof</span>(transparentVertices), transparentVertices, GL_STATIC_DRAW);</span><br><span class="line">glVertexAttribPointer(<span class="number">0</span>, <span class="number">3</span>, GL_FLOAT, GL_FALSE, <span class="number">5</span> * <span class="keyword">sizeof</span>(<span class="keyword">float</span>), (<span class="keyword">void</span>*)<span class="number">0</span>);</span><br><span class="line"><span class="comment">//对于一个顶点着色器，可以有多个VAO去用它的位置，之前的画箱子平面也用了这两个位置，你可能会疑惑为什么同一个顶点着色器的location被重复使用了，但是你仔细想想，它并没有重复，因为每创建一个VAO，你就使用了顶点着色器里面的locaion，然后去解析了数据，然后就存在了VAO之中，顶点着色器里面的lacation斌并有用来存数据，他只是一个指示，来把数据解析然后存在VAO中，所以重复使用位置不是什么奇怪的事。</span></span><br><span class="line">glEnableVertexAttribArray(<span class="number">0</span>);</span><br><span class="line">glVertexAttribPointer(<span class="number">1</span>, <span class="number">2</span>, GL_FLOAT, GL_FALSE, <span class="number">5</span> * <span class="keyword">sizeof</span>(<span class="keyword">float</span>), (<span class="keyword">void</span>*)(<span class="number">3</span> * <span class="keyword">sizeof</span>(<span class="keyword">float</span>)));</span><br><span class="line">glEnableVertexAttribArray(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//加载纹理，并且把纹理存储到2号位</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> transparentTexture = LoadImageToGPU(<span class="string">&quot;grass.png&quot;</span>, GL_RGBA, GL_RGBA, <span class="number">2</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//画平面</span></span><br><span class="line">glBindVertexArray(transparentVAO);</span><br><span class="line">glUniform1i(glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;texture1&quot;</span>), <span class="number">2</span>);</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">unsigned</span> <span class="keyword">int</span> i = <span class="number">0</span>; i &lt; grass.size(); i++)</span><br><span class="line">&#123;</span><br><span class="line">	model = glm::mat4(<span class="number">1.0f</span>);</span><br><span class="line">	model = glm::translate(model, grass[i]);</span><br><span class="line">	glUniformMatrix4fv(glad_glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;model&quot;</span>), <span class="number">1</span>, GL_FALSE, glm::value_ptr(model));</span><br><span class="line">	glDrawArrays(GL_TRIANGLES, <span class="number">0</span>, <span class="number">6</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以画出这样的样子：</p>
+<img src="/2021/04/04/%E6%B7%B7%E5%90%88-%E9%9D%A2%E5%89%94%E9%99%A4/1.png" class="">
+
+<p>但是我们加载图片的时候虽然加了alpha通道，但是没有告诉片段着色器如何去处理它，于是我们要改变一下片段着色器，GLSL有一个<code>discard</code>命令，一旦被调用，它就会保证片段不会被进一步处理，所以就不会进入颜色缓冲。有了这个指令，我们就能够在片段着色器中检测一个片段的alpha值是否低于某个值，如果是的话，则丢弃这个片段：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 330 core                                      </span></span><br><span class="line"><span class="keyword">in</span> <span class="type">vec2</span> texCoord;</span><br><span class="line"></span><br><span class="line"><span class="keyword">out</span> <span class="type">vec4</span> fragColor;</span><br><span class="line"></span><br><span class="line"><span class="keyword">uniform</span> <span class="type">sampler2D</span> texture1;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> main()&#123;</span><br><span class="line">	<span class="type">vec4</span> texColor = <span class="built_in">texture</span>(texture1,texCoord);</span><br><span class="line">	<span class="keyword">if</span>(texColor.a &lt; <span class="number">0.1</span>) <span class="keyword">discard</span>;</span><br><span class="line">	fragColor = texColor;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>于是就可以得到比较好的效果：</p>
+<img src="/2021/04/04/%E6%B7%B7%E5%90%88-%E9%9D%A2%E5%89%94%E9%99%A4/2.png" class="">
+
+<p>但是如果只是很简单地丢弃，我们就做不出来透明效果，所以要启动混合，OpenGL中的混合是通过一个方程去混和：</p>
+<img src="/2021/04/04/%E6%B7%B7%E5%90%88-%E9%9D%A2%E5%89%94%E9%99%A4/3.png" class="">
+
+<p>片段着色器运行完成后，并且所有的测试都通过之后，这个混合方程就会应用到片段颜色输出与当前颜色缓冲中的值上。源颜色和目标颜色将会由OpenGL自动设定，但源因子和目标因子的值可以由我们来决定。首先把片段着色器还原：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">#version 330 core                                      </span><br><span class="line">in vec2 texCoord;</span><br><span class="line"></span><br><span class="line">out vec4 fragColor;</span><br><span class="line"></span><br><span class="line">uniform sampler2D texture1;</span><br><span class="line"></span><br><span class="line">void main()&#123;</span><br><span class="line">	fragColor &#x3D; texture(texture1,texCoord);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>开启混合：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">glEnable(GL_BLEND);</span><br><span class="line">glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);</span><br></pre></td></tr></table></figure>
+
+<p>然后把之前的草纹理换成玻璃，就可以得到这样的效果：</p>
+<img src="/2021/04/04/%E6%B7%B7%E5%90%88-%E9%9D%A2%E5%89%94%E9%99%A4/4.png" class="">
+
+<p>但是仔细看你会发现前面的玻璃居然能会挡住后面的玻璃，这是因为深度测试和混合一起使用会产生一些麻烦。当写入深度缓冲时，深度缓冲不会检查片段是否是透明的，所以透明的部分会也会写入到深度缓冲中。这样一来透明物体后面的东西也无法被渲染出来。</p>
+<p>所以我们不能随意地决定如何渲染窗户，让深度缓冲解决所有的问题，我们必须先手动将窗户按照最远到最近来排序，再按照顺序渲染。大致的顺序事是：先绘制所有不透明的物体，然后对所有透明的物体排序，最后再按顺序绘制所有透明的物体。</p>
+<p>具体算法：我们从观察者视角获取物体的距离（通过计算摄像机位置向量和物体的位置向量之间的距离所获得），接下来我们把距离和它对应的位置向量存储到map数据结构中。map会自动根据键值(Key)对它的值排序，所以只要我们添加了所有的位置，并以它的距离作为键，它们就会自动根据距离值排序了。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">map</span>&lt;<span class="keyword">float</span>, glm::vec3&gt; distanceSort;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">unsigned</span> <span class="keyword">int</span> i = <span class="number">0</span>; i &lt; grass.size(); i++)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">float</span> distance = glm::length(camera.Position - grass[i]);</span><br><span class="line">	distanceSort[distance] = grass[i];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//反向迭代器，由远到近渲染窗户</span></span><br><span class="line">glBindVertexArray(windowVAO);</span><br><span class="line">glUniform1i(glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;texture1&quot;</span>), <span class="number">3</span>);</span><br><span class="line"><span class="keyword">for</span> (<span class="built_in">std</span>::<span class="built_in">map</span>&lt;<span class="keyword">float</span>, glm::vec3&gt;::reverse_iterator it = distanceSort.rbegin(); it != distanceSort.rend(); ++it)</span><br><span class="line">&#123;</span><br><span class="line">	model = glm::mat4(<span class="number">1.0f</span>);</span><br><span class="line">	model = glm::translate(model, it-&gt;second);</span><br><span class="line">	glUniformMatrix4fv(glad_glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;model&quot;</span>), <span class="number">1</span>, GL_FALSE, glm::value_ptr(model));</span><br><span class="line">	glDrawArrays(GL_TRIANGLES, <span class="number">0</span>, <span class="number">6</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以得到我们想要的结果：</p>
+<img src="/2021/04/04/%E6%B7%B7%E5%90%88-%E9%9D%A2%E5%89%94%E9%99%A4/5.png" class="">
+
+<p>虽然这种方法对我们这个场景能够正常工作，但它并没有考虑旋转、缩放或者其它的变换，有一些奇怪形状的物体仅用一个位置向量不能也准确地描述它是否遮挡了别人。而且这个算法当场景中需要排序地物体太多时，它的开销就太大了。</p>
+<p>还有一种方法就是在渲染半透明物体的时候把深度写入关了，渲染完毕之后再打开，这样就透明物体就不会受深度值的影响，这样也可以得到一样的效果：</p>
+<img src="/2021/04/04/%E6%B7%B7%E5%90%88-%E9%9D%A2%E5%89%94%E9%99%A4/6.png" class="">
+
+<p>这也许就需要去了解一下更优秀的技术，比如说<strong>次序无关透明度</strong>这种技术。后面会专门用一篇文章去记录一下我对这个技术的学习。</p>
+<hr>
+<h3 id="面剔除"><a href="#面剔除" class="headerlink" title="面剔除"></a>面剔除</h3><p>面剔除就是用来剔除那些我们看不到的面，这样可以节省很多的时间。但需要告诉OpenGL哪些面是正向面(Front Face)，哪些面是背向面(Back Face)，这就是通过<strong>环绕顺序</strong>去实现的。</p>
+<p>我们定义一组三角形顶点时，我们会以特定的环绕顺序来定义它们，可能是顺时针(Clockwise)的，也可能是逆时针(Counter-clockwise)的。默认情况下，逆时针顶点所定义的三角形将会被处理为正向三角形。</p>
+<p>所以在实际操作中，你只需要定义好逆时针的顶点数据，然后用<code>glEnable(GL_CULL_FACE)</code>就可以舍弃背面。而对于舍弃也可以选择是正面还是背面，用glCullFace函数就可以实现。</p>
+<p>glCullFace函数有三个可用的选项：</p>
+<ul>
+<li><code>GL_BACK</code>：只剔除背向面。</li>
+<li><code>GL_FRONT</code>：只剔除正向面。</li>
+<li><code>GL_FRONT_AND_BACK</code>：剔除正向面和背向面。</li>
+</ul>
+<hr>
+<p>混合和面剔除的基础我们也学完了！！！</p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">OpenGL</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">混合&面剔除</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/04/04/%E6%B7%B7%E5%90%88-%E9%9D%A2%E5%89%94%E9%99%A4/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
+  
+    <a href="/2021/04/09/%E6%A8%A1%E5%9E%8B%E5%8A%A0%E8%BD%BD/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          模型加载
+        
+      </div>
+    </a>
   
   
-    </div></section>
+    <a href="/2021/04/03/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">深度测试和模板测试</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+  
+  
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -226,9 +404,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
