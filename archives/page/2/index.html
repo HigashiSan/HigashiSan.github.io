@@ -6,29 +6,15 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://HigashiSan.github.io/project">
-  <title>深度测试和模板测试 | hexo</title>
+  <title>Archives | hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="深度测试现在我们来到了一个非常重要的专题：深度测试，它关乎着渲染过程中所有的遮挡关系，之前在画箱子的时候我们就开启了深度测试，下面来更加深入地学习深度缓冲中的深度值。 深度缓冲存在每一个片段中，当开启了深度测试后glEnable(GL_DEPTH_TEST),在绘制每个片元时就会去进行深度测试，通过则被绘制，否则就被丢弃，他是在片段着色器工作完成之后在屏幕空间运行的。屏幕空间坐标与通过OpenGL">
-<meta property="og:type" content="article">
-<meta property="og:title" content="深度测试和模板测试">
-<meta property="og:url" content="https://higashisan.github.io/project/2021/04/03/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/index.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="hexo">
+<meta property="og:url" content="https://higashisan.github.io/project/archives/page/2/index.html">
 <meta property="og:site_name" content="hexo">
-<meta property="og:description" content="深度测试现在我们来到了一个非常重要的专题：深度测试，它关乎着渲染过程中所有的遮挡关系，之前在画箱子的时候我们就开启了深度测试，下面来更加深入地学习深度缓冲中的深度值。 深度缓冲存在每一个片段中，当开启了深度测试后glEnable(GL_DEPTH_TEST),在绘制每个片元时就会去进行深度测试，通过则被绘制，否则就被丢弃，他是在片段着色器工作完成之后在屏幕空间运行的。屏幕空间坐标与通过OpenGL">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://higashisan.github.io/project/2021/04/03/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/2.png">
-<meta property="og:image" content="https://higashisan.github.io/project/2021/04/03/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/1.png">
-<meta property="og:image" content="https://higashisan.github.io/project/2021/04/03/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/3.png">
-<meta property="og:image" content="https://higashisan.github.io/project/2021/04/03/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/5.png">
-<meta property="og:image" content="https://higashisan.github.io/project/2021/04/03/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/4.png">
-<meta property="og:image" content="https://higashisan.github.io/project/2021/04/03/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/6.png">
-<meta property="og:image" content="https://higashisan.github.io/project/2021/04/03/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/7.png">
-<meta property="og:image" content="https://higashisan.github.io/project/2021/04/03/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/8.png">
-<meta property="article:published_time" content="2021-04-03T09:16:38.000Z">
-<meta property="article:modified_time" content="2021-04-04T12:48:44.271Z">
 <meta property="article:author" content="cdc">
-<meta property="article:tag" content="深度测试&amp;模板测试">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://higashisan.github.io/project/2021/04/03/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/2.png">
   
     <link rel="alternative" href="/atom.xml" title="hexo" type="application/atom+xml">
   
@@ -164,291 +150,101 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-深度测试和模板测试" class="article article-type-post " itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
+            
   
-    <h1 class="article-title" itemprop="name">
-      深度测试和模板测试
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/project/archives/2021" class="archive-year">2021</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/project/2021/03/27/OpenGL%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%9A%E5%85%89%E7%85%A7/" class="archive-article-date">
+  	<time datetime="2021-03-27T12:20:21.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-27</time>
+</a>
+        </div>
+    	 
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/project/2021/03/27/OpenGL%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%9A%E5%85%89%E7%85%A7/">OpenGL学习记录：光照</a>
     </h1>
   
 
-        
-        <a href="/project/2021/04/03/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/" class="archive-article-date">
-  	<time datetime="2021-04-03T09:16:38.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-03</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="深度测试"><a href="#深度测试" class="headerlink" title="深度测试"></a>深度测试</h3><p>现在我们来到了一个非常重要的专题：深度测试，它关乎着渲染过程中所有的遮挡关系，之前在画箱子的时候我们就开启了深度测试，下面来更加深入地学习深度缓冲中的深度值。</p>
-<p>深度缓冲存在每一个片段中，当开启了深度测试后<code>glEnable(GL_DEPTH_TEST)</code>,在绘制每个片元时就会去进行深度测试，通过则被绘制，否则就被丢弃，他是在片段着色器工作完成之后在屏幕空间运行的。屏幕空间坐标与通过OpenGL的glViewport所定义的视口密切相关，并且可以直接使用gl_FragCoord从片段着色器中直接访问。gl_FragCoord的x和y分量代表了片段的屏幕空间坐标（其中(0, 0)位于左下角），还包含了一个z分量，它包含了片段真正的深度值，z值就是需要与深度缓冲内容所对比的那个值。</p>
-<p>如果你启用了深度缓冲，你还应该在每个渲染迭代之前使用GL_DEPTH_BUFFER_BIT来清除深度缓冲，否则你会仍在使用上一次渲染迭代中的写入的深度值<code>glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)</code>。</p>
-<p>还有一个小技巧是当你想要使用深度缓存，但是不想去更新深度值的时候，可以使用<code>glDepthMask(GL_FALSE)</code>，去禁止深度缓冲的写入。</p>
-<h4 id="深度测试函数"><a href="#深度测试函数" class="headerlink" title="深度测试函数"></a>深度测试函数</h4><p>深度测试函数实际上就是告诉OpenGL在做深度测试的时候如何去舍弃片段<code>glDepthFunc(GL_LESS)</code>。默认的是GL_LESS，它会丢弃深度值大于等于当前深度缓冲值的所有片段。</p>
-<p>我们将之前的代码重写一遍，顺便巩固一下基础的知识，把LearnOpenGL上的箱子和平面坐标先直接复制上去，然后我们来写顶点着色器，需要两个位置，一个去存顶点一个去存纹理坐标。还需要输出一个纹理坐标。片段着色器就需要得到纹理坐标的输入然后用一个纹理采样器去接收。</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//顶点着色器</span></span><br><span class="line"><span class="meta">#version 330 core 								</span></span><br><span class="line"><span class="keyword">layout</span> (<span class="keyword">location</span> = <span class="number">0</span>) <span class="keyword">in</span> <span class="type">vec3</span> aPos;</span><br><span class="line"><span class="keyword">layout</span> (<span class="keyword">location</span> = <span class="number">1</span>) <span class="keyword">in</span> <span class="type">vec2</span> aTexCoord;</span><br><span class="line"></span><br><span class="line"><span class="keyword">out</span> <span class="type">vec2</span> texCoord;</span><br><span class="line"></span><br><span class="line"><span class="keyword">uniform</span> <span class="type">mat4</span> model;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">mat4</span> projection;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">mat4</span> view;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> main()&#123;</span><br><span class="line">	texCoord = aTexCoord;</span><br><span class="line">	<span class="built_in">gl_Position</span> = projection * view * model * <span class="type">vec4</span>(aPos, <span class="number">1.0</span>f);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//片段着色器</span></span><br><span class="line"><span class="keyword">in</span> <span class="type">vec2</span> texCoord;</span><br><span class="line"></span><br><span class="line"><span class="keyword">out</span> <span class="type">vec4</span> fragColor;</span><br><span class="line"></span><br><span class="line"><span class="keyword">uniform</span> <span class="type">sampler2D</span> texture1;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> main()&#123;</span><br><span class="line">	fragColor = <span class="built_in">texture</span>(texture1, texCoord);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在main函数里去编译这两个着色器，然后设置VBO、VAO去画出箱子和平面。对于VBO是一个Buffer，我们需要进行三部曲：创建、生成、绑定，赋予数据，对于VAO，我们只需要创建、生成、绑定，然后用glDrawArray去画就行了：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//分别拿到箱子和平面的坐标并且画出来</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> cubeVAO, cubeVBO;</span><br><span class="line">glGenBuffers(<span class="number">1</span>, &amp;cubeVBO);</span><br><span class="line">glGenVertexArrays(<span class="number">1</span>, &amp;cubeVAO);</span><br><span class="line">glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);</span><br><span class="line">glBindVertexArray(cubeVAO);</span><br><span class="line">glBufferData(GL_ARRAY_BUFFER, <span class="keyword">sizeof</span>(cubeVertices), &amp;cubeVertices, GL_STATIC_DRAW);</span><br><span class="line">glVertexAttribPointer(<span class="number">0</span>, <span class="number">3</span>, GL_FLOAT, GL_FALSE, <span class="number">5</span> * <span class="keyword">sizeof</span>(<span class="keyword">float</span>), (<span class="keyword">void</span>*)<span class="number">0</span>);</span><br><span class="line">glEnableVertexAttribArray(<span class="number">0</span>);</span><br><span class="line">glVertexAttribPointer(<span class="number">1</span>, <span class="number">2</span>, GL_FLOAT, GL_FALSE, <span class="number">5</span> * <span class="keyword">sizeof</span>(<span class="keyword">float</span>), (<span class="keyword">void</span>*)(<span class="number">3</span> * <span class="keyword">sizeof</span>(<span class="keyword">float</span>)));</span><br><span class="line">glEnableVertexAttribArray(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> planeVAO, planeVBO;</span><br><span class="line">glGenBuffers(<span class="number">1</span>, &amp;planeVBO);</span><br><span class="line">glGenVertexArrays(<span class="number">1</span>, &amp;planeVAO);</span><br><span class="line">glBindBuffer(GL_ARRAY_BUFFER, planeVBO);</span><br><span class="line">glBindVertexArray(planeVAO);</span><br><span class="line">glBufferData(GL_ARRAY_BUFFER, <span class="keyword">sizeof</span>(planeVertices), &amp;planeVertices, GL_STATIC_DRAW);</span><br><span class="line">glVertexAttribPointer(<span class="number">0</span>, <span class="number">3</span>, GL_FLOAT, GL_FALSE, <span class="number">5</span> * <span class="keyword">sizeof</span>(<span class="keyword">float</span>), (<span class="keyword">void</span>*)<span class="number">0</span>);</span><br><span class="line">glEnableVertexAttribArray(<span class="number">0</span>);</span><br><span class="line">glVertexAttribPointer(<span class="number">1</span>, <span class="number">2</span>, GL_FLOAT, GL_FALSE, <span class="number">5</span> * <span class="keyword">sizeof</span>(<span class="keyword">float</span>), (<span class="keyword">void</span>*)(<span class="number">3</span> * (<span class="keyword">sizeof</span>(<span class="keyword">float</span>))));</span><br><span class="line">glEnableVertexAttribArray(<span class="number">1</span>);</span><br></pre></td></tr></table></figure>
-
-<p>至于纹理我们直接把它加载到两个位置，然后再分别在画方块和画地板的时候给纹理采样器绑上不同的纹理就行：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//将图片加载到一号位</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> cubeTexture = LoadImageToGPU(<span class="string">&quot;marble.jpg&quot;</span>, GL_RGB, GL_RGB, <span class="number">0</span>);</span><br><span class="line"><span class="comment">//将图片加载到二号位</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> floorTexture = LoadImageToGPU(<span class="string">&quot;floor.png&quot;</span>, GL_RGB, GL_RGB, <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//给MVP矩阵赋值</span></span><br><span class="line">glm::mat4 model = glm::mat4(<span class="number">1.0f</span>);</span><br><span class="line">glUniformMatrix4fv(glad_glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;model&quot;</span>), <span class="number">1</span>, GL_FALSE, glm::value_ptr(model));</span><br><span class="line">glUniformMatrix4fv(glad_glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;view&quot;</span>), <span class="number">1</span>, GL_FALSE, glm::value_ptr(viewMat));</span><br><span class="line">glUniformMatrix4fv(glad_glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;projection&quot;</span>), <span class="number">1</span>, GL_FALSE, glm::value_ptr(projMat));</span><br><span class="line"></span><br><span class="line"><span class="comment">//把一号位的纹理送给纹理采样器</span></span><br><span class="line">glUniform1i(glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;texture1&quot;</span>), <span class="number">0</span>);</span><br><span class="line">glBindVertexArray(cubeVAO);<span class="comment">//在画之前绑定相应的VAO</span></span><br><span class="line">glDrawArrays(GL_TRIANGLES, <span class="number">0</span>, <span class="number">36</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//把二号位的纹理送给纹理采样器</span></span><br><span class="line">glUniform1i(glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;texture1&quot;</span>), <span class="number">1</span>);</span><br><span class="line">glBindVertexArray(planeVAO);<span class="comment">//绑定相应的VAO</span></span><br><span class="line">glDrawArrays(GL_TRIANGLES, <span class="number">0</span>, <span class="number">6</span>);</span><br></pre></td></tr></table></figure>
-
-<p>这样就可以画出我们想要的场景，是不是对基础的操作又多了一点理解？</p>
-<img src="/project/2021/04/03/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/2.png" class="">
-
-<p><code>glUniform1i</code>实际上是给片段着色器里的纹理采样器一个我们刚刚加载的纹理的位置，我们可以加载很多纹理到我们指定的位置，然后把某个位置送给纹理采样器，就可以把这个位置上储存的纹理给采样器。所以加载纹理实际上是很简单的，具体看一看之前文章的纹理章节。</p>
-<p>现在我们开启深度测试并且设置舍弃的方式为GL_ALWAYS，这样在时间上后绘制的片元永远会把先绘制的片元挡住，所以你会看到地板把箱子遮住：</p>
-<img src="/project/2021/04/03/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/1.png" class="">
-
-<p>改为GL_LESS，他就会回到原来的状态。</p>
-<h4 id="深度值精度"><a href="#深度值精度" class="headerlink" title="深度值精度"></a>深度值精度</h4><p>深度缓冲包含了一个介于0.0和1.0之间的深度值，它将会与观察者视角所看见的场景中所有物体的z值进行比较。观察空间的z值（观察者视角所看到的空间中的物体的z值）可能是投影平截头体的<strong>近平面</strong>(Near)和<strong>远平面</strong>(Far)之间的任何值。于是我们需要一种方式来将这些观察空间的z值变换到[0, 1]范围之间，其中的一种方式就是将它们线性变换到[0, 1]范围之间，但是要想得到正确的投影，一般都要使用非线性方程来进行映射。它是与 1/z 成正比的。它做的就是在z值很小的时候提供非常高的精度，而在z值很远的时候提供更少的精度：</p>
-<img src="/project/2021/04/03/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/3.png" class="">
-
-
-
-<h4 id="深度缓冲可视化"><a href="#深度缓冲可视化" class="headerlink" title="深度缓冲可视化"></a>深度缓冲可视化</h4><p>片段着色器中有一个内建函数：gl_FragCoord，它的Z值包含了输出的片段的深度值，我们直接将这个深度值作为颜色输出，就可以看到场景中所有片段的深度值<code>fragColor = vec4(vec3(gl_FragCoord.z),1.0f)</code>。粗略一看全是白色：</p>
-<img src="/project/2021/04/03/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/5.png" class="">
-
-<p>但是当我们靠近时，颜色就会逐渐变深：</p>
-<img src="/project/2021/04/03/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/4.png" class="">
-
-<p>这很清楚地展示了之前说过的深度值的非线性性质。近处的物体比起远处的物体对深度值有着更大的影响。只需要移动几厘米就能让颜色从暗完全变白。现在我们来强行把非线性的转化为线性的：</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 330 core                                     </span></span><br><span class="line"><span class="keyword">out</span> <span class="type">vec4</span> fragColor;</span><br><span class="line"></span><br><span class="line"><span class="type">float</span> near = <span class="number">0.1</span>; </span><br><span class="line"><span class="type">float</span> far  = <span class="number">100.0</span>; </span><br><span class="line"></span><br><span class="line"><span class="type">float</span> LinearizeDepth(<span class="type">float</span> depth) </span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">float</span> z = depth * <span class="number">2.0</span> - <span class="number">1.0</span>; <span class="comment">// back to NDC </span></span><br><span class="line">    <span class="keyword">return</span> (<span class="number">2.0</span> * near * far) / (far + near - z * (far - near));    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> main()&#123;</span><br><span class="line">	<span class="type">float</span> depth = LinearizeDepth(<span class="built_in">gl_FragCoord</span>.z) / far; </span><br><span class="line">    fragColor = <span class="type">vec4</span>(<span class="type">vec3</span>(depth), <span class="number">1.0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这样一来，你再去移动视角，就会发现深度值的改变和距离是成正比的。</p>
-<h4 id="深度冲突（Z-Fighting）"><a href="#深度冲突（Z-Fighting）" class="headerlink" title="深度冲突（Z-Fighting）"></a>深度冲突（Z-Fighting）</h4><p>相信你在之前就可能发现一个奇怪的东西，当你进入箱子内部，你会发现箱子的底面和地板的纹理在不停闪烁：</p>
-<img src="/project/2021/04/03/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/6.png" class="">
-
-<p>这是因为两个平面或者三角形非常紧密地平行排列在一起时，深度缓冲没有足够的精度来决定两个形状哪个在前面。结果就是这两个形状不断地在切换前后顺序，特别是当你的视角移动时，会产生非常奇怪的视觉效果。</p>
-<p>这里箱子被放置在地板的同一高度上，这也就意味着箱子的底面和地板是共面的。这两个面的深度值都是一样的，所以深度测试没有办法决定应该显示哪一个。</p>
-<blockquote>
-<p>深度冲突是深度缓冲的一个常见问题，当物体在远处时效果会更明显（因为深度缓冲在z值比较大的时候有着更小的精度）</p>
-</blockquote>
-<p>这里可以采用多种方法去处理：</p>
-<h5 id="代码强行改"><a href="#代码强行改" class="headerlink" title="代码强行改"></a>代码强行改</h5><p>我们在两个会有冲突的面先后绘制的时候，使用<code>glPolygonOffset</code>函数去设置偏移量，就可以让这两个面的z有细微的差别，当前一个面绘制完成后使用这个函数，然后在下一个面的绘制时，就会采用这个函数带来的深度偏移。</p>
-<blockquote>
-<p>函数的原型为void APIENTRY glPolygonOffset (GLfloat factor, GLfloat units)，</p>
-<p>设置后深度偏移量的计算公式是Offset = DZ * factor+r * units，DZ和r是当前系统跟深度测试相关的系数，其中r是两个深度缓冲区间的最小间隔，一般情况下，factor和units都设置为1.0（或-1.0）个单位，基本上是一个比较稳妥的设定。</p>
-<p>正数表示当前的深度更深一些，显示的时候会被前景覆盖，设为负数表示深度较浅，会被绘制到屏幕上去。</p>
-</blockquote>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">glUniform1i(glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;texture1&quot;</span>), <span class="number">0</span>);</span><br><span class="line">glBindVertexArray(cubeVAO);</span><br><span class="line">glDrawArrays(GL_TRIANGLES, <span class="number">0</span>, <span class="number">36</span>);</span><br><span class="line"></span><br><span class="line">glEnable(GL_POLYGON_OFFSET_FILL);<span class="comment">//开启offset的使用</span></span><br><span class="line">glPolygonOffset(<span class="number">0.1f</span>, <span class="number">0.0f</span>);<span class="comment">//将后面的z变深</span></span><br><span class="line"></span><br><span class="line">glUniform1i(glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;texture1&quot;</span>), <span class="number">1</span>);</span><br><span class="line">glBindVertexArray(planeVAO);</span><br><span class="line">glDrawArrays(GL_TRIANGLES, <span class="number">0</span>, <span class="number">6</span>);</span><br><span class="line"></span><br><span class="line">glDisable(GL_POLYGON_OFFSET_FILL);<span class="comment">//绘制完后要马上关掉</span></span><br></pre></td></tr></table></figure>
-
-<p>这样就可以解决掉Z-Fighting：</p>
-<img src="/project/2021/04/03/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/7.png" class="">
-
-<h5 id="控制坐标"><a href="#控制坐标" class="headerlink" title="控制坐标"></a>控制坐标</h5><p>不要把多个物体摆得太靠近，就可以避免它们的一些三角形会重叠。我们将位置设置一点看不出来的偏移量，比如让箱子往上画0.01f，就可以解决这个问题。</p>
-<h5 id="更高精度的深度缓冲"><a href="#更高精度的深度缓冲" class="headerlink" title="更高精度的深度缓冲"></a>更高精度的深度缓冲</h5><p>大部分深度缓冲的精度都是24位的，但现在大部分的显卡都支持32位的深度缓冲，这将会极大地提高精度。所以，牺牲掉一些性能，你就能获得更高精度的深度测试，减少深度冲突。</p>
-<p>这些就是常用的解决方法，后面会深入去了解一下工业界或者在引擎实际开发中是用的什么方法去解决这个Z-Fighting。</p>
-<hr>
-<h3 id="模板测试"><a href="#模板测试" class="headerlink" title="模板测试"></a>模板测试</h3><p>模板测试(Stencil Test)和深度测试一样，它也可能会丢弃片段。接下来，被保留的片段会进入深度测试，它可能会丢弃更多的片段。</p>
-<p>一个模板缓冲中，每个模板值(Stencil Value)是8位的。所以每个像素/片段一共能有256种不同的模板值。模板缓冲操作允许我们在渲染片段时将模板缓冲设定为一个特定的值。通过在渲染时修改模板缓冲的内容，我们<strong>写入</strong>了模板缓冲。在同一个（或者接下来的）渲染迭代中，我们可以<strong>读取</strong>这些值，来决定丢弃还是保留某个片段。使用模板缓冲的的步骤如下：</p>
-<ul>
-<li>启用模板缓冲的写入。</li>
-<li>渲染物体，更新模板缓冲的内容。</li>
-<li>禁用模板缓冲的写入。</li>
-<li>渲染（其它）物体，这次根据模板缓冲的内容丢弃特定的片段。</li>
-</ul>
-<p>所以，通过使用模板缓冲，我们可以根据场景中已绘制的其它物体的片段，来决定是否丢弃特定的片段。</p>
-<h4 id="模板函数"><a href="#模板函数" class="headerlink" title="模板函数"></a>模板函数</h4><p>和深度测试一样，我们也可以通过使用glStencilFunc和glStencilOp这两个函数去指定什么时候该让模板缓冲通过，即什么时候片段需要被丢弃。</p>
-<p>glStencilFunc(GLenum func, GLint ref, GLuint mask)一共包含三个参数，它指定了如何让接下来的片段进行模板缓冲：</p>
-<ul>
-<li><code>func</code>：设置模板测试函数(Stencil Test Function)。这个测试函数将会应用到已储存的模板值上和glStencilFunc函数的<code>ref</code>值上。可用的选项有：<code>GL_NEVER、GL_LESS、GL_LEQUAL、GL_GREATER、GL_GEQUAL、GL_EQUAL、GL_NOTEQUAL和GL_ALWAYS。</code>它们的语义和深度缓冲的函数类似。</li>
-<li><code>ref</code>：设置了模板测试的参考值(Reference Value)。模板缓冲的内容将会与这个值进行比较。这个数值完全由你自己设置。</li>
-<li><code>mask</code>：设置一个掩码，它将会与参考值和储存的模板值在测试比较它们之前进行与(AND)运算。初始情况下所有位都为1。</li>
-</ul>
-<p>比如<code>glStencilFunc(GL_EQUAL, 1, 0xFF)</code>，它的参数会告诉OpenGL，只要一个片段的模板值等于(<code>GL_EQUAL</code>)参考值1，片段将会通过测试并被绘制，否则会被丢弃。</p>
-<p>但是glStencilFunc仅仅描述了OpenGL应该对模板缓冲内容做什么，而不是我们应该如何更新缓冲。这就需要glStencilOp这个函数。</p>
-<p>glStencilOp(GLenum sfail, GLenum dpfail, GLenum dppass)一共包含三个选项，我们能够设定每个选项应该采取的行为：</p>
-<ul>
-<li><code>sfail</code>：模板测试失败时采取的行为。</li>
-<li><code>dpfail</code>：模板测试通过，但深度测试失败时采取的行为。</li>
-<li><code>dppass</code>：模板测试和深度测试都通过时采取的行为。</li>
-</ul>
-<p>具体有哪些行为可以去看官方文档，但是有一些是很难用到的，默认情况下glStencilOp是设置为<code>(GL_KEEP, GL_KEEP, GL_KEEP)</code>，所以不论任何测试的结果是如何，模板缓冲都会保留它的值。默认的行为不会更新模板缓冲，所以如果你想写入模板缓冲的话，你需要至少对其中一个选项设置不同的值。这个一般在模板测试的开始指定一次就可以了。</p>
-<p>你还可以通过mask去设置是否对下面绘制的物体使用写入：</p>
-<p>glStencilMask(0xFF); // 每一位写入模板缓冲时都保持原样 </p>
-<p>glStencilMask(0x00); // 每一位在写入模板缓冲时都会变成0（禁用写入）</p>
-<h4 id="实战：物体轮廓"><a href="#实战：物体轮廓" class="headerlink" title="实战：物体轮廓"></a>实战：物体轮廓</h4><p>为了使用一下模板测试这个知识，我们来实战为箱子做一个轮廓效果。想一想你在打一些经营类小游戏的时候，当你选到某一个物体，它的轮廓会加深，提醒玩家选到了这个物体。</p>
-<p>为物体创建轮廓的步骤如下：</p>
-<ol>
-<li>在绘制（需要添加轮廓的）物体之前，将模板函数设置为GL_ALWAYS，每当物体的片段被渲染时，将模板缓冲更新为1。</li>
-<li>渲染物体。</li>
-<li>禁用模板写入以及深度测试。</li>
-<li>将每个物体缩放一点点。</li>
-<li>使用一个不同的片段着色器，输出一个单独的（边框）颜色。</li>
-<li>再次绘制物体，但只在它们片段的模板值不等于1时才绘制。</li>
-<li>再次启用模板写入和深度测试。</li>
-</ol>
-<p>主要的做法就是一开始我们正常绘制物体，把不想加边框的物体的模板值写入关掉，把模板值写入打开之后再画想要加边框的物体，这时我们启动模板缓冲写入，把所有要绘制的片段的模板值更新为1。然后我们再绘制放大了一点的箱子，同时把模板缓冲写入禁用，然后就只画模板缓冲值不为1的部分就可以画出边框了。</p>
-<p>所以这个画边框算法的框架看起来就像这样：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">glEnable(GL_DEPTH_TEST);</span><br><span class="line">glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);<span class="comment">//如果其中的一个测试失败了，我们什么都不做，我们仅仅保留当前储存在模板缓冲中的值。如果模板测试和深度测试都通过了，那么我们希望将储存的模板值设置为参考值，参考值能够通过</span></span><br><span class="line"></span><br><span class="line">glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT); <span class="comment">//清除上一次的缓存</span></span><br><span class="line"></span><br><span class="line">glStencilMask(<span class="number">0x00</span>); <span class="comment">// 保证我们在绘制我们不想加边框的时候不会更新模板缓冲，禁止模板写入</span></span><br><span class="line">normalShader.use();</span><br><span class="line">DrawSomething_WeDontNeedOutline();</span><br><span class="line"></span><br><span class="line">glStencilFunc(GL_ALWAYS, <span class="number">1</span>, <span class="number">0xFF</span>); <span class="comment">//所有片段总是更新缓冲为1，所有片段全部通过并且被绘制,这里不是1也可以，是你自己设置的模板值</span></span><br><span class="line">glStencilMask(<span class="number">0xFF</span>); <span class="comment">//启动模板写入</span></span><br><span class="line">DrawSomthing_WeNeedOutline();</span><br><span class="line"></span><br><span class="line"><span class="comment">//绘制大一点的物体</span></span><br><span class="line">glStencilFunc(GL_NOTEQUAL, <span class="number">1</span>, <span class="number">0xFF</span>);<span class="comment">//等于1的所有片段都被丢弃</span></span><br><span class="line">glStencilMask(<span class="number">0x00</span>); <span class="comment">//关闭缓冲写入</span></span><br><span class="line">glDisable(GL_DEPTH_TEST);</span><br><span class="line">shaderDrawOutline.use(); </span><br><span class="line">DrawSomthing_WeNeedOutline();</span><br><span class="line">glStencilMask(<span class="number">0xFF</span>);</span><br><span class="line">glEnable(GL_DEPTH_TEST);  </span><br></pre></td></tr></table></figure>
-
-
-
-<p>代码如下：</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//只画边框的片段着色器</span></span><br><span class="line"><span class="meta">#version 330 core</span></span><br><span class="line"><span class="keyword">out</span> <span class="type">vec4</span> FragColor;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> main()</span><br><span class="line">&#123;</span><br><span class="line">    FragColor = <span class="type">vec4</span>(<span class="number">0.04</span>, <span class="number">0.28</span>, <span class="number">0.26</span>, <span class="number">1.0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>main：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line">Shader* myShader = <span class="keyword">new</span> Shader(<span class="string">&quot;vertexSource-Depth.vert&quot;</span>, <span class="string">&quot;fragmentSource-Depth.frag&quot;</span>);</span><br><span class="line">Shader* drawOutline = <span class="keyword">new</span> Shader(<span class="string">&quot;vertexSource-Depth.vert&quot;</span>, <span class="string">&quot;fragmentSource-Stencil.frag&quot;</span>);<span class="comment">//画边框的Shader</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//初始设置</span></span><br><span class="line">glEnable(GL_DEPTH_TEST);</span><br><span class="line">glDepthFunc(GL_LESS);</span><br><span class="line">glEnable(GL_STENCIL_TEST);</span><br><span class="line">glStencilFunc(GL_NOTEQUAL, <span class="number">1</span>, <span class="number">0xFF</span>);</span><br><span class="line">glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);<span class="comment">//提前定义好如何更新模板缓存</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//边框绘制</span></span><br><span class="line">glm::mat4 model = glm::mat4(<span class="number">1.0f</span>);</span><br><span class="line">viewMat = camera.GetViewMatrix();</span><br><span class="line">projMat = glm::perspective(glm::radians(<span class="number">45.0f</span>), <span class="number">800.0f</span> / <span class="number">600.0f</span>, <span class="number">0.1f</span>, <span class="number">100.0f</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//设置相关Uniform</span></span><br><span class="line">drawOutline-&gt;use();</span><br><span class="line">glUniformMatrix4fv(glad_glGetUniformLocation(drawOutline-&gt;ID, <span class="string">&quot;view&quot;</span>), <span class="number">1</span>, GL_FALSE, glm::value_ptr(viewMat));</span><br><span class="line">glUniformMatrix4fv(glad_glGetUniformLocation(drawOutline-&gt;ID, <span class="string">&quot;projection&quot;</span>), <span class="number">1</span>, GL_FALSE, glm::value_ptr(projMat));</span><br><span class="line">		</span><br><span class="line">myShader-&gt;use();</span><br><span class="line">glUniformMatrix4fv(glad_glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;view&quot;</span>), <span class="number">1</span>, GL_FALSE, glm::value_ptr(viewMat));</span><br><span class="line">glUniformMatrix4fv(glad_glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;projection&quot;</span>), <span class="number">1</span>, GL_FALSE, glm::value_ptr(projMat));</span><br><span class="line"></span><br><span class="line">glStencilMask(<span class="number">0x00</span>);</span><br><span class="line">glUniform1i(glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;texture1&quot;</span>), <span class="number">1</span>);</span><br><span class="line">glBindVertexArray(planeVAO);</span><br><span class="line">glUniformMatrix4fv(glad_glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;model&quot;</span>), <span class="number">1</span>, GL_FALSE, glm::value_ptr(model));</span><br><span class="line">glDrawArrays(GL_TRIANGLES, <span class="number">0</span>, <span class="number">6</span>);</span><br><span class="line"></span><br><span class="line">glStencilFunc(GL_ALWAYS, <span class="number">1</span>, <span class="number">0xFF</span>);</span><br><span class="line">glStencilMask(<span class="number">0xFF</span>);</span><br><span class="line">glUniform1i(glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;texture1&quot;</span>), <span class="number">0</span>);</span><br><span class="line">model = glm::translate(model, glm::vec3(<span class="number">-1.0f</span>, <span class="number">0.0f</span>, <span class="number">-1.0f</span>));</span><br><span class="line">glUniformMatrix4fv(glad_glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;model&quot;</span>), <span class="number">1</span>, GL_FALSE, glm::value_ptr(model));</span><br><span class="line">glBindVertexArray(cubeVAO);</span><br><span class="line">glDrawArrays(GL_TRIANGLES, <span class="number">0</span>, <span class="number">36</span>);</span><br><span class="line">model = glm::mat4(<span class="number">1.0f</span>);</span><br><span class="line">model = glm::translate(model, glm::vec3(<span class="number">2.0f</span>, <span class="number">0.0f</span>, <span class="number">0.0f</span>));</span><br><span class="line">glUniformMatrix4fv(glad_glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;model&quot;</span>), <span class="number">1</span>, GL_FALSE, glm::value_ptr(model));</span><br><span class="line">glDrawArrays(GL_TRIANGLES, <span class="number">0</span>, <span class="number">36</span>);</span><br><span class="line"></span><br><span class="line">glStencilFunc(GL_NOTEQUAL, <span class="number">1</span>, <span class="number">0xFF</span>);</span><br><span class="line">glStencilMask(<span class="number">0x00</span>);</span><br><span class="line">glDisable(GL_DEPTH_TEST);</span><br><span class="line">drawOutline-&gt;use();</span><br><span class="line"><span class="keyword">float</span> scale = <span class="number">1.1</span>;</span><br><span class="line"></span><br><span class="line">glBindVertexArray(cubeVAO);</span><br><span class="line">glUniform1i(glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;texture1&quot;</span>), <span class="number">0</span>);</span><br><span class="line">model = glm::mat4(<span class="number">1.0f</span>);</span><br><span class="line">model = glm::translate(model, glm::vec3(<span class="number">-1.0f</span>, <span class="number">0.0f</span>, <span class="number">-1.0f</span>));</span><br><span class="line">model = glm::scale(model, glm::vec3(scale, scale, scale));</span><br><span class="line">glUniformMatrix4fv(glad_glGetUniformLocation(drawOutline-&gt;ID, <span class="string">&quot;model&quot;</span>), <span class="number">1</span>, GL_FALSE, glm::value_ptr(model));</span><br><span class="line">glDrawArrays(GL_TRIANGLES, <span class="number">0</span>, <span class="number">36</span>);</span><br><span class="line"></span><br><span class="line">model = glm::mat4(<span class="number">1.0f</span>);</span><br><span class="line">model = glm::translate(model, glm::vec3(<span class="number">2.0f</span>, <span class="number">0.0f</span>, <span class="number">0.0f</span>));</span><br><span class="line">model = glm::scale(model, glm::vec3(scale, scale, scale));</span><br><span class="line">glUniformMatrix4fv(glad_glGetUniformLocation(drawOutline-&gt;ID, <span class="string">&quot;model&quot;</span>), <span class="number">1</span>, GL_FALSE, glm::value_ptr(model));</span><br><span class="line">glDrawArrays(GL_TRIANGLES, <span class="number">0</span>, <span class="number">36</span>);</span><br><span class="line">glStencilMask(<span class="number">0xFF</span>);</span><br><span class="line">glStencilFunc(GL_ALWAYS, <span class="number">0</span>, <span class="number">0xFF</span>);</span><br><span class="line">glEnable(GL_DEPTH_TEST);</span><br></pre></td></tr></table></figure>
-
-<p>这样就可以得到画了边框的物体：</p>
-<img src="/project/2021/04/03/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/8.png" class="">
-
-<hr>
-<p>仔细想一想这个东西比深度测试更好玩，它可以用来实现物体边缘一些好玩的效果，比如发光、边框等等。它还可以在一个后视镜中绘制纹理，让它能够绘制到镜子形状中，或者使用一个叫做阴影体积(Shadow Volume)的模板缓冲技术渲染实时阴影。后面我在练习的时候会都做一做康康。</p>
-
-      
-
-      
-        <div class="page-reward">
-          <a href="javascript:;" class="page-reward-btn tooltip-top">
-            <div class="tooltip tooltip-east">
-            <span class="tooltip-item">
-              赏
-            </span>
-            <span class="tooltip-content">
-              <span class="tooltip-text">
-                <span class="tooltip-inner">
-                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
-                  <div class="reward-box">
-                    
-                    
-                  </div>
-                </span>
-              </span>
-            </span>
-          </div>
-          </a>
-        </div>
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
+        <div class="article-info info-on-right">
+          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">深度测试&模板测试</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">OpenGL学习记录：光照</a>
         		</li>
       		
 		</ul>
 	</div>
 
-      
+          
 
-      
-
-      
-        
-<div class="share-btn share-icons tooltip-left">
-  <div class="tooltip tooltip-east">
-    <span class="tooltip-item">
-      <a href="javascript:;" class="share-sns share-outer">
-        <i class="icon icon-share"></i>
-      </a>
-    </span>
-    <span class="tooltip-content">
-      <div class="share-wrap">
-        <div class="share-icons">
-          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
-            <i class="icon icon-weibo"></i>
-          </a>
-          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
-            <i class="icon icon-weixin"></i>
-          </a>
-          <a class="qq share-sns" href="javascript:;" data-type="qq">
-            <i class="icon icon-qq"></i>
-          </a>
-          <a class="douban share-sns" href="javascript:;" data-type="douban">
-            <i class="icon icon-douban"></i>
-          </a>
-          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
-            <i class="icon icon-qzone"></i>
-          </a>
-          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
-            <i class="icon icon-facebook"></i>
-          </a>
-          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
-            <i class="icon icon-twitter"></i>
-          </a>
-          <a class="google share-sns" href="javascript:;" data-type="google">
-            <i class="icon icon-google"></i>
-          </a>
         </div>
-      </div>
-    </span>
-  </div>
-</div>
-
-<div class="page-modal wx-share js-wx-box">
-    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=https://higashisan.github.io/project/2021/04/03/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/" alt="微信分享二维码">
-    </div>
-</div>
-
-<div class="mask js-mask"></div>
-      
-      <div class="clearfix"></div>
-    </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
 </article>
-
   
-<nav id="article-nav">
-  
-    <a href="/project/2021/04/04/%E6%B7%B7%E5%90%88-%E9%9D%A2%E5%89%94%E9%99%A4/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          混合&amp;面剔除
-        
-      </div>
-    </a>
-  
-  
-    <a href="/project/2021/03/27/OpenGL%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%9A%E5%85%89%E7%85%A7/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">OpenGL学习记录：光照</div>
-      <i class="icon-circle-right"></i>
-    </a>
-  
-</nav>
-
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
+    
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/project/2021/03/19/OpenGL-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" class="archive-article-date">
+  	<time datetime="2021-03-19T09:04:17.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-19</time>
+</a>
         </div>
-        
-        
-    </div>
-</aside>
-
-
-
+    	 
   
-  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/project/2021/03/19/OpenGL-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/">OpenGL学习记录--入门章节</a>
+    </h1>
   
 
+        <div class="article-info info-on-right">
+          
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">OpenGL</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+          
+
+        </div>
+        <div class="clearfix"></div>
+    </header>
+  </div>
+</article>
+  
+  
+    </div></section>
   
 
-  
-
+    
+    <nav id="page-nav">
+      <a class="extend prev" rel="prev" href="/project/archives/">&amp;laquo; Prev</a><a class="page-number" href="/project/archives/">1</a><span class="page-number current">2</span>
+    </nav>
   
 
 
@@ -472,8 +268,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: true,
-		isArchive: false,
+		isPost: false,
+		isArchive: true,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
