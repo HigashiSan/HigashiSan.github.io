@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Ray Marching, YoKuYou">
+    <meta name="keywords" content="程序化生成开放世界地形, YoKuYou">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>Ray Marching | YoKuYou</title>
+    <title>程序化生成开放世界地形 | YoKuYou</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -310,12 +310,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/11.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/23.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Ray Marching</h1>
+                    <h1 class="description center-align post-title">程序化生成开放世界地形</h1>
                 </div>
             </div>
         </div>
@@ -431,8 +431,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/Ray-Marching-Shadow/">
-                                <span class="chip bg-color">Ray Marching Shadow</span>
+                            <a href="/tags/%E7%A8%8B%E5%BA%8F%E5%8C%96%E7%94%9F%E6%88%90/">
+                                <span class="chip bg-color">程序化生成</span>
                             </a>
                         
                     </div>
@@ -447,7 +447,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>Publish Date:&nbsp;&nbsp;
-                    2021-10-06
+                    2021-10-08
                 </div>
                 
 
@@ -468,7 +468,35 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                
+                <h3 id="Procedural-Generation"><a href="#Procedural-Generation" class="headerlink" title="Procedural   Generation"></a>Procedural   Generation</h3><p>之前研究了一下程序化生成，这是个很复杂的技术，开放世界游戏最需要的，就是可以很方便快速且随机地去生成地形，然后美术可以用很多接口去控制地形的细节，然后给地形上植被、建筑等等。这篇文章就总结一下我学到的相关技术，会基于噪声去生成高度图，自己去储存mesh的三角面然后给Mesh Filter，这样我们可以控制地形的细分程度，然后控制地形的细节，然后会用LOD的思想去做无尽的地形，进行地形分块。</p>
+<h3 id="生成Noise-Map"><a href="#生成Noise-Map" class="headerlink" title="生成Noise Map"></a>生成Noise Map</h3><p>首先要通过噪声生成高度图，我用曲线表示地形，不同高度的曲线叠加，去增加地形的细节。将单独的一个波形称为Octave，将多个Octave叠加起来，就可以得到我想要的效果。然后另外用两个变量去控制叠加的波形的波峰高度和频率。</p>
+<img src="/2021/10/08/%E7%A8%8B%E5%BA%8F%E5%8C%96%E7%94%9F%E6%88%90%E5%BC%80%E6%94%BE%E4%B8%96%E7%95%8C%E6%97%A0%E5%B0%BD%E5%9C%B0%E5%BD%A2/1.png" class="">
+
+<p>具体代码如下：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="built_in">int</span> y = <span class="number">0</span>; y &lt; height; y++)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="built_in">int</span> x = <span class="number">0</span>; x &lt; width; x++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">float</span> amplitude = <span class="number">1</span>;</span><br><span class="line">		<span class="built_in">float</span> frequency = <span class="number">1</span>;</span><br><span class="line">		<span class="built_in">float</span> noiseHeight = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; octaves; i++)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="built_in">float</span> samplerX = (x - halfWidth) / scale * frequency + octaveOffsets[i].x;</span><br><span class="line">			<span class="built_in">float</span> samplerY = (y - halfHeight) / scale * frequency + octaveOffsets[i].y;</span><br><span class="line">			<span class="comment">//转换到-1~1</span></span><br><span class="line">			<span class="built_in">float</span> perlinValue = Mathf.PerlinNoise(samplerX, samplerY) * <span class="number">2</span> - <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">			noiseHeight += perlinValue * amplitude;</span><br><span class="line">			amplitude *= persistance;</span><br><span class="line">			frequency *= lacunarity;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (noiseHeight &gt; maxNoiseHeight) maxNoiseHeight = noiseHeight;</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span> (noiseHeight &lt; minNoiseHeight) minNoiseHeight = noiseHeight;</span><br><span class="line"></span><br><span class="line">		noiseMap[x, y] = noiseHeight;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中，Lacunarity表示频率的增加量，Persistence是一个0-1的数，它表示增幅的减小量，也就是后面叠加的波峰的最大高度，octave的个数就代表着地形细节的多少。</p>
+<p>然后再根据这个噪点图给一个texture上色，每一个点的颜色则取决于相同大小的噪点图的这个点对应的值，那我就从黑到白做一个lerp，lerp的值就是noiseMap[x, y]存的值。</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">int</span> width = heightMap.GetLength(<span class="number">0</span>);</span><br><span class="line"><span class="built_in">int</span> height = heightMap.GetLength(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">Color[] colorMap = <span class="keyword">new</span> Color[width * height];</span><br><span class="line"><span class="keyword">for</span> (<span class="built_in">int</span> x = <span class="number">0</span>; x &lt; width; x++)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="built_in">int</span> y = <span class="number">0</span>; y &lt; height; y++)</span><br><span class="line">	&#123;</span><br><span class="line">		colorMap[y * width + x] = Color.Lerp(Color.black, Color.white, heightMap[x, 		y]);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Texture2D texture = <span class="keyword">new</span> Texture2D(width, height);</span><br><span class="line">texture.filterMode = FilterMode.Point;</span><br><span class="line">texture.wrapMode = TextureWrapMode.Clamp;</span><br><span class="line">texture.SetPixels(colorMap);</span><br><span class="line">texture.Apply();</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以生成一个可以调整细节的噪声图：</p>
+<img src="/2021/10/08/%E7%A8%8B%E5%BA%8F%E5%8C%96%E7%94%9F%E6%88%90%E5%BC%80%E6%94%BE%E4%B8%96%E7%95%8C%E6%97%A0%E5%B0%BD%E5%9C%B0%E5%BD%A2/2.png" class="">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 
             </div>
             <hr/>
@@ -494,7 +522,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://higashisan.github.io/2021/10/06/Ray-Marching/">https://higashisan.github.io/2021/10/06/Ray-Marching/</a>
+                    <a href="https://higashisan.github.io/2021/10/08/%E7%A8%8B%E5%BA%8F%E5%8C%96%E7%94%9F%E6%88%90%E5%BC%80%E6%94%BE%E4%B8%96%E7%95%8C%E6%97%A0%E5%B0%BD%E5%9C%B0%E5%BD%A2/">https://higashisan.github.io/2021/10/08/%E7%A8%8B%E5%BA%8F%E5%8C%96%E7%94%9F%E6%88%90%E5%BC%80%E6%94%BE%E4%B8%96%E7%95%8C%E6%97%A0%E5%B0%BD%E5%9C%B0%E5%BD%A2/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -532,8 +560,8 @@
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/Ray-Marching-Shadow/">
-                                    <span class="chip bg-color">Ray Marching Shadow</span>
+                                <a href="/tags/%E7%A8%8B%E5%BA%8F%E5%8C%96%E7%94%9F%E6%88%90/">
+                                    <span class="chip bg-color">程序化生成</span>
                                 </a>
                             
                         </div>
@@ -703,9 +731,10 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;Previous</div>
+                <i class="far fa-dot-circle"></i>&nbsp;Current
+            </div>
             <div class="card">
                 <a href="/2021/10/08/%E7%A8%8B%E5%BA%8F%E5%8C%96%E7%94%9F%E6%88%90%E5%BC%80%E6%94%BE%E4%B8%96%E7%95%8C%E6%97%A0%E5%B0%BD%E5%9C%B0%E5%BD%A2/">
                     <div class="card-image">
@@ -723,9 +752,9 @@
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2021-10-08
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2021-10-08
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -734,6 +763,7 @@
                         </span>
                     </div>
                 </div>
+
                 
                 <div class="card-action article-tags">
                     
@@ -752,13 +782,13 @@
                 Next&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2021/05/07/%E9%98%B4%E5%BD%B1/">
+                <a href="/2021/10/06/Ray-Marching/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/5.jpg" class="responsive-img" alt="阴影">
+                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="Ray Marching">
                         
-                        <span class="card-title">阴影</span>
+                        <span class="card-title">Ray Marching</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -769,7 +799,7 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2021-05-07
+                                <i class="far fa-clock fa-fw icon-date"></i>2021-10-06
                             </span>
                         <span class="publish-author">
                             
@@ -782,8 +812,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/%E9%98%B4%E5%BD%B1/">
-                        <span class="chip bg-color">阴影</span>
+                    <a href="/tags/Ray-Marching-Shadow/">
+                        <span class="chip bg-color">Ray Marching Shadow</span>
                     </a>
                     
                 </div>
