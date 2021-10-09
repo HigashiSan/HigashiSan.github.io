@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="程序化地形二（Endless Terrain）, YoKuYou">
+    <meta name="keywords" content="程序化生成开放世界地形二（Endless Terrain）, YoKuYou">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>程序化地形二（Endless Terrain） | YoKuYou</title>
+    <title>程序化生成开放世界地形二（Endless Terrain） | YoKuYou</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -310,12 +310,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/0.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/19.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">程序化地形二（Endless Terrain）</h1>
+                    <h1 class="description center-align post-title">程序化生成开放世界地形二（Endless Terrain）</h1>
                 </div>
             </div>
         </div>
@@ -431,8 +431,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/%E6%97%A0%E5%B0%BD%E5%9C%B0%E5%BD%A2%E3%80%81%E6%97%A0%E7%BC%9D%E5%A4%A7%E5%9C%B0%E5%BD%A2%E3%80%81%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%BC%98%E5%8C%96/">
-                                <span class="chip bg-color">无尽地形、无缝大地形、多线程优化</span>
+                            <a href="/tags/%E6%97%A0%E7%BC%9D%E5%A4%A7%E5%9C%B0%E5%BD%A2%E3%80%81%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%BC%98%E5%8C%96/">
+                                <span class="chip bg-color">无缝大地形、多线程优化</span>
                             </a>
                         
                     </div>
@@ -469,7 +469,55 @@
         <div class="card-content article-card-content">
             <div id="articleContent">
                 <p>在这篇文章里，主要是实现Endless Terrain，以及我对这几个技术的学习、总结以及实践，这些东西的学习真的是花了大量的时间和精力，看了好几个外国大佬的博客，自己写了一个国庆，才终于实现了出来（其实是因为弄unity的多线程花了挺多的时间）。可能有点长，如果你也想做Procedural Terrain，看完这篇你一定能有大收获。</p>
-<h3 id="ChunkSize"><a href="#ChunkSize" class="headerlink" title="ChunkSize"></a>ChunkSize</h3>
+<h3 id="Chunks"><a href="#Chunks" class="headerlink" title="Chunks"></a>Chunks</h3><p>unity对于一个mesh的绘制是有着顶点数上限限制，所以要实现大地形，需要随机生成很多块地形，每个地形称为一个chunk，生成多少个chunk则取决于玩家能看到的最远处，如果玩家位置发生了改变，那么在玩家目前MaxViewDst外的chunk就设置为不可见，生成的其它chunk就拼接在玩家目前所在chunk的四周，这样就能做出Endless Terrain。</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">const</span> <span class="built_in">float</span> maxViewDst = <span class="number">300</span>;</span><br><span class="line"><span class="keyword">public</span> Transform viewer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Vector2 viewerPosition;</span><br><span class="line"><span class="keyword">static</span> NoiseMapGenerator mapGenerator;</span><br><span class="line"><span class="built_in">int</span> chunkSize;<span class="comment">//就是一个地图块的大小</span></span><br><span class="line"><span class="built_in">int</span> chunkVisibleInViewDst;</span><br></pre></td></tr></table></figure>
+
+<p>在一条视线方向上可见的chunk个数就为</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chunkSize = NoiseMapGenerator.mapChunkSize - <span class="number">1</span>;</span><br><span class="line">chunkVisibleInViewDst = Mathf.RoundToInt(maxViewDst / chunkSize);</span><br></pre></td></tr></table></figure>
+
+<p>我把整个世界划分成网格，每个网格就是一个chunk，玩家所能看到的chunkVisibleInViewDst就决定了这个chunk集的大小，假定能看到附近的一个chunk，那个一共要生成的chunk集就要有九个chunk：</p>
+<img src="/2021/10/08/%E7%A8%8B%E5%BA%8F%E5%8C%96%E5%9C%B0%E5%BD%A2%E4%BA%8C/1.png" class="">
+
+<p>我用一个TerrainChunk类去储存要生成的chunk的信息，它还要有一个方法去更新chunk的可见性，判断这个chunk是否在MaxViewDst内，如果在，那么让它可见</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">UpdateTerrainChunk</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="built_in">float</span> viewDstFromNearestEdge = Mathf.Sqrt(bounds.SqrDistance(viewerPosition));</span><br><span class="line">	<span class="built_in">bool</span> visible = viewDstFromNearestEdge &lt;= maxViewDst;</span><br><span class="line">	SetVisible(<span class="literal">true</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于生成的chunks，我用一个字典类型去存储，每当view的位置变化，都会计算出一个新的中心点，也就要基于这个点去生成新的chunk，如果已经有了这个chunk，那就直接把它setvisible就行了，而是否已经有了这个chunk，直接用key去查就行了，UpdateVisibleChunks函数如下</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">Dictionary&lt;Vector2, TerrainChunk&gt; terrainChunkDictionary = <span class="keyword">new</span> Dictionary&lt;Vector2, TerrainChunk&gt;();<span class="comment">//&lt;位置，对应的地形&gt;</span></span><br><span class="line">List&lt;TerrainChunk&gt; terrainChunksVisibleLastUpdate = <span class="keyword">new</span> List&lt;TerrainChunk&gt;();<span class="comment">//viewer上一次移动时可见的chunk</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; terrainChunksVisibleLastUpdate.Count; i++)</span><br><span class="line">&#123;</span><br><span class="line">	terrainChunksVisibleLastUpdate[i].SetVisible(<span class="literal">false</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">int</span> currentChunkCoordX = Mathf.RoundToInt(viewerPosition.x / chunkSize);</span><br><span class="line"><span class="built_in">int</span> currentChunkCoordY = Mathf.RoundToInt(viewerPosition.y / chunkSize);</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="built_in">int</span> yOffset = -chunkVisibleInViewDst; yOffset &lt;= chunkVisibleInViewDst; yOffset++)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="built_in">int</span> xOffset = -chunkVisibleInViewDst; xOffset &lt;= chunkVisibleInViewDst; xOffset++)</span><br><span class="line">	&#123;</span><br><span class="line">		Vector2 viewedChunkCoord = <span class="keyword">new</span> Vector2(currentChunkCoordX + xOffset, currentChunkCoordY + 			yOffset);</span><br><span class="line">		<span class="keyword">if</span> (terrainChunkDictionary.ContainsKey(viewedChunkCoord))</span><br><span class="line">		&#123;</span><br><span class="line">			terrainChunkDictionary[viewedChunkCoord].UpdateTerrainChunk();</span><br><span class="line">			<span class="keyword">if</span> (terrainChunkDictionary[viewedChunkCoord].IsVisible())</span><br><span class="line">			&#123;                      																 			terrainChunksVisibleLastUpdate.Add(terrainChunkDictionary[viewedChunkCoord]);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">		&#123;</span><br><span class="line">			terrainChunkDictionary.Add(viewedChunkCoord, <span class="keyword">new</span> TerrainChunk(viewedChunkCoord, 				chunkSize, transform));</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后在update里面一直去更新chunks就可以了</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Update</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	viewerPosition = <span class="keyword">new</span> Vector2(viewer.position.x, viewer.position.z);</span><br><span class="line">	UpdateVisibleChunks();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>接下来就是用Threading去优化整个过程，避免在生成太多地形的时候导致卡顿。我需要在生成map的脚本里面得到Endless Terrain脚本里生成的所有chunks的数据，它不需要立即得到所有生成的数据。所以在mapGenerator脚本里面我们需要一个RequestMapData函数，它的参数是一个callback function，在Endless Terrain里面当我们计算好了数据，就是用这个对应的callback function。</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">Queue&lt;MapThreadInfo&lt;MapData&gt;&gt; mapdataThreadInfoQueue = <span class="keyword">new</span> Queue&lt;MapThreadInfo&lt;MapData&gt;&gt;();</span><br><span class="line">Queue&lt;MapThreadInfo&lt;MeshData&gt;&gt; meshDataThreadInfoQueue = <span class="keyword">new</span> Queue&lt;MapThreadInfo&lt;MeshData&gt;&gt;();</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> MapThreadInfo&lt;T&gt;</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">readonly</span> Action&lt;T&gt; callback;</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">readonly</span> T parameter;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">MapThreadInfo</span>(<span class="params">Action&lt;T&gt; callback, T parameter</span>)</span></span><br><span class="line"><span class="function"></span>	&#123;</span><br><span class="line">		<span class="keyword">this</span>.callback = callback;</span><br><span class="line">		<span class="keyword">this</span>.parameter = parameter;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">RequestMapData</span>(<span class="params">Action&lt;MapData&gt; callback</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	ThreadStart threadStart = <span class="built_in">delegate</span></span><br><span class="line">	&#123;</span><br><span class="line">		MapDataThread(callback);</span><br><span class="line">	&#125;;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">new</span> Thread(threadStart).Start();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">MapDataThread</span>(<span class="params">Action&lt;MapData&gt; callback</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	MapData mapData = GenerateMapData();</span><br><span class="line">	<span class="keyword">lock</span> (mapdataThreadInfoQueue)</span><br><span class="line">	&#123;</span><br><span class="line">		mapdataThreadInfoQueue.Enqueue(<span class="keyword">new</span> MapThreadInfo&lt;MapData&gt;(callback, mapData));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">RequestMeshData</span>(<span class="params">MapData mapData, Action&lt;MeshData&gt; callback</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	ThreadStart threadStart = <span class="built_in">delegate</span></span><br><span class="line">	&#123;</span><br><span class="line">		MeshDataThread(mapData, callback);</span><br><span class="line">	&#125;;</span><br><span class="line">	<span class="keyword">new</span> Thread(threadStart).Start();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">MeshDataThread</span>(<span class="params">MapData mapData, Action&lt;MeshData&gt; callback</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	MeshData meshData = MeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, 		meshHeightCurve, levelOfDetail);</span><br><span class="line">	<span class="keyword">lock</span> (meshDataThreadInfoQueue)</span><br><span class="line">	&#123;</span><br><span class="line">		meshDataThreadInfoQueue.Enqueue(<span class="keyword">new</span> MapThreadInfo&lt;MeshData&gt;(callback, meshData));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在Update里</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (mapdataThreadInfoQueue.Count&gt;<span class="number">0</span>)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; mapdataThreadInfoQueue.Count; i++)</span><br><span class="line">	&#123;</span><br><span class="line">		MapThreadInfo&lt;MapData&gt; threadInfo = mapdataThreadInfoQueue.Dequeue();</span><br><span class="line">		threadInfo.callback(threadInfo.parameter);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (meshDataThreadInfoQueue.Count&gt;<span class="number">0</span>)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; meshDataThreadInfoQueue.Count; i++)</span><br><span class="line">	&#123;</span><br><span class="line">		MapThreadInfo&lt;MeshData&gt; threadInfo = meshDataThreadInfoQueue.Dequeue();</span><br><span class="line">		threadInfo.callback(threadInfo.parameter);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后在Endless Terrain里去实做Received Function</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">OnMapDataReceived</span>(<span class="params">MapData mapData</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	mapGenerator.RequestMeshData(mapData, OnMeshDataRecieved);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">OnMeshDataRecieved</span>(<span class="params">MeshData meshData</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	meshFilter.mesh = meshData.CreateMesh();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>然后我们就可以得到多个chunk拼接起来的地形</p>
+<img src="/2021/10/08/%E7%A8%8B%E5%BA%8F%E5%8C%96%E5%9C%B0%E5%BD%A2%E4%BA%8C/2.png" class="">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 
             </div>
             <hr/>
@@ -533,8 +581,8 @@
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/%E6%97%A0%E5%B0%BD%E5%9C%B0%E5%BD%A2%E3%80%81%E6%97%A0%E7%BC%9D%E5%A4%A7%E5%9C%B0%E5%BD%A2%E3%80%81%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%BC%98%E5%8C%96/">
-                                    <span class="chip bg-color">无尽地形、无缝大地形、多线程优化</span>
+                                <a href="/tags/%E6%97%A0%E7%BC%9D%E5%A4%A7%E5%9C%B0%E5%BD%A2%E3%80%81%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%BC%98%E5%8C%96/">
+                                    <span class="chip bg-color">无缝大地形、多线程优化</span>
                                 </a>
                             
                         </div>
@@ -713,9 +761,9 @@
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="程序化地形二（Endless Terrain）">
+                        <img src="/medias/featureimages/19.jpg" class="responsive-img" alt="程序化生成开放世界地形二（Endless Terrain）">
                         
-                        <span class="card-title">程序化地形二（Endless Terrain）</span>
+                        <span class="card-title">程序化生成开放世界地形二（Endless Terrain）</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -740,8 +788,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/%E6%97%A0%E5%B0%BD%E5%9C%B0%E5%BD%A2%E3%80%81%E6%97%A0%E7%BC%9D%E5%A4%A7%E5%9C%B0%E5%BD%A2%E3%80%81%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%BC%98%E5%8C%96/">
-                        <span class="chip bg-color">无尽地形、无缝大地形、多线程优化</span>
+                    <a href="/tags/%E6%97%A0%E7%BC%9D%E5%A4%A7%E5%9C%B0%E5%BD%A2%E3%80%81%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%BC%98%E5%8C%96/">
+                        <span class="chip bg-color">无缝大地形、多线程优化</span>
                     </a>
                     
                 </div>
@@ -956,9 +1004,9 @@
     
     <div class="row">
         <meting-js class="col l8 offset-l2 m10 offset-m1 s12"
-                   server="netease"
+                   server="tencent"
                    type="playlist"
-                   id="503838841"
+                   id="8194788712"
                    fixed='true'
                    autoplay='false'
                    theme='#42b983'
