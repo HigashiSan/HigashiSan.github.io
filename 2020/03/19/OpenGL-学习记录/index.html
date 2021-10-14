@@ -447,7 +447,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>Publish Date:&nbsp;&nbsp;
-                    2021-03-19
+                    2020-03-19
                 </div>
                 
 
@@ -479,7 +479,7 @@
 <p><code>glfwPollEvents()</code>用来返回用户的输入。</p>
 <hr>
 <h3 id="图形渲染管线"><a href="#图形渲染管线" class="headerlink" title="图形渲染管线"></a>图形渲染管线</h3><p>　　图形渲染管线其实就是把一大堆3D的数据转化为屏幕上的2D像素，所有的渲染都是通过这个管线将你想让它出现的东西最终出现在屏幕上。图形渲染管线有几个阶段，每个阶段都把前一个阶段的结果（输入）拿来操作，并且这些操作具有并行性，所以大多数显卡都有成千上万的小处理核心(并行性也是GPU速度很快的原因)，它们在GPU上为每一个（渲染管线）阶段运行各自的小程序，从而在图形渲染管线中快速处理数据。这些小程序就叫做着色器(Shader)，它们运行在GPU上，并且有的着色器可以由我们来编程控制。</p>
-<img src="/2021/03/19/OpenGL-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/tube.png" class="">
+<img src="/2020/03/19/OpenGL-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/tube.png" class="">
 
 <blockquote>
 <p>为了让OpenGL知道我们的坐标和颜色值构成的到底是什么，OpenGL需要你去指定这些数据所表示的渲染类型。做出的这些提示叫做图元(Primitive)，任何一个绘制指令的调用都将把图元传递给OpenGL。这是其中的几个：<code>GL_POINTS、GL_TRIANGLES、GL_LINE_STRIP</code>。</p>
@@ -513,14 +513,14 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//绑定，加载源代码</span></span><br><span class="line">glVertexAttribPointer(<span class="number">0</span>, <span class="number">3</span>, GL_FLOAT, GL_FALSE, <span class="number">3</span> * <span class="keyword">sizeof</span>(<span class="keyword">float</span>), (<span class="keyword">void</span>*)<span class="number">0</span>);</span><br><span class="line">glEnableVertexAttribArray(<span class="number">0</span>);</span><br><span class="line"><span class="comment">//绘制，在While循环中</span></span><br><span class="line">glUseProgram(shaderProgram);</span><br><span class="line">glDrawArrays(GL_TRIANGLES, <span class="number">0</span>, <span class="number">3</span>);</span><br></pre></td></tr></table></figure>
 
 <p>完成以上代码就可以绘制出OpenGL中最基础的三角形：</p>
-<img src="/2021/03/19/OpenGL-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/1.png" class="">
+<img src="/2020/03/19/OpenGL-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/1.png" class="">
 
 <p>可喜可贺！！！</p>
 <p>但是在这里我们需要多提一下，如果我们把顶点增加为六个：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> vertices[] = &#123;</span><br><span class="line">	<span class="number">-0.5f</span>, <span class="number">-0.5f</span>, <span class="number">0.0f</span>,</span><br><span class="line">	 <span class="number">0.5f</span>, <span class="number">-0.5f</span>, <span class="number">0.0f</span>,</span><br><span class="line">	 <span class="number">0.0f</span>,  <span class="number">0.5f</span>, <span class="number">0.0f</span>,</span><br><span class="line">	 <span class="number">0.8f</span>,  <span class="number">0.8f</span>,  <span class="number">0.0f</span>,</span><br><span class="line">	 <span class="number">0.5f</span>, <span class="number">-0.5f</span>, <span class="number">0.0f</span>,</span><br><span class="line">	 <span class="number">0.0f</span>,  <span class="number">0.5f</span>, <span class="number">0.0f</span>,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
 <p>这时画出的是一个四边形：</p>
-<img src="/2021/03/19/OpenGL-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/2.png" class="">
+<img src="/2020/03/19/OpenGL-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/2.png" class="">
 
 <p>　　但是OpenGL默认的三角形的绘制顺序是逆时针，也就是说我们新增的那三个顶点所画出的那个三角形其实是背面，为了验证我们加两行代码，打开OpenGL的背面剔除：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">glEnable(GL_CULL_FACE);</span><br><span class="line">glCullFace(GL_BACK);</span><br></pre></td></tr></table></figure>
@@ -561,7 +561,7 @@
 
 <p>　　同时我们需要在顶点着色器中指定颜色坐标的输入：<code>layout(location = 1) in vec3 aColor</code>。然后把它赋予输入到片段着色器的颜色数据。最后在片段着色器中把输出颜色改为接收到的顶点着色器的输出颜色。</p>
 <p>就可以得到下面的效果：</p>
-<img src="/2021/03/19/OpenGL-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/3.png" class="">
+<img src="/2020/03/19/OpenGL-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/3.png" class="">
 
 <hr>
 <h3 id="创建着色器类，从外部读取Shader代码！！重要重要"><a href="#创建着色器类，从外部读取Shader代码！！重要重要" class="headerlink" title="创建着色器类，从外部读取Shader代码！！重要重要"></a>创建着色器类，从外部读取Shader代码！！重要重要</h3><p>　　在创建我们自己的着色器类时，我们想要从硬盘里面读取Shader代码（如果总是把Shader代码硬编码在main函数里会很不方便修改与Debug），这时由于CPU和硬盘处理速度的原因，我们希望在主存里面设置一个Buffer去存储从硬盘中读取的文件，然后让CPU去进行处理。还有一个点就是我们读到的其实是String，然而 OpenGL支持的是字符数组，所以我们还需要去Cast String。这就需要用到C++的字符串的处理和文件读取的一些知识，要用到C++中流概念。</p>
@@ -598,7 +598,7 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> TexbufferA;<span class="comment">//定义纹理位置</span></span><br><span class="line">glGenTextures(<span class="number">1</span>, &amp;TexbufferA);<span class="comment">//生成</span></span><br><span class="line">glActiveTexture(GL_TEXTURE0);<span class="comment">//激活纹理单元，这里后面的数字是你加载的纹理所存放的位置，等会儿把这个位置给纹理采样器就可以让纹理采样器得到这个纹理</span></span><br><span class="line">glBindTexture(GL_TEXTURE_2D, TexbufferA);<span class="comment">//绑定到刚刚激活的纹理单元</span></span><br><span class="line"><span class="comment">//这里可以去设置一些特殊的东西，比如说环绕方式，过滤方式。。。</span></span><br><span class="line"><span class="comment">//加载图片</span></span><br><span class="line">stbi_set_flip_vertically_on_load(<span class="literal">true</span>);<span class="comment">//反转Y轴，OpenGL要求y轴0.0坐标是在图片的底部的，但是图片的y轴0.0坐标通常在顶部</span></span><br><span class="line"><span class="keyword">int</span> width, height, nrChannel;</span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span>* data = stbi_load(<span class="string">&quot;container.jpg&quot;</span>, &amp;width, &amp;height, &amp;nrChannel, <span class="number">0</span>);</span><br><span class="line"><span class="keyword">if</span> (data)</span><br><span class="line">&#123;</span><br><span class="line">	glTexImage2D(GL_TEXTURE_2D, <span class="number">0</span>, GL_RGB, width, height, <span class="number">0</span>, GL_RGB,   		      GL_UNSIGNED_BYTE, data);<span class="comment">//默认将图片加载刚刚生成的纹理单元上</span></span><br><span class="line">	glGenerateMipmap(GL_TEXTURE_2D);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Load Image Failed&quot;</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br><span class="line">stbi_image_free(data);<span class="comment">//释放数据</span></span><br><span class="line"><span class="comment">//通过使用glUniform1i设置每个采样器的方式告诉OpenGL每个着色器采样器属于哪个纹理单元，着色采样器就是在片段着色器里面uniform的那个东西,设置uniform的方法就是取得或者设定他的位置。</span></span><br><span class="line">myShader-&gt;use();</span><br><span class="line">glUniform1i(glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;texture1&quot;</span>), <span class="number">0</span>);</span><br><span class="line">glUniform1i(glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;texture2&quot;</span>), <span class="number">1</span>);</span><br><span class="line">glDrawElements(GL_TRIANGLES, <span class="number">6</span>, GL_UNSIGNED_INT, <span class="number">0</span>);</span><br><span class="line"><span class="comment">//这里的设置的采样器（uniform）的位置就是让采样器可以访问这个位置中所存放的纹理</span></span><br></pre></td></tr></table></figure>
 
 <p>这样就可以得到两个纹理混合之后的效果，Texture is awesome！！</p>
-<img src="/2021/03/19/OpenGL-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/4.png" class="">
+<img src="/2020/03/19/OpenGL-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/4.png" class="">
 
 <hr>
 <h3 id="变换与坐标系统"><a href="#变换与坐标系统" class="headerlink" title="变换与坐标系统"></a>变换与坐标系统</h3><p>　　这一小节的关于线性代数的知识，最好去深刻地理解，不要去听大学老师给你讲，学不到什么本质，推荐去看<strong>3Blue1Brown</strong>的线性代数的本质，想要打好图形学基础的话最好微积分的本质也要去看一下（这个up的知识普及视频都挺好看的，可以知道很多很酷的知识）。还有个必须要看的就是闫令琪101图形学入门课程的transform章节，里面详细讲了关于坐标与变换的知识。为了后面的实践，我们先下载glm这个图形库。</p>
@@ -619,7 +619,7 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">glUniformMatrix4fv(glad_glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;modelMat&quot;</span>), <span class="number">1</span>, GL_FALSE, glm::value_ptr(modelMat));</span><br><span class="line">glUniformMatrix4fv(glad_glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;viewMat&quot;</span>), <span class="number">1</span>, GL_FALSE, glm::value_ptr(viewMat));</span><br><span class="line">glUniformMatrix4fv(glad_glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;projMat&quot;</span>), <span class="number">1</span>, GL_FALSE, glm::value_ptr(projMat));</span><br></pre></td></tr></table></figure>
 
 <p>然后就可以得到如下的效果：</p>
-<img src="/2021/03/19/OpenGL-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/5.png" class="">
+<img src="/2020/03/19/OpenGL-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/5.png" class="">
 
 <p>（有关坐标空间的详细讲解，建议去看冯乐乐女神的shader入门精要）</p>
 <h4 id="画立方体"><a href="#画立方体" class="headerlink" title="画立方体"></a>画立方体</h4><p>在LearnOpenGL官网把顶点直接复制之后，我们也照老规矩开始改Attribute：</p>
@@ -634,7 +634,7 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)</span><br><span class="line">&#123;</span><br><span class="line">	glm::mat4 modelMat;</span><br><span class="line">	modelMat = glm::translate(modelMat, cubePositions[i]);</span><br><span class="line">	glUniformMatrix4fv(glad_glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;modelMat&quot;</span>), <span class="number">1</span>, GL_FALSE, glm::value_ptr(modelMat));</span><br><span class="line">	glUniformMatrix4fv(glad_glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;viewMat&quot;</span>), <span class="number">1</span>, GL_FALSE, glm::value_ptr(viewMat));</span><br><span class="line">	glUniformMatrix4fv(glad_glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;projMat&quot;</span>), <span class="number">1</span>, GL_FALSE, glm::value_ptr(projMat));</span><br><span class="line"></span><br><span class="line">	glDrawArrays(GL_TRIANGLES, <span class="number">0</span>, <span class="number">36</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>这样就可以画出十个小箱子：</p>
-<img src="/2021/03/19/OpenGL-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/6.png" class="">
+<img src="/2020/03/19/OpenGL-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/6.png" class="">
 
 <p>在这里就要提到DrawCall，drawcall是CPU对底层图形绘制接口的调用命令GPU执行渲染操作，每次绘制时，CPU都需要调用drawcall，每个drawcall都需要很多准备工作，检测渲染状态、提交渲染数据、提交渲染状态。而GPU本身具有很强大的计算能力，可以很快就处理完渲染任务。</p>
 <p>但是当DrawCall过多，CPU就会很多额外开销用于准备工作，这里我们就使用了是个drawcall命令，所以我们要采取一个优化，只使用一个drawcall就画出这十个立方体。由于这篇文章的篇幅已经过大，我会在另外一篇文章给出具体的优化方法，就是<strong>基于GPU Instance实现大量物体的渲染和绘制</strong>。</p>
@@ -650,7 +650,7 @@
 
 <p>然后我们就可以把之前的view矩阵替换掉，<code>viewMat = camera.GetViewMatrix()</code>，并且把它放到渲染循环里面，这样就做出了摄像机的视角。</p>
 <h4 id="旋转矩阵"><a href="#旋转矩阵" class="headerlink" title="旋转矩阵"></a>旋转矩阵</h4><p>之前的构造函数无法做出旋转量的改变，接下来做另外一个构造函数：<code>Camera(glm::vec3 position, float pitch, float yaw, glm::vec3 worldup)</code>。我们想要使用之前提到过的欧拉角的方式，来计算Camera的Forward向量的改变，具体的推导计算方法如下：</p>
-<img src="/2021/03/19/OpenGL-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/7.jpg" class="">
+<img src="/2020/03/19/OpenGL-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/7.jpg" class="">
 
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Camera::Camera(glm::vec3 position, <span class="keyword">float</span> pitch, <span class="keyword">float</span> yaw, glm::vec3 worldup)</span><br><span class="line">&#123;</span><br><span class="line">	Position = position;</span><br><span class="line">	WorldUp = worldup;</span><br><span class="line">	Pitch = pitch;</span><br><span class="line">	Yaw = yaw;</span><br><span class="line">	Forward.x = glm::<span class="built_in">cos</span>(Pitch) * glm::<span class="built_in">sin</span>(Yaw);</span><br><span class="line">	Forward.y = glm::<span class="built_in">sin</span>(Pitch);</span><br><span class="line">	Forward.z = glm::<span class="built_in">cos</span>(Pitch) * glm::<span class="built_in">cos</span>(Yaw);</span><br><span class="line">	Right = glm::normalize((glm::cross(Forward, WorldUp)));</span><br><span class="line">	Up = glm::normalize(glm::cross(Forward, Right));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -696,7 +696,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://higashisan.github.io/2021/03/19/OpenGL-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/">https://higashisan.github.io/2021/03/19/OpenGL-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/</a>
+                    <a href="https://higashisan.github.io/2020/03/19/OpenGL-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/">https://higashisan.github.io/2020/03/19/OpenGL-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -954,7 +954,7 @@
                 Current&nbsp;<i class="far fa-dot-circle"></i>
             </div>
             <div class="card">
-                <a href="/2021/03/19/OpenGL-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/">
+                <a href="/2020/03/19/OpenGL-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/">
                     <div class="card-image">
                         
                         
@@ -971,7 +971,7 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2021-03-19
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-03-19
                             </span>
                         <span class="publish-author">
                             
