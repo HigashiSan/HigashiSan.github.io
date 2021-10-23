@@ -1,0 +1,1352 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="OpenGL学习记录：光照, YoKuYou">
+    <meta name="description" content="">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    <title>OpenGL学习记录：光照 | YoKuYou</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+
+    <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+
+    <script src="/libs/jquery/jquery.min.js"></script>
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+
+
+<body>
+    <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="/medias/logo.png" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span">YoKuYou</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fas fa-bars"></i></a>
+<ul class="right nav-menu">
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/" class="waves-effect waves-light">
+      
+      <i class="fas fa-home" style="zoom: 0.6;"></i>
+      
+      <span>Index</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/tags" class="waves-effect waves-light">
+      
+      <i class="fas fa-tags" style="zoom: 0.6;"></i>
+      
+      <span>Tags</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/categories" class="waves-effect waves-light">
+      
+      <i class="fas fa-bookmark" style="zoom: 0.6;"></i>
+      
+      <span>Categories</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/archives" class="waves-effect waves-light">
+      
+      <i class="fas fa-archive" style="zoom: 0.6;"></i>
+      
+      <span>Archives</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/about" class="waves-effect waves-light">
+      
+      <i class="fas fa-user-circle" style="zoom: 0.6;"></i>
+      
+      <span>About</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/contact" class="waves-effect waves-light">
+      
+      <i class="fas fa-comments" style="zoom: 0.6;"></i>
+      
+      <span>Contact</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/friends" class="waves-effect waves-light">
+      
+      <i class="fas fa-address-book" style="zoom: 0.6;"></i>
+      
+      <span>Friends</span>
+    </a>
+    
+  </li>
+  
+  <li>
+    <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+      <i id="searchIcon" class="fas fa-search" title="Search" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+</ul>
+
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="/medias/logo.png" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">YoKuYou</div>
+        <div class="logo-desc">
+            
+            Never really desperate, only the lost of the soul.
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="/" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-home"></i>
+			
+			Index
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/tags" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-tags"></i>
+			
+			Tags
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-bookmark"></i>
+			
+			Categories
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/archives" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-archive"></i>
+			
+			Archives
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/about" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-user-circle"></i>
+			
+			About
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/contact" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-comments"></i>
+			
+			Contact
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/friends" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-address-book"></i>
+			
+			Friends
+		</a>
+          
+        </li>
+        
+        
+        <li><div class="divider"></div></li>
+        <li>
+            <a href="https://github.com/blinkfox/hexo-theme-matery" class="waves-effect waves-light" target="_blank">
+                <i class="fab fa-github-square fa-fw"></i>Fork Me
+            </a>
+        </li>
+        
+    </ul>
+</div>
+
+
+        </div>
+
+        
+            <style>
+    .nav-transparent .github-corner {
+        display: none !important;
+    }
+
+    .github-corner {
+        position: absolute;
+        z-index: 10;
+        top: 0;
+        right: 0;
+        border: 0;
+        transform: scale(1.1);
+    }
+
+    .github-corner svg {
+        color: #0f9d58;
+        fill: #fff;
+        height: 64px;
+        width: 64px;
+    }
+
+    .github-corner:hover .octo-arm {
+        animation: a 0.56s ease-in-out;
+    }
+
+    .github-corner .octo-arm {
+        animation: none;
+    }
+
+    @keyframes a {
+        0%,
+        to {
+            transform: rotate(0);
+        }
+        20%,
+        60% {
+            transform: rotate(-25deg);
+        }
+        40%,
+        80% {
+            transform: rotate(10deg);
+        }
+    }
+</style>
+
+<a href="https://github.com/blinkfox/hexo-theme-matery" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
+   data-tooltip="Fork Me" data-position="left" data-delay="50">
+    <svg viewBox="0 0 250 250" aria-hidden="true">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+              fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+              fill="currentColor" class="octo-body"></path>
+    </svg>
+</a>
+        
+    </nav>
+
+</header>
+
+    
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/2.jpg')">
+    <div class="container" style="right: 0px;left: 0px;">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <h1 class="description center-align post-title">OpenGL学习记录：光照</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        width: 345px;
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        padding: 35px 0 15px 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content {
+        padding-bottom: 30px;
+        overflow: auto;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+
+        position: absolute;
+        right: 23.5vw;
+        display: block;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 15px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+</style>
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                    <div class="article-tag">
+                        
+                            <a href="/tags/OpenGL%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%9A%E5%85%89%E7%85%A7/">
+                                <span class="chip bg-color">OpenGL学习记录：光照</span>
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                </div>
+            </div>
+
+            <div class="post-info">
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-minus fa-fw"></i>Publish Date:&nbsp;&nbsp;
+                    2020-03-27
+                </div>
+                
+
+                
+
+                
+
+                
+
+                
+            </div>
+        </div>
+        <hr class="clearfix">
+
+        
+
+        
+
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <h3 id="光照篇"><a href="#光照篇" class="headerlink" title="光照篇"></a>光照篇</h3><p>终于是来到了光照篇，这一章会比上一章更加复杂一些，代码量也会增加很多，屏住呼吸，我们一起踏上旅程吧~~~！</p>
+<p>首先我们要对之前的代码做一些修改，之前加载纹理的代码写得太丑了，我们这里把它写成一个加载、生成纹理的方法：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="title">LoadImageToGPU</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* filename,GLint internalFormat,GLenum format,<span class="keyword">int</span> textureSlot)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span> TexBuffer;</span><br><span class="line">	glGenTextures(<span class="number">1</span>, &amp;TexBuffer);</span><br><span class="line">	glActiveTexture(GL_TEXTURE0 + textureSlot);</span><br><span class="line">	glBindTexture(GL_TEXTURE_2D, TexBuffer);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">int</span> width, height, nrChannel;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">char</span>* data = stbi_load(filename, &amp;width, &amp;height, &amp;nrChannel, <span class="number">0</span>);</span><br><span class="line">	<span class="keyword">if</span> (data)</span><br><span class="line">	&#123;</span><br><span class="line">		glTexImage2D(GL_TEXTURE_2D, <span class="number">0</span>, internalFormat, width, height, <span class="number">0</span>, format, GL_UNSIGNED_BYTE, data);</span><br><span class="line">		glGenerateMipmap(GL_TEXTURE_2D);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Load Image Failed&quot;</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	stbi_image_free(data);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> TexBuffer;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//然后在main函数里bind上纹理</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> TexbufferA;</span><br><span class="line">TexbufferA = LoadImageToGPU(<span class="string">&quot;container.jpg&quot;</span>, GL_RGB, GL_RGB, <span class="number">0</span>);</span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> TexBufferB;</span><br><span class="line">TexBufferB = LoadImageToGPU(<span class="string">&quot;awesomeface.png&quot;</span>, GL_RGBA, GL_RGBA, <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//在渲染函数里面把纹理送给纹理采集器</span></span><br><span class="line">myShader-&gt;use();</span><br><span class="line">glUniform1i(glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;texture1&quot;</span>), <span class="number">0</span>);</span><br><span class="line">glUniform1i(glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;texture2&quot;</span>), <span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="颜色"><a href="#颜色" class="headerlink" title="颜色"></a>颜色</h3><p>我们可以直接给光源一个三维向量，这样就可以模拟出这个光源的颜色，实际上这三个数值就对应了它的RBG值。颜色和颜色的叠加直接用向量乘法实现就行。</p>
+<hr>
+<h3 id="构建光照环境"><a href="#构建光照环境" class="headerlink" title="构建光照环境"></a>构建光照环境</h3><p>顶点着色器中我们不需要什么变化，我们只需要在片段着色器中做修改就可以了，定义两个光照的uniform：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 330 core                                      </span></span><br><span class="line"><span class="keyword">in</span> <span class="type">vec4</span> vertexColor;     </span><br><span class="line"><span class="keyword">in</span> <span class="type">vec2</span> TexCoord;</span><br><span class="line"></span><br><span class="line"><span class="keyword">out</span> <span class="type">vec4</span> FragColor;			</span><br><span class="line"></span><br><span class="line"><span class="keyword">uniform</span> <span class="type">sampler2D</span> texture1;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">sampler2D</span> texture2;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">vec3</span> objColor;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">vec3</span> ambientColor;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> main()												</span><br><span class="line">&#123;														</span><br><span class="line">	<span class="comment">//FragColor = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), 0.2);</span></span><br><span class="line">	FragColor = <span class="type">vec4</span>(objColor * ambientColor, <span class="number">1.0</span>) * <span class="built_in">mix</span>(<span class="built_in">texture</span>(texture1, TexCoord), <span class="built_in">texture</span>(texture2, TexCoord), <span class="number">0.2</span>);</span><br><span class="line">&#125;	               </span><br></pre></td></tr></table></figure>
+
+<p>然后配置uniform：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">glUniform3f(glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;objColor&quot;</span>), <span class="number">1.0f</span>, <span class="number">0.5f</span>, <span class="number">0.3f</span>);</span><br><span class="line">glUniform3f(glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;ambientColor&quot;</span>), <span class="number">1.0f</span>, <span class="number">1.0f</span>, <span class="number">1.0f</span>);</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以得到加了颜色的笑脸方块：</p>
+<img src="/2020/03/27/OpenGL%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%9A%E5%85%89%E7%85%A7/1.png" class="">
+
+<hr>
+<h3 id="Phong光照模型"><a href="#Phong光照模型" class="headerlink" title="Phong光照模型"></a>Phong光照模型</h3><p>现实世界的光照太过复杂，很难直接去计算，在图形学中大部分都是用经验模型去模拟现实的光照，因为只要“看起来是对的，那就是对的”。现在我们就用OpenGL实现一个基础的Phong光照。冯氏光照模型的主要结构由3个分量组成：环境(Ambient)、漫反射(Diffuse)和镜面(Specular)光照，将这三个叠加，就得到了我们想模拟的现实中的光照。</p>
+<h4 id="漫反射光照"><a href="#漫反射光照" class="headerlink" title="漫反射光照"></a>漫反射光照</h4><p>计算漫反射光照最重要的就是角度，光的入射角度与法向量的夹角就可以反映出在这个点的光的强度，也就是这束光对这个片段的颜色影响大小。我们要uniform一个光源的位置，然后用物体颜色点去减去光源点，就可以的到这个点的入射光线，然后再用入射光线乘法相向量，就得到了我们想要的diffuse。</p>
+<p>先来看看着色器：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//顶点着色器</span></span><br><span class="line"><span class="meta">#version 330 core 								</span></span><br><span class="line"><span class="keyword">layout</span>(<span class="keyword">location</span> = <span class="number">0</span>) <span class="keyword">in</span> <span class="type">vec3</span> aPos;				</span><br><span class="line"><span class="comment">//layout(location = 1) in vec3 aColor;   </span></span><br><span class="line"><span class="comment">//layout(location = 2) in vec2 aTexCoord;</span></span><br><span class="line"><span class="keyword">layout</span>(<span class="keyword">location</span> = <span class="number">3</span>) <span class="keyword">in</span> <span class="type">vec3</span> aNormal;<span class="comment">//存物体法向量</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">uniform</span> <span class="type">mat4</span> modelMat;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">mat4</span> viewMat;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">mat4</span> projMat;</span><br><span class="line"></span><br><span class="line"><span class="comment">//out vec4 vertexColor;     </span></span><br><span class="line"><span class="comment">//out vec2 TexCoord;</span></span><br><span class="line"><span class="keyword">out</span> <span class="type">vec3</span> FragPos;<span class="comment">//把物体表面的坐标点输出到片段着色器</span></span><br><span class="line"><span class="keyword">out</span> <span class="type">vec3</span> Normal;</span><br><span class="line"><span class="type">void</span> main()										</span><br><span class="line">&#123;														</span><br><span class="line">	<span class="built_in">gl_Position</span> = projMat * viewMat * modelMat * <span class="type">vec4</span>(aPos, <span class="number">1.0</span>);</span><br><span class="line">    FragPos = <span class="type">vec3</span>(modelMat * <span class="type">vec4</span>(aPos, <span class="number">1.0</span>f));<span class="comment">//物体表面像素坐标</span></span><br><span class="line">    Normal = <span class="type">mat3</span>(modelMat) * aNormal;<span class="comment">//物体的法向量</span></span><br><span class="line">    <span class="comment">//vertexColor = vec4(aColor.xyz,1.0);    </span></span><br><span class="line">    <span class="comment">//TexCoord = aTexCoord;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//片段着色器</span></span><br><span class="line"><span class="meta">#version 330 core                                      </span></span><br><span class="line"><span class="comment">//in vec4 vertexColor;     </span></span><br><span class="line"><span class="comment">//in vec2 TexCoord;</span></span><br><span class="line"><span class="keyword">in</span> <span class="type">vec3</span> FragPos;</span><br><span class="line"><span class="keyword">in</span> <span class="type">vec3</span> Normal;</span><br><span class="line"></span><br><span class="line"><span class="keyword">out</span> <span class="type">vec4</span> FragColor;			</span><br><span class="line"></span><br><span class="line"><span class="comment">//uniform sampler2D texture1;</span></span><br><span class="line"><span class="comment">//uniform sampler2D texture2;</span></span><br><span class="line"><span class="keyword">uniform</span> <span class="type">vec3</span> objColor;<span class="comment">//物体光</span></span><br><span class="line"><span class="keyword">uniform</span> <span class="type">vec3</span> ambientColor;<span class="comment">//环境光</span></span><br><span class="line"><span class="keyword">uniform</span> <span class="type">vec3</span> lightPos;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">vec3</span> lightColor;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> main()												</span><br><span class="line">&#123;														</span><br><span class="line">	<span class="comment">//FragColor = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), 0.2);</span></span><br><span class="line">	<span class="type">vec3</span> lightDir = <span class="built_in">normalize</span>(lightPos - FragPos);</span><br><span class="line">	<span class="type">vec3</span> diffuse = <span class="built_in">max</span>(<span class="built_in">dot</span>(lightDir , Normal),<span class="number">0</span>) * lightColor ;<span class="comment">//一定要避免出现负值，不然会对镜面反射光等造成影响</span></span><br><span class="line">	FragColor = <span class="type">vec4</span>((diffuse + ambientColor) * objColor, <span class="number">1.0</span>);</span><br><span class="line">&#125;	</span><br><span class="line"></span><br><span class="line"><span class="comment">//老规矩更改Attribute，因为要去挖法向量</span></span><br><span class="line">glVertexAttribPointer(<span class="number">0</span>, <span class="number">3</span>, GL_FLOAT, GL_FALSE, <span class="number">6</span> * sizeof(<span class="type">float</span>), (<span class="type">void</span>*)<span class="number">0</span>);</span><br><span class="line">glEnableVertexAttribArray(<span class="number">0</span>);</span><br><span class="line">glVertexAttribPointer(<span class="number">3</span>, <span class="number">3</span>, GL_FLOAT, GL_FALSE, <span class="number">6</span> * sizeof(<span class="type">float</span>), (<span class="type">void</span>*)(<span class="number">3</span> * sizeof(<span class="type">float</span>)));</span><br><span class="line">glEnableVertexAttribArray(<span class="number">3</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//用Uniform去设置片段着色器里的变量</span></span><br><span class="line">glUniform3f(glGetUniformLocation(myShader-&gt;ID, &quot;objColor&quot;), 1.0f, 0.5f, 0.3f);//设置物体颜色</span><br><span class="line">glUniform3f(glGetUniformLocation(myShader-&gt;ID, &quot;ambientColor&quot;), 1.0f, 1.0f, 1.0f);//设置环境光</span><br><span class="line">glUniform3f(glGetUniformLocation(myShader-&gt;ID, &quot;lightPos&quot;), 10.0f, 10.0f, 5.0f);//设置灯的位置</span><br><span class="line">glUniform3f(glGetUniformLocation(myShader-&gt;ID, &quot;lightColor&quot;), 1.0f, 1.0f, 1.0f);//设置光的颜色</span><br></pre></td></tr></table></figure>
+
+<p>然后就可以看到我们单独做出的白光打在立方体上的漫反射光照：</p>
+<img src="/2020/03/27/OpenGL%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%9A%E5%85%89%E7%85%A7/2.png" class="">
+
+<blockquote>
+<p>总结一下漫反射光照的计算：dot（lightDir ， Normal）* lightColor</p>
+</blockquote>
+<h4 id="镜面反射"><a href="#镜面反射" class="headerlink" title="镜面反射"></a>镜面反射</h4><p>镜面反射需要考虑我们的眼睛的所在位置，也就是视线方向，我们通过入射光向量和入射点法向量来计算反射向量，这个用OpenGL的reflect API就可以做到。然后我们计算反射光向量和视线方向的角度差，这个直接用点乘去实现，如果夹角越小，那么镜面光的影响就会越大（我们的眼睛看到的反射光就更多，就感觉更亮）。它的作用效果就是，当我们去看光被物体所反射的那个方向的时候，我们会看到一个高光，这和真实物理世界里的现象是一样的。</p>
+<p>我们同样需要uniform一个camera的位置，然后由这个去得到我们的视角方向，顶点着色器没有任何改变，片段着色器如下：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 330 core                                      </span></span><br><span class="line"><span class="comment">//in vec4 vertexColor;     </span></span><br><span class="line"><span class="comment">//in vec2 TexCoord;</span></span><br><span class="line"><span class="keyword">in</span> <span class="type">vec3</span> FragPos;</span><br><span class="line"><span class="keyword">in</span> <span class="type">vec3</span> Normal;</span><br><span class="line"></span><br><span class="line"><span class="keyword">out</span> <span class="type">vec4</span> FragColor;			</span><br><span class="line"></span><br><span class="line"><span class="comment">//uniform sampler2D texture1;</span></span><br><span class="line"><span class="comment">//uniform sampler2D texture2;</span></span><br><span class="line"><span class="keyword">uniform</span> <span class="type">vec3</span> objColor;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">vec3</span> ambientColor;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">vec3</span> lightPos;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">vec3</span> lightColor;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">vec3</span> cameraPos;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> main()												</span><br><span class="line">&#123;			</span><br><span class="line">	<span class="comment">//FragColor = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), 0.2);</span></span><br><span class="line">	<span class="type">vec3</span> lightDir = <span class="built_in">normalize</span>(lightPos - FragPos);</span><br><span class="line"></span><br><span class="line">	<span class="type">vec3</span> reflectDir = <span class="built_in">reflect</span>(-lightDir , Normal);<span class="comment">//反射光向量</span></span><br><span class="line">	<span class="type">vec3</span> viewDir = <span class="built_in">normalize</span>(cameraPos - FragPos);<span class="comment">//视角方向</span></span><br><span class="line">	<span class="type">vec3</span> specular = <span class="built_in">pow</span>(<span class="built_in">max</span>(<span class="built_in">dot</span>(reflectDir , viewDir),<span class="number">0</span>),<span class="number">32</span>) * lightColor;<span class="comment">//高光程度，核心代码</span></span><br><span class="line"></span><br><span class="line">	<span class="type">vec3</span> diffuse = <span class="built_in">max</span>(<span class="built_in">dot</span>(lightDir , Normal),<span class="number">0</span>) * lightColor ;</span><br><span class="line"></span><br><span class="line">	FragColor = <span class="type">vec4</span>((diffuse + ambientColor + specular) * objColor, <span class="number">1.0</span>);</span><br><span class="line">    <span class="comment">//环境光漫反射光高光叠加，计算Phong光照模型</span></span><br><span class="line">&#125;	                  </span><br></pre></td></tr></table></figure>
+
+<p>这样我们就完全实现了Phong光照模型，在某一个特定的角度你可以看到镜面高光：</p>
+<img src="/2020/03/27/OpenGL%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%9A%E5%85%89%E7%85%A7/3.png" class="">
+
+<p>是不是很神奇？模拟出了你在现实世界中的情况，某一个角度可看到镜面反射的高光，这仅仅只是两个向量的点积带来的，一个反射光线向量，一个视角方向。</p>
+<blockquote>
+<p>总结一下高光反射的计算：(dot(reflectDir , viewDir) ^ specular Amount ) * lightColor。</p>
+<p>Phong光照模型：(环境光+高光反射+漫反射光) * 物体颜色</p>
+</blockquote>
+<hr>
+<h3 id="材质"><a href="#材质" class="headerlink" title="材质"></a>材质</h3><p>在现实中不同的材质对于光照的反射效果是不同的。这里我们就去做一个材质属性，去模拟不同的材质对光照的效果。</p>
+<p>我们先做一个Material的材质结构体，我们让他能在最后对关照的效果做一些调整：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">struct Material&#123;</span><br><span class="line">	<span class="type">vec3</span> ambient;</span><br><span class="line">    <span class="type">vec3</span> diffuse;</span><br><span class="line">    <span class="type">vec3</span> specular;</span><br><span class="line">    <span class="type">float</span> shininess; </span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">uniform</span> Material material;</span><br><span class="line"></span><br><span class="line"><span class="comment">//直接在之前的结果上乘一个系数就行，让我们做的材质属性可以造成影响</span></span><br><span class="line"><span class="type">vec3</span> specular = material.specular * <span class="built_in">pow</span>(<span class="built_in">max</span>(<span class="built_in">dot</span>(reflectDir , viewDir),<span class="number">0</span>),<span class="number">32</span>) * lightColor;</span><br><span class="line"><span class="type">vec3</span> diffuse = material.diffuse * <span class="built_in">max</span>(<span class="built_in">dot</span>(lightDir , Normal),<span class="number">0</span>) * lightColor ;</span><br><span class="line"><span class="type">vec3</span> ambient = material.ambient * ambientColor;</span><br></pre></td></tr></table></figure>
+
+<p>然后在main函数里面给uniform赋值就可以了;</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">glUniform3f(glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;material.ambient&quot;</span>), <span class="number">1.0f</span>, <span class="number">1.0f</span>, <span class="number">1.0f</span>);</span><br><span class="line">glUniform3f(glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;material.diffuse&quot;</span>), <span class="number">1.0f</span>, <span class="number">1.0f</span>, <span class="number">1.0f</span>);</span><br><span class="line">glUniform3f(glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;material.specular&quot;</span>), <span class="number">1.0f</span>, <span class="number">1.0f</span>, <span class="number">1.0f</span>);</span><br><span class="line">glUniform1f(glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;material.shininess&quot;</span>), <span class="number">32.0f</span>);</span><br></pre></td></tr></table></figure>
+
+<p>然后我们来做一个class，把这个属性封装成一个类。因为直接这样去赋值太麻烦，而且也不直观，我们直接做一个材质类，在构造函数里面就把这些属性的值给赋了，我们在创建一个材质时就可以直接对于这个材质赋值。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Material</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	Shader* shader;</span><br><span class="line">	glm::vec3 diffuse;</span><br><span class="line">	glm::vec3 specular;</span><br><span class="line">	glm::vec3 ambient;</span><br><span class="line">	<span class="keyword">float</span> shininess;</span><br><span class="line"></span><br><span class="line">	Material(Shader* _shader, glm::vec3 _diffuse, glm::vec3 _specular, glm::vec3 _ambient, <span class="keyword">float</span> _shininess);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Material::Material(Shader* _shader, glm::vec3 _diffuse, glm::vec3 _specular, glm::vec3 _ambient, <span class="keyword">float</span> _shininess) :</span><br><span class="line">	shader(_shader),</span><br><span class="line">	diffuse(_diffuse),</span><br><span class="line">	specular(_specular),</span><br><span class="line">	ambient(_ambient),</span><br><span class="line">	shininess(_shininess)</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后我们在主函数中：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Material* material &#x3D; new Material(myShader,</span><br><span class="line">		glm::vec3(1.0f,1.0f,1.0f),</span><br><span class="line">		glm::vec3(1.0f,1.0f,1.0f),</span><br><span class="line">		glm::vec3(1.0f,1.0f,1.0f),</span><br><span class="line">		32.0f);</span><br></pre></td></tr></table></figure>
+
+<p>然后为了避免在uniform赋值的时候要把三个向量拆开，我们再去在shader.h里面做一个SetUniform的方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">void Shader::SetUniform3f(const char* paramNameString, glm::vec3 param)</span><br><span class="line">&#123;</span><br><span class="line">	glUniform3f(glGetUniformLocation(ID, paramNameString), param.x, param.y, param.z);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void Shader::SetUniform1f(const char* paramNameString, float param)</span><br><span class="line">&#123;</span><br><span class="line">	glUniform1f(glGetUniformLocation(ID, paramNameString), param);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以很容易在main函数里面直接把一个vec3和float赋给uniform：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">myMaterial-&gt;shader-&gt;SetUniform3f(<span class="string">&quot;material.ambient&quot;</span>, myMaterial-&gt;ambient);</span><br><span class="line">myMaterial-&gt;shader-&gt;SetUniform3f(<span class="string">&quot;material.diffuse&quot;</span>, myMaterial-&gt;diffuse);</span><br><span class="line">myMaterial-&gt;shader-&gt;SetUniform3f(<span class="string">&quot;material.specular&quot;</span>, myMaterial-&gt;specular);</span><br><span class="line">myMaterial-&gt;shader-&gt;SetUniform1f(<span class="string">&quot;material.shininess&quot;</span>, myMaterial-&gt;shininess);</span><br></pre></td></tr></table></figure>
+
+<p>这样我们就有了一个很好的给物体附上材质的结构，不需要在渲染循环里面定义数据，所有的材质属性在这个材质创建出来时就已经赋予了。</p>
+<hr>
+<h3 id="光照贴图"><a href="#光照贴图" class="headerlink" title="光照贴图"></a>光照贴图</h3><p>在之前我们已经实现了贴图了，在这里我们主要是要重构一下我们上贴图的代码，让他的结构更好，主要的想法是让之前指定数值的方式变一下，让专门的贴图去做镜面光和漫反射光。</p>
+<p>现在引入<strong>漫反射</strong>和<strong>镜面光</strong>贴图(Map)。这允许我们对物体的漫反射分量（以及间接地对环境光分量，它们几乎总是一样的）和镜面光分量有着更精确的控制。所以之前的片段着色器代码我们要做一些改变，所有的vec3我们都要改成用贴图控制的sampler2D，因此我们还需要额外的纹理贴图输入。所以顶点着色器也要大改，首先要新增location，还需要给片段着色器输出贴图坐标。我们首先把之前加载的两个纹理全部取消，让立方体不上任何贴图，然后我们来改我们的代码。。。要改的地方太多，搞了我一节课。。。直接上改动了的代码吧：</p>
+<p>顶点着色器：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 330 core 								</span></span><br><span class="line"><span class="keyword">layout</span>(<span class="keyword">location</span> = <span class="number">0</span>) <span class="keyword">in</span> <span class="type">vec3</span> aPos;				</span><br><span class="line"><span class="keyword">layout</span>(<span class="keyword">location</span> = <span class="number">1</span>) <span class="keyword">in</span> <span class="type">vec3</span> aNormal;</span><br><span class="line"><span class="keyword">layout</span>(<span class="keyword">location</span> = <span class="number">2</span>) <span class="keyword">in</span> <span class="type">vec2</span> aTexCoord;</span><br><span class="line"></span><br><span class="line"><span class="keyword">uniform</span> <span class="type">mat4</span> modelMat;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">mat4</span> viewMat;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">mat4</span> projMat;</span><br><span class="line"></span><br><span class="line"><span class="keyword">out</span> <span class="type">vec3</span> FragPos;</span><br><span class="line"><span class="keyword">out</span> <span class="type">vec3</span> Normal;</span><br><span class="line"><span class="keyword">out</span> <span class="type">vec2</span> texCoord;</span><br><span class="line"><span class="type">void</span> main()										</span><br><span class="line">&#123;														</span><br><span class="line">	<span class="built_in">gl_Position</span> = projMat * viewMat * modelMat * <span class="type">vec4</span>(aPos.xyz, <span class="number">1.0</span>);</span><br><span class="line">    FragPos = (modelMat * <span class="type">vec4</span>(aPos.xyz, <span class="number">1.0</span>)).xyz;</span><br><span class="line">    Normal = <span class="type">mat3</span>(<span class="built_in">transpose</span>(<span class="built_in">inverse</span>(modelMat))) * aNormal;</span><br><span class="line">    texCoord = aTexCoord;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>顶点着色器重新定义之后就直接导致了Attribute要改变:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">glVertexAttribPointer(<span class="number">0</span>, <span class="number">3</span>, GL_FLOAT, GL_FALSE, <span class="number">8</span> * <span class="keyword">sizeof</span>(<span class="keyword">float</span>), (<span class="keyword">void</span>*)<span class="number">0</span>);</span><br><span class="line">glEnableVertexAttribArray(<span class="number">0</span>);</span><br><span class="line">glVertexAttribPointer(<span class="number">1</span>, <span class="number">3</span>, GL_FLOAT, GL_FALSE, <span class="number">8</span> * <span class="keyword">sizeof</span>(<span class="keyword">float</span>), (<span class="keyword">void</span>*)(<span class="number">3</span> * <span class="keyword">sizeof</span>(<span class="keyword">float</span>)));</span><br><span class="line">glEnableVertexAttribArray(<span class="number">1</span>);</span><br><span class="line">glVertexAttribPointer(<span class="number">2</span>, <span class="number">2</span>, GL_FLOAT, GL_FALSE, <span class="number">8</span> * <span class="keyword">sizeof</span>(<span class="keyword">float</span>), (<span class="keyword">void</span>*)(<span class="number">6</span> * <span class="keyword">sizeof</span>(<span class="keyword">float</span>)));</span><br><span class="line">glEnableVertexAttribArray(<span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+
+<p>片段着色器：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 330 core                                         </span></span><br><span class="line"><span class="keyword">in</span> <span class="type">vec3</span> FragPos;</span><br><span class="line"><span class="keyword">in</span> <span class="type">vec3</span> Normal;</span><br><span class="line"><span class="keyword">in</span> <span class="type">vec2</span> texCoord;</span><br><span class="line"></span><br><span class="line">struct Material&#123;</span><br><span class="line">	<span class="type">vec3</span> ambient;</span><br><span class="line">    <span class="type">sampler2D</span> diffuse;</span><br><span class="line">    <span class="type">sampler2D</span> specular;</span><br><span class="line">    <span class="type">float</span> shininess; </span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">uniform</span> Material material;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">vec3</span> objColor;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">vec3</span> ambientColor;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">vec3</span> lightPos;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">vec3</span> lightColor;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">vec3</span> cameraPos;</span><br><span class="line"></span><br><span class="line"><span class="keyword">out</span> <span class="type">vec4</span> FragColor;			</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> main()												</span><br><span class="line">&#123;			</span><br><span class="line">	<span class="type">vec3</span> lightDir = <span class="built_in">normalize</span>(lightPos - FragPos);</span><br><span class="line"></span><br><span class="line">	<span class="type">vec3</span> reflectDir = <span class="built_in">reflect</span>(-lightDir , Normal);</span><br><span class="line">	<span class="type">vec3</span> viewDir = <span class="built_in">normalize</span>(cameraPos - FragPos);</span><br><span class="line"></span><br><span class="line"><span class="comment">//把之前数值的影响改变为贴图的采样</span></span><br><span class="line">	<span class="type">vec3</span> specular = <span class="built_in">texture</span>(material.specular,texCoord).rgb * <span class="built_in">pow</span>(<span class="built_in">max</span>(<span class="built_in">dot</span>(reflectDir , viewDir),<span class="number">0</span>),<span class="number">32</span>) * lightColor;</span><br><span class="line">	<span class="type">vec3</span> diffuse = <span class="built_in">texture</span>(material.diffuse,texCoord).rgb * <span class="built_in">max</span>(<span class="built_in">dot</span>(lightDir, Normal),<span class="number">0</span>) * lightColor ;</span><br><span class="line">	<span class="type">vec3</span> ambient = <span class="built_in">texture</span>(material.diffuse,texCoord).rgb * ambientColor;</span><br><span class="line"></span><br><span class="line">	FragColor = <span class="type">vec4</span>((diffuse + ambient + specular) * objColor, <span class="number">1.0</span>);</span><br><span class="line">&#125;	            </span><br></pre></td></tr></table></figure>
+
+<p>shader:</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">enum Slot</span><br><span class="line">&#123;</span><br><span class="line">	DIFFUSE,</span><br><span class="line">	SPECULAR</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> use();</span><br><span class="line"><span class="type">void</span> SetUniform3f(<span class="keyword">const</span> char* paramNameString,glm::<span class="type">vec3</span> param);</span><br><span class="line"><span class="type">void</span> SetUniform1f(<span class="keyword">const</span> char* paramNameString, <span class="type">float</span> param);</span><br><span class="line"><span class="type">void</span> SetUniform1i(<span class="keyword">const</span> char* paramNameString, <span class="type">int</span> slot);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Shader::SetUniform3f</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* paramNameString, glm::vec3 param)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	glUniform3f(glGetUniformLocation(ID, paramNameString), param.x, param.y, param.z);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Shader::SetUniform1f</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* paramNameString, <span class="keyword">float</span> param)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	glUniform1f(glGetUniformLocation(ID, paramNameString), param);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Shader::SetUniform1i</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* paramNameString, <span class="keyword">int</span> slot)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	glUniform1i(glGetUniformLocation(ID, paramNameString), slot);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>main:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Material* myMaterial = <span class="keyword">new</span> Material(myShader,</span><br><span class="line">		LoadImageToGPU(<span class="string">&quot;container2.png&quot;</span>,GL_RGBA,GL_RGBA,Shader::DIFFUSE),</span><br><span class="line">		LoadImageToGPU(<span class="string">&quot;container2_specular.png&quot;</span>, GL_RGBA, GL_RGBA, 			Shader::SPECULAR),</span><br><span class="line">		glm::vec3(<span class="number">1.0f</span>,<span class="number">1.0f</span>,<span class="number">1.0f</span>),</span><br><span class="line">		<span class="number">64.0f</span>);</span><br><span class="line"></span><br><span class="line">myMaterial-&gt;shader-&gt;SetUniform1i(<span class="string">&quot;material.diffuse&quot;</span>, Shader::DIFFUSE);</span><br><span class="line">myMaterial-&gt;shader-&gt;SetUniform1i(<span class="string">&quot;material.specular&quot;</span>, Shader::SPECULAR);</span><br><span class="line">myMaterial-&gt;shader-&gt;SetUniform3f(<span class="string">&quot;material.ambient&quot;</span>, myMaterial-&gt;ambient);</span><br><span class="line">myMaterial-&gt;shader-&gt;SetUniform1f(<span class="string">&quot;material.shininess&quot;</span>, myMaterial-&gt;shininess);</span><br></pre></td></tr></table></figure>
+
+<p>搞定了，是不是有点累？说实话有点烦，这东西搞了我一节课课。。。不说了，回去看我小ig的比赛了，要是输了这周末狂写码！！！</p>
+<p>这就是加上了镜面光贴图后的效果，你可以看到金属一样的反光：</p>
+<img src="/2020/03/27/OpenGL%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%9A%E5%85%89%E7%85%A7/6.png" class="">
+
+<hr>
+<h3 id="光源"><a href="#光源" class="headerlink" title="光源"></a>光源</h3><p>在这里我们会去学习光源，分别对平行光、点光源和聚光灯进行实现。在之前我们做了一个Material的class，我们可以很方便地去使用材质，现在我们也来做一个Light类，以便我们去做出各种各样的灯光，然后去使用它。之前我们只是很简单地去指定灯的颜色和位置，现在我们来做一个大工程吧~~</p>
+<h4 id="平行光"><a href="#平行光" class="headerlink" title="平行光"></a>平行光</h4><p>首先去做一个平行光的类：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">class LightDirectional</span><br><span class="line">&#123;</span><br><span class="line">public:</span><br><span class="line">	LightDirectional(Shader* _shader, glm::<span class="type">vec3</span> _angles, glm::<span class="type">vec3</span> _color = glm::<span class="type">vec3</span>(<span class="number">1.0</span>f, <span class="number">1.0</span>f, <span class="number">1.0</span>f));</span><br><span class="line"></span><br><span class="line">	Shader* shader;</span><br><span class="line"></span><br><span class="line">	glm::<span class="type">vec3</span> position;</span><br><span class="line">	glm::<span class="type">vec3</span> angles;</span><br><span class="line">	glm::<span class="type">vec3</span> direction = glm::<span class="type">vec3</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">1.0</span>f);</span><br><span class="line">	glm::<span class="type">vec3</span> color;</span><br><span class="line">	</span><br><span class="line">	<span class="type">void</span> UpdateDirection();<span class="comment">//这个函数用于我们方便去调光的方向做测试</span></span><br><span class="line">&#125;;</span><br><span class="line">    </span><br><span class="line">LightDirectional::LightDirectional(Shader* _shader,glm::<span class="type">vec3</span> _angles,glm::<span class="type">vec3</span> _color):</span><br><span class="line">	shader(_shader),</span><br><span class="line">	angles(_angles),</span><br><span class="line">	color(_color)</span><br><span class="line">&#123;</span><br><span class="line">	UpdateDirection();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span>::LightDirectional::UpdateDirection() &#123;</span><br><span class="line">	direction = glm::<span class="type">vec3</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">1.0</span>f);</span><br><span class="line">	direction = glm::rotateZ(direction, angles.z);</span><br><span class="line">	direction = glm::rotateX(direction, angles.x);</span><br><span class="line">	direction = glm::rotateY(direction, angles.y);</span><br><span class="line">	direction = <span class="number">-1.0</span>f * direction;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>之前我们做的光的方向<code>vec3 lightDir = normalize(lightPos - FragPos)</code>，其实只是点光源的计算方法而已，并且这种计算方法还有问题。我们现在应该直接喂给光的方向，这样才是真正的平行光，于是在片段着色器里面，我们uniform一个lightDir，然后直接在main里面给它赋值：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//vec3 lightDir = normalize(lightPos - FragPos);</span></span><br><span class="line"><span class="comment">//因为是平行光，我们不再需要去根据与物体像素点的相交计算光的方向，直接给出就好</span></span><br><span class="line"><span class="type">vec3</span> reflectDir = <span class="built_in">reflect</span>(-lightDir , Normal);</span><br><span class="line"></span><br><span class="line"><span class="comment">//main</span></span><br><span class="line">LightDirectional light = LightDirectional(myShader, glm::<span class="type">vec3</span>(glm::<span class="built_in">radians</span>(<span class="number">45.0</span>f), <span class="number">0</span>, <span class="number">0</span>));</span><br><span class="line"></span><br><span class="line">light.shader-&gt;SetUniform3f(&quot;lightColor&quot;, light.color);</span><br><span class="line">light.shader-&gt;SetUniform3f(&quot;lightDir&quot;, light.direction);</span><br><span class="line"><span class="comment">//在main函数里面我们只需要去给之前的方向和颜色赋值就好，</span></span><br></pre></td></tr></table></figure>
+
+<p>这样一来其实和之前的不一样的地方就只有：增加了一个平行光的类，直接给出lightDir的值不让他去和物体像素位置做计算。效果上就是只有一个方向有光，我们从45°打，就只有上面和前面有光：</p>
+<img src="/2020/03/27/OpenGL%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%9A%E5%85%89%E7%85%A7/4.png" class="">
+
+<img src="/2020/03/27/OpenGL%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%9A%E5%85%89%E7%85%A7/5.png" class="">
+
+<h4 id="点光源"><a href="#点光源" class="headerlink" title="点光源"></a>点光源</h4><p>点光源和平行光不一样的地方就是，他不管角度，只管位置，但是其他地方他们都十分像。首先我们要把之前的<code>vec3 lightDir = normalize(lightPos - FragPos)</code>打开，这里需要正常地去计算光的方向，这也和我们最开始做的光一样（一开始我们做的光其实就是一个点光源地效果），直接看点光源类地代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LightPoint</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	LightPoint(Shader* _shader, glm::vec3 _position, glm::vec3 _color = glm::vec3(<span class="number">1.0f</span>, <span class="number">1.0f</span>, <span class="number">1.0f</span>));</span><br><span class="line"></span><br><span class="line">	Shader* shader;</span><br><span class="line">	glm::vec3 position;</span><br><span class="line">	glm::vec3 color;</span><br><span class="line"></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">LightPoint::LightPoint(Shader* _shader, glm::vec3 _position, glm::vec3 _color):</span><br><span class="line">	shader(_shader),</span><br><span class="line">	position(_position),</span><br><span class="line">	color(_color)</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>就这么简单，点光源就出来了：</p>
+<img src="/2020/03/27/OpenGL%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%9A%E5%85%89%E7%85%A7/7.png" class="">
+
+<p>但这个和现实差别很大，远处的箱子所受到地光照居然和近处是一样的，这里我们就需要做一个光照衰减。我们直接套用别人的公式就行了，用一个二次多项式去做衰减：</p>
+<img src="/2020/03/27/OpenGL%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%9A%E5%85%89%E7%85%A7/8.png" class="">
+
+<p>实现代码如下：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//fragment</span></span><br><span class="line">struct LightPoint&#123;</span><br><span class="line">	<span class="type">float</span> constant;</span><br><span class="line">	<span class="type">float</span> linear;</span><br><span class="line">	<span class="type">float</span> quadratic;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">uniform</span> LightPoint lightPoint;</span><br><span class="line"></span><br><span class="line"><span class="comment">//计算衰减值</span></span><br><span class="line"><span class="type">float</span> dist = <span class="built_in">length</span>(lightPos - FragPos);</span><br><span class="line"><span class="type">float</span> attenuation = <span class="number">1.0</span> / (lightPoint.constant + lightPoint.linear * dist + lightPoint.quadratic * (dist * dist));</span><br><span class="line"></span><br><span class="line"><span class="comment">//衰减值作用在漫反射和高光反射上面，因为只有这两个是被光源影响的</span></span><br><span class="line">FragColor = <span class="type">vec4</span>((ambient + (diffuse + specular) * attenuation) * objColor, <span class="number">1.0</span>);</span><br></pre></td></tr></table></figure>
+
+<p>初始化三个计算参数，main里面赋值：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//.cpp</span></span><br><span class="line">LightPoint::LightPoint(Shader* _shader, glm::vec3 _position, glm::vec3 _color):</span><br><span class="line">	shader(_shader),</span><br><span class="line">	position(_position),</span><br><span class="line">	color(_color)</span><br><span class="line">&#123;</span><br><span class="line">	constant = <span class="number">1.0f</span>;</span><br><span class="line">	linear = <span class="number">0.09f</span>;</span><br><span class="line">	quadratic = <span class="number">0.032f</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//main</span></span><br><span class="line">lightpoint.shader-&gt;SetUniform3f(<span class="string">&quot;lightPos&quot;</span>, lightpoint.position);</span><br><span class="line">lightpoint.shader-&gt;SetUniform3f(<span class="string">&quot;lightColor&quot;</span>, lightpoint.color);</span><br><span class="line">lightpoint.shader-&gt;SetUniform1f(<span class="string">&quot;lightPoint.constant&quot;</span>, lightpoint.constant);</span><br><span class="line">lightpoint.shader-&gt;SetUniform1f(<span class="string">&quot;lightPoint.linear&quot;</span>, lightpoint.linear);</span><br><span class="line">lightpoint.shader-&gt;SetUniform1f(<span class="string">&quot;lightPoint.quadratic&quot;</span>, lightpoint.quadratic);</span><br></pre></td></tr></table></figure>
+
+<p>效果如下：</p>
+<img src="/2020/03/27/OpenGL%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%9A%E5%85%89%E7%85%A7/9.png" class="">
+
+<p>这下可以很明显地看出，远一点的箱子没有被照得那么亮了。</p>
+<h4 id="聚光灯"><a href="#聚光灯" class="headerlink" title="聚光灯"></a>聚光灯</h4><p>和舞台上面的聚光灯一样，它只朝一个特定方向而不是所有方向照射光线，只有在聚光方向的特定半径内的物体才会被照亮，其它的物体都会保持黑暗。在实现这个灯时，我们要给出这个灯的最小照射cos值，然后当某个片元与光源的向量夹角小于了这个最大值，那么这个片元就无法被照射出。</p>
+<p>首先我们需要计算出一个片元与光源的向量与光源方向的夹角的cos值，然后把这个值与最小的cos进行比较，如果小，就不去计算这个片元被光的照射。需要注意的是因为我们想得到的是cos值，所以我们要注意把得到的向量转换为单位向量。然后为了处理边缘太硬的问题，我们再设置一个内圈然后在这个环里面去做光由亮变暗的渐变：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> cosTheta = <span class="built_in">dot</span>(<span class="built_in">normalize</span>(FragPos-lightPos),<span class="number">-1</span> * lightDirUniform);</span><br><span class="line"><span class="type">float</span> spotIndex;</span><br><span class="line">	</span><br><span class="line"><span class="keyword">if</span>(cosTheta&gt;lightSpot.cosMinInner)&#123;</span><br><span class="line">	spotIndex = <span class="number">1.0</span>f;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span>(cosTheta&gt;lightSpot.cosMinOuter)&#123;</span><br><span class="line">	spotIndex = (cosTheta - lightSpot.cosMinOuter) / (lightSpot.cosMinInner - lightSpot.cosMinOuter);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line">	spotIndex = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line">FragColor = <span class="type">vec4</span>((ambient + diffuse + specular) * spotIndex * objColor, <span class="number">1.0</span>);</span><br></pre></td></tr></table></figure>
+
+<p>创建一个lightSpot类去在创建灯时就初始化它的位置、中心光照射方向、颜色，照射最大范围（最小cos值）。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LightSpot</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	LightSpot(Shader* _shader, glm::vec3 _position, glm::vec3 _angles, <span class="keyword">float</span> range, glm::vec3 _color = glm::vec3(<span class="number">1.0f</span>, <span class="number">1.0f</span>, <span class="number">1.0f</span>));</span><br><span class="line"></span><br><span class="line">	Shader* shader;</span><br><span class="line">	glm::vec3 position;</span><br><span class="line">	glm::vec3 angles;</span><br><span class="line">	glm::vec3 direction = glm::vec3(<span class="number">0</span>, <span class="number">0</span>, <span class="number">1.0f</span>);</span><br><span class="line">	glm::vec3 color;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">float</span> cosMinInner;</span><br><span class="line">	<span class="keyword">float</span> cosMinOuter = cosMinInner - <span class="number">0.05f</span>;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">UpdateDirection</span><span class="params">()</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">LightSpot::LightSpot(Shader* _shader, glm::vec3 _position , glm::vec3 _angles,<span class="keyword">float</span> _range,glm::vec3 _color):</span><br><span class="line">	shader(_shader),</span><br><span class="line">	position(_position),</span><br><span class="line">	angles(_angles),</span><br><span class="line">	color(_color),</span><br><span class="line">	cosMinInner(_range)</span><br><span class="line">&#123;</span><br><span class="line">	UpdateDirection();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">LightSpot::UpdateDirection</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	direction = glm::vec3(<span class="number">0</span>, <span class="number">0</span>, <span class="number">1.0f</span>);</span><br><span class="line">	direction = glm::rotateZ(direction, angles.z);</span><br><span class="line">	direction = glm::rotateX(direction, angles.x);</span><br><span class="line">	direction = glm::rotateY(direction, angles.y);</span><br><span class="line">	direction = <span class="number">-1.0f</span> * direction;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>main：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">LightSpot lightSpot = LightSpot(myShader, glm::vec3(<span class="number">0.0f</span>, <span class="number">5.0f</span>, <span class="number">0.0f</span>), glm::vec3(glm::radians(<span class="number">90.0f</span>), <span class="number">0</span>, <span class="number">0</span>), <span class="number">0.9f</span>);</span><br><span class="line"></span><br><span class="line">lightSpot.shader-&gt;SetUniform3f(<span class="string">&quot;lightPos&quot;</span>, lightSpot.position);</span><br><span class="line">lightSpot.shader-&gt;SetUniform3f(<span class="string">&quot;lightColor&quot;</span>, lightSpot.color);</span><br><span class="line">lightSpot.shader-&gt;SetUniform3f(<span class="string">&quot;lightDirUniform&quot;</span>, lightSpot.direction);</span><br><span class="line">lightSpot.shader-&gt;SetUniform1f(<span class="string">&quot;lightSpot.cosMinInner&quot;</span>, lightSpot.cosMinInner);</span><br><span class="line">lightSpot.shader-&gt;SetUniform1f(<span class="string">&quot;lightSpot.cosMinOuter&quot;</span>, lightSpot.cosMinOuter);</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以得到很好的聚光灯效果：</p>
+<img src="/2020/03/27/OpenGL%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%9A%E5%85%89%E7%85%A7/10.png" class="">
+
+<hr>
+<h3 id="多光源"><a href="#多光源" class="headerlink" title="多光源"></a>多光源</h3><p>现在我们来做多光源，我们需要把之前的代码重构，用一个计算光照的函数去计算所有的光照效果，然后作为颜色的输出。在片段着色器里面我们分别用三个函数去计算，然后再去叠加：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">out</span> <span class="type">vec4</span> FragColor;	</span><br><span class="line"></span><br><span class="line"><span class="type">vec3</span> CalLightDirectional(LightDirectional light, <span class="type">vec3</span> uNormal, <span class="type">vec3</span> dirToCamera)&#123;</span><br><span class="line"><span class="comment">//diffuse = dot(光入射向量，法向量) * 灯颜色</span></span><br><span class="line">	<span class="type">float</span> diffuseIntensity = <span class="built_in">max</span>(<span class="built_in">dot</span>(light.dirToLight , uNormal),<span class="number">0</span>);</span><br><span class="line">	<span class="type">vec3</span> diffuseColor = diffuseIntensity * light.color * <span class="built_in">texture</span>(material.diffuse,texCoord).rgb;</span><br><span class="line"></span><br><span class="line"><span class="comment">//specular = dot(光的出射向量，视线方向向量)^高光度</span></span><br><span class="line">	<span class="type">float</span> specularIntensity = <span class="built_in">pow</span>(<span class="built_in">max</span>(<span class="built_in">dot</span>(<span class="built_in">normalize</span>(<span class="built_in">reflect</span>(-light.dirToLight,uNormal)),dirToCamera),<span class="number">0</span>),material.shininess);</span><br><span class="line">	<span class="type">vec3</span> specularColor = specularIntensity * light.color * <span class="built_in">texture</span>(material.specular, texCoord).rgb;</span><br><span class="line"></span><br><span class="line">	<span class="type">vec3</span> result = diffuseColor + specularColor;</span><br><span class="line">	<span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">vec3</span> CalLightPoint(LightPoint light, <span class="type">vec3</span> uNormal, <span class="type">vec3</span> dirToCamera)&#123;</span><br><span class="line"></span><br><span class="line">	<span class="type">float</span> dist = <span class="built_in">length</span>(light.pos - FragPos);</span><br><span class="line">	<span class="type">float</span> attenuation = <span class="number">1</span> / (light.constant + light.linear * dist + light.quadratic * dist * dist);</span><br><span class="line"></span><br><span class="line">	<span class="type">float</span> diffuseIntensity = <span class="built_in">max</span>(<span class="built_in">dot</span>(<span class="built_in">normalize</span>(light.pos - FragPos), uNormal),<span class="number">0</span>) * attenuation;</span><br><span class="line">	<span class="type">vec3</span> diffuseColor = diffuseIntensity * light.color * <span class="built_in">texture</span>(material.diffuse,texCoord).rgb;</span><br><span class="line"></span><br><span class="line">	<span class="type">float</span> specularIntensity = <span class="built_in">pow</span>(<span class="built_in">max</span>(<span class="built_in">dot</span>(-<span class="built_in">normalize</span>(<span class="built_in">reflect</span>(light.pos - FragPos,uNormal)),dirToCamera),<span class="number">0</span>),material.shininess);</span><br><span class="line">	<span class="type">vec3</span> specularColor = specularIntensity * light.color * <span class="built_in">texture</span>(material.specular, texCoord).rgb;</span><br><span class="line"></span><br><span class="line">	<span class="type">vec3</span> result = (diffuseColor + specularColor) * attenuation;</span><br><span class="line">	<span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">vec3</span> CalLightSpot(LightSpot light, <span class="type">vec3</span> uNormal, <span class="type">vec3</span> dirToCamera)&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="type">float</span> diffuseIntensity = <span class="built_in">max</span>(<span class="built_in">dot</span>(<span class="built_in">normalize</span>(light.pos - FragPos), uNormal),<span class="number">0</span>);</span><br><span class="line">	<span class="type">vec3</span> diffuseColor = diffuseIntensity * light.color * <span class="built_in">texture</span>(material.diffuse,texCoord).rgb;</span><br><span class="line"></span><br><span class="line">	<span class="type">float</span> specularIntensity = <span class="built_in">pow</span>(<span class="built_in">max</span>(<span class="built_in">dot</span>(-<span class="built_in">normalize</span>(<span class="built_in">reflect</span>(light.pos - FragPos,uNormal)),dirToCamera),<span class="number">0</span>),material.shininess);</span><br><span class="line">	<span class="type">vec3</span> specularColor = specularIntensity * light.color * <span class="built_in">texture</span>(material.specular, texCoord).rgb;</span><br><span class="line"></span><br><span class="line">	<span class="type">float</span> cosTheta = <span class="built_in">dot</span>(<span class="built_in">normalize</span>(FragPos-light.pos),<span class="number">-1</span> * light.dirToLight);</span><br><span class="line">	<span class="type">float</span> spotIndex;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">if</span>(cosTheta&gt;light.cosMinInner)&#123;</span><br><span class="line">		spotIndex = <span class="number">1.0</span>f;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> <span class="keyword">if</span>(cosTheta&gt;light.cosMinOuter)&#123;</span><br><span class="line">		spotIndex = (cosTheta - light.cosMinOuter) / (light.cosMinInner - light.cosMinOuter);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span>&#123;</span><br><span class="line">		spotIndex = <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="type">vec3</span> result = (diffuseColor + specularColor) * spotIndex * objColor;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> main()												</span><br><span class="line">&#123;			</span><br><span class="line">	<span class="type">vec3</span> finalResult = <span class="type">vec3</span>(<span class="number">0.0</span>f,<span class="number">0.0</span>f,<span class="number">0.0</span>f);</span><br><span class="line">	<span class="type">vec3</span> uNormal = <span class="built_in">normalize</span>(Normal);</span><br><span class="line">	<span class="type">vec3</span> dirToCamera = <span class="built_in">normalize</span>(cameraPos - FragPos);</span><br><span class="line"></span><br><span class="line">	finalResult += CalLightDirectional(lightDirectional, uNormal, dirToCamera);</span><br><span class="line"></span><br><span class="line">	finalResult += CalLightPoint(lightP0, uNormal, dirToCamera);</span><br><span class="line">	finalResult += CalLightPoint(lightP1, uNormal, dirToCamera);</span><br><span class="line">	finalResult += CalLightPoint(lightP2, uNormal, dirToCamera);</span><br><span class="line">	finalResult += CalLightPoint(lightP3, uNormal, dirToCamera);</span><br><span class="line">	</span><br><span class="line">	finalResult += CalLightSpot(lightS, uNormal, dirToCamera);</span><br><span class="line"></span><br><span class="line">	FragColor = <span class="type">vec4</span>(finalResult, <span class="number">1.0</span>);</span><br><span class="line">&#125;	                  </span><br></pre></td></tr></table></figure>
+
+<p>在main函数里面进行赋值：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//创建多光源</span></span><br><span class="line">LightDirectional lightD = LightDirectional(myShader, glm::vec3(glm::radians(<span class="number">90.0f</span>), <span class="number">0</span>, <span class="number">0</span>));</span><br><span class="line"></span><br><span class="line">LightPoint lightP0 = LightPoint(myShader, glm::vec3(<span class="number">1.0f</span>, <span class="number">0.0f</span>,  <span class="number">0.0f</span>),glm::vec3(<span class="number">1.0f</span>,<span class="number">0.0f</span>,<span class="number">0.0f</span>));</span><br><span class="line">LightPoint lightP1 = LightPoint(myShader, glm::vec3(<span class="number">0.0f</span>, <span class="number">1.0f</span>, <span class="number">0.0f</span>), glm::vec3(<span class="number">0.0f</span>, <span class="number">1.0f</span>, <span class="number">0</span>));</span><br><span class="line">LightPoint lightP2 = LightPoint(myShader, glm::vec3(<span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>), glm::vec3(<span class="number">0</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>));</span><br><span class="line">LightPoint lightP3 = LightPoint(myShader, glm::vec3(<span class="number">1.0f</span>, <span class="number">1.0f</span>, <span class="number">1.0f</span>), glm::vec3(<span class="number">1.0f</span>, <span class="number">1.0f</span>, <span class="number">1.0f</span>));</span><br><span class="line"></span><br><span class="line">LightSpot lightS = LightSpot(myShader, glm::vec3(<span class="number">0</span>, <span class="number">5.0f</span>, <span class="number">0</span>), glm::vec3(glm::radians(<span class="number">90.0f</span>), <span class="number">0</span>, <span class="number">0</span>), <span class="number">0.9f</span>);</span><br><span class="line"></span><br><span class="line">lightD.shader-&gt;SetUniform3f(<span class="string">&quot;lightDirectional.color&quot;</span>, lightD.color);</span><br><span class="line">lightD.shader-&gt;SetUniform3f(<span class="string">&quot;lightDirectional.dirToLight&quot;</span>, lightD.direction);</span><br><span class="line"></span><br><span class="line">lightP0.shader-&gt;SetUniform3f(<span class="string">&quot;lightP0.pos&quot;</span>, lightP0.position);</span><br><span class="line">lightP0.shader-&gt;SetUniform3f(<span class="string">&quot;lightP0.color&quot;</span>, lightP0.color);</span><br><span class="line">lightP0.shader-&gt;SetUniform1f(<span class="string">&quot;lightP0.constant&quot;</span>, lightP0.constant);</span><br><span class="line">lightP0.shader-&gt;SetUniform1f(<span class="string">&quot;lightP0.linear&quot;</span>, lightP0.linear);</span><br><span class="line">lightP0.shader-&gt;SetUniform1f(<span class="string">&quot;lightP0.quadratic&quot;</span>, lightP0.quadratic);</span><br><span class="line"></span><br><span class="line">lightP1.shader-&gt;SetUniform3f(<span class="string">&quot;lightP1.pos&quot;</span>, lightP1.position);</span><br><span class="line">lightP1.shader-&gt;SetUniform3f(<span class="string">&quot;lightP1.color&quot;</span>, lightP1.color);</span><br><span class="line">lightP1.shader-&gt;SetUniform1f(<span class="string">&quot;lightP1.constant&quot;</span>, lightP1.constant);</span><br><span class="line">lightP1.shader-&gt;SetUniform1f(<span class="string">&quot;lightP1.linear&quot;</span>, lightP1.linear);</span><br><span class="line">lightP1.shader-&gt;SetUniform1f(<span class="string">&quot;lightP1.quadratic&quot;</span>, lightP0.quadratic);</span><br><span class="line"></span><br><span class="line">lightP2.shader-&gt;SetUniform3f(<span class="string">&quot;lightP2.pos&quot;</span>, lightP2.position);</span><br><span class="line">lightP2.shader-&gt;SetUniform3f(<span class="string">&quot;lightP2.color&quot;</span>, lightP2.color);</span><br><span class="line">lightP2.shader-&gt;SetUniform1f(<span class="string">&quot;lightP2.constant&quot;</span>, lightP2.constant);</span><br><span class="line">lightP2.shader-&gt;SetUniform1f(<span class="string">&quot;lightP2.linear&quot;</span>, lightP2.linear);</span><br><span class="line">lightP2.shader-&gt;SetUniform1f(<span class="string">&quot;lightP2.quadratic&quot;</span>, lightP2.quadratic);</span><br><span class="line"></span><br><span class="line">lightP3.shader-&gt;SetUniform3f(<span class="string">&quot;lightP3.pos&quot;</span>, lightP3.position);</span><br><span class="line">lightP3.shader-&gt;SetUniform3f(<span class="string">&quot;lightP3.color&quot;</span>, lightP3.color);</span><br><span class="line">lightP3.shader-&gt;SetUniform1f(<span class="string">&quot;lightP3.constant&quot;</span>, lightP3.constant);</span><br><span class="line">lightP3.shader-&gt;SetUniform1f(<span class="string">&quot;lightP3.linear&quot;</span>, lightP3.linear);</span><br><span class="line">lightP3.shader-&gt;SetUniform1f(<span class="string">&quot;lightP3.quadratic&quot;</span>, lightP3.quadratic);</span><br><span class="line"></span><br><span class="line">lightS.shader-&gt;SetUniform3f(<span class="string">&quot;lightS.pos&quot;</span>, lightS.position);</span><br><span class="line">lightS.shader-&gt;SetUniform3f(<span class="string">&quot;lightS.color&quot;</span>, lightS.color);</span><br><span class="line">lightS.shader-&gt;SetUniform3f(<span class="string">&quot;lightS.dirToLight&quot;</span>, lightS.direction);</span><br><span class="line">lightS.shader-&gt;SetUniform1f(<span class="string">&quot;lightS.cosMinInner&quot;</span>, lightS.cosMinInner);</span><br><span class="line">lightS.shader-&gt;SetUniform1f(<span class="string">&quot;lightS.cosMinOuter&quot;</span>, lightS.cosMinOuter);</span><br></pre></td></tr></table></figure>
+
+<p>这样就得到了多光源照射的效果：</p>
+<img src="/2020/03/27/OpenGL%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%9A%E5%85%89%E7%85%A7/11.png" class="">
+
+<hr>
+<p>好了，第二章也学习完了，现在OpenGL的基本使用差不多可以了，我想先跳过模型加载的章节，直接进入高级OpenGL和高级光照，最后我们再来做模型加载。</p>
+
+                
+            </div>
+            <hr/>
+
+            
+
+    <div class="reprint" id="reprint-statement">
+        
+            <div class="reprint__author">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-user">
+                        Author:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="/about" rel="external nofollow noreferrer">cdc</a>
+                </span>
+            </div>
+            <div class="reprint__type">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-link">
+                        Link:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="https://higashisan.github.io/2020/03/27/OpenGL%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%9A%E5%85%89%E7%85%A7/">https://higashisan.github.io/2020/03/27/OpenGL%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%9A%E5%85%89%E7%85%A7/</a>
+                </span>
+            </div>
+            <div class="reprint__notice">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-copyright">
+                        Reprint policy:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    All articles in this blog are used except for special statements
+                    <a href="https://creativecommons.org/licenses/by/4.0/deed.zh" rel="external nofollow noreferrer" target="_blank">CC BY 4.0</a>
+                    reprint polocy. If reproduced, please indicate source
+                    <a href="/about" target="_blank">cdc</a>
+                    !
+                </span>
+            </div>
+        
+    </div>
+
+    <script async defer>
+      document.addEventListener("copy", function (e) {
+        let toastHTML = '<span>Copied successfully, please follow the reprint policy of this article</span><button class="btn-flat toast-action" onclick="navToReprintStatement()" style="font-size: smaller">more</a>';
+        M.toast({html: toastHTML})
+      });
+
+      function navToReprintStatement() {
+        $("html, body").animate({scrollTop: $("#reprint-statement").offset().top - 80}, 800);
+      }
+    </script>
+
+
+
+            <div class="tag_share" style="display: block;">
+                <div class="post-meta__tag-list" style="display: inline-block;">
+                    
+                        <div class="article-tag">
+                            
+                                <a href="/tags/OpenGL%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%9A%E5%85%89%E7%85%A7/">
+                                    <span class="chip bg-color">OpenGL学习记录：光照</span>
+                                </a>
+                            
+                        </div>
+                    
+                </div>
+                <div class="post_share" style="zoom: 80%; width: fit-content; display: inline-block; float: right; margin: -0.15rem 0;">
+                    <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+<div id="article-share">
+
+    
+    <div class="social-share" data-sites="twitter,facebook,google,qq,qzone,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+    <script src="/libs/share/js/social-share.min.js"></script>
+    
+
+    
+
+</div>
+
+                </div>
+            </div>
+            
+                <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.4rem;
+        line-height: 38px;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-medium waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fas fa-times"></i></a>
+            <h4 class="reward-title">你的赏识是我前进的动力</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="/medias/reward/alipay.jpg" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="/medias/reward/wechat.png" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+
+            
+        </div>
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fas fa-chevron-left"></i>&nbsp;Previous</div>
+            <div class="card">
+                <a href="/2020/04/03/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/3.jpg" class="responsive-img" alt="深度测试和模板测试">
+                        
+                        <span class="card-title">深度测试和模板测试</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2020-04-03
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            cdc
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95-%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/">
+                        <span class="chip bg-color">深度测试&amp;模板测试</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                Next&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2020/03/19/OpenGL-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/21.jpg" class="responsive-img" alt="OpenGL学习记录--入门章节">
+                        
+                        <span class="card-title">OpenGL学习记录--入门章节</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-03-19
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            cdc
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/OpenGL/">
+                        <span class="chip bg-color">OpenGL</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+
+</div>
+
+
+
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFuction.js"></script>
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget card" style="background-color: white;">
+            <div class="toc-title"><i class="far fa-list-alt"></i>&nbsp;&nbsp;TOC</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fas fa-list-ul"></i>
+    </a>
+</div>
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            collapseDepth: Number('0'),
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h2, h3, h4').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).hide();
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).show();
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+
+    
+
+</main>
+
+
+
+
+    <footer class="page-footer bg-color">
+    
+        <link rel="stylesheet" href="/libs/aplayer/APlayer.min.css">
+<style>
+    .aplayer .aplayer-lrc p {
+        
+        display: none;
+        
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 16px !important;
+    }
+
+    .aplayer .aplayer-lrc p.aplayer-lrc-current {
+        
+        display: none;
+        
+        font-size: 15px;
+        color: #42b983;
+    }
+
+    
+    .aplayer.aplayer-fixed.aplayer-narrow .aplayer-body {
+        left: -66px !important;
+    }
+
+    .aplayer.aplayer-fixed.aplayer-narrow .aplayer-body:hover {
+        left: 0px !important;
+    }
+
+    
+</style>
+<div class="">
+    
+    <div class="row">
+        <meting-js class="col l8 offset-l2 m10 offset-m1 s12"
+                   server="tencent"
+                   type="playlist"
+                   id="8194788712"
+                   fixed='true'
+                   autoplay='true'
+                   theme='#42b983'
+                   loop='all'
+                   order='random'
+                   preload='auto'
+                   volume='0.7'
+                   list-folded='false'
+        >
+        </meting-js>
+    </div>
+</div>
+
+<script src="/libs/aplayer/APlayer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
+
+    
+    <div class="container row center-align" style="margin-bottom: 0px !important;">
+        <div class="col s12 m8 l8 copy-right">
+            Copyright&nbsp;&copy;
+            
+                <span id="year">2019-2021</span>
+            
+            <span id="year">2019</span>
+            <a href="/about" target="_blank">cdc</a>
+            |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>
+            |&nbsp;Theme&nbsp;<a href="https://github.com/blinkfox/hexo-theme-matery" target="_blank">Matery</a>
+            <br>
+            
+            
+            
+            
+            
+            
+            <span id="busuanzi_container_site_pv">
+                |&nbsp;<i class="far fa-eye"></i>&nbsp;总访问量:&nbsp;<span id="busuanzi_value_site_pv"
+                    class="white-color"></span>&nbsp;次
+            </span>
+            
+            
+            <span id="busuanzi_container_site_uv">
+                |&nbsp;<i class="fas fa-users"></i>&nbsp;总访问人数:&nbsp;<span id="busuanzi_value_site_uv"
+                    class="white-color"></span>&nbsp;人
+            </span>
+            
+            <br>
+            
+            <br>
+            
+        </div>
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/blinkfox" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fab fa-github"></i>
+    </a>
+
+
+
+    <a href="mailto:2923642767@qq.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fas fa-envelope-open"></i>
+    </a>
+
+
+
+
+
+
+
+    <a href="tencent://AddContact/?fromId=50&fromSubId=1&subcmd=all&uin=2923642767" class="tooltipped" target="_blank" data-tooltip="QQ联系我: 2923642767" data-position="top" data-delay="50">
+        <i class="fab fa-qq"></i>
+    </a>
+
+
+
+
+
+
+
+    <a href="/atom.xml" class="tooltipped" target="_blank" data-tooltip="RSS 订阅" data-position="top" data-delay="50">
+        <i class="fas fa-rss"></i>
+    </a>
+
+</div>
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+
+    <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fas fa-search"></i>&nbsp;&nbsp;Search</span>
+            <input type="search" id="searchInput" name="s" placeholder="Please enter a search keyword"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(function () {
+    var searchFunc = function (path, search_id, content_id) {
+        'use strict';
+        $.ajax({
+            url: path,
+            dataType: "xml",
+            success: function (xmlResponse) {
+                // get the contents from search data
+                var datas = $("entry", xmlResponse).map(function () {
+                    return {
+                        title: $("title", this).text(),
+                        content: $("content", this).text(),
+                        url: $("url", this).text()
+                    };
+                }).get();
+                var $input = document.getElementById(search_id);
+                var $resultContent = document.getElementById(content_id);
+                $input.addEventListener('input', function () {
+                    var str = '<ul class=\"search-result-list\">';
+                    var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                    $resultContent.innerHTML = "";
+                    if (this.value.trim().length <= 0) {
+                        return;
+                    }
+                    // perform local searching
+                    datas.forEach(function (data) {
+                        var isMatch = true;
+                        var data_title = data.title.trim().toLowerCase();
+                        var data_content = data.content.trim().replace(/<[^>]+>/g, "").toLowerCase();
+                        var data_url = data.url;
+                        data_url = data_url.indexOf('/') === 0 ? data.url : '/' + data_url;
+                        var index_title = -1;
+                        var index_content = -1;
+                        var first_occur = -1;
+                        // only match artiles with not empty titles and contents
+                        if (data_title !== '' && data_content !== '') {
+                            keywords.forEach(function (keyword, i) {
+                                index_title = data_title.indexOf(keyword);
+                                index_content = data_content.indexOf(keyword);
+                                if (index_title < 0 && index_content < 0) {
+                                    isMatch = false;
+                                } else {
+                                    if (index_content < 0) {
+                                        index_content = 0;
+                                    }
+                                    if (i === 0) {
+                                        first_occur = index_content;
+                                    }
+                                }
+                            });
+                        }
+                        // show search results
+                        if (isMatch) {
+                            str += "<li><a href='" + data_url + "' class='search-result-title'>" + data_title + "</a>";
+                            var content = data.content.trim().replace(/<[^>]+>/g, "");
+                            if (first_occur >= 0) {
+                                // cut out 100 characters
+                                var start = first_occur - 20;
+                                var end = first_occur + 80;
+                                if (start < 0) {
+                                    start = 0;
+                                }
+                                if (start === 0) {
+                                    end = 100;
+                                }
+                                if (end > content.length) {
+                                    end = content.length;
+                                }
+                                var match_content = content.substr(start, end);
+                                // highlight all keywords
+                                keywords.forEach(function (keyword) {
+                                    var regS = new RegExp(keyword, "gi");
+                                    match_content = match_content.replace(regS, "<em class=\"search-keyword\">" + keyword + "</em>");
+                                });
+
+                                str += "<p class=\"search-result\">" + match_content + "...</p>"
+                            }
+                            str += "</li>";
+                        }
+                    });
+                    str += "</ul>";
+                    $resultContent.innerHTML = str;
+                });
+            }
+        });
+    };
+
+    searchFunc('/search.xml', 'searchInput', 'searchResult');
+});
+</script>
+
+    <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
+
+
+    <script src="/libs/materialize/materialize.min.js"></script>
+    <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+    <script src="/libs/aos/aos.js"></script>
+    <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+    <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+    <script src="/js/matery.js"></script>
+
+    <!-- Baidu Analytics -->
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    <script src="/libs/others/clicklove.js" async="async"></script>
+    
+    
+    <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+    
+
+	
+    
+
+    
+
+    
+
+    
+    <script src="/libs/instantpage/instantpage.js" type="module"></script>
+    
+
+</body>
+
+</html>

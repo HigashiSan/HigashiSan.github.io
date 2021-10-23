@@ -1,0 +1,1325 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="深度测试和模板测试, YoKuYou">
+    <meta name="description" content="">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    <title>深度测试和模板测试 | YoKuYou</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+
+    <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+
+    <script src="/libs/jquery/jquery.min.js"></script>
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+
+
+<body>
+    <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="/medias/logo.png" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span">YoKuYou</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fas fa-bars"></i></a>
+<ul class="right nav-menu">
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/" class="waves-effect waves-light">
+      
+      <i class="fas fa-home" style="zoom: 0.6;"></i>
+      
+      <span>Index</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/tags" class="waves-effect waves-light">
+      
+      <i class="fas fa-tags" style="zoom: 0.6;"></i>
+      
+      <span>Tags</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/categories" class="waves-effect waves-light">
+      
+      <i class="fas fa-bookmark" style="zoom: 0.6;"></i>
+      
+      <span>Categories</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/archives" class="waves-effect waves-light">
+      
+      <i class="fas fa-archive" style="zoom: 0.6;"></i>
+      
+      <span>Archives</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/about" class="waves-effect waves-light">
+      
+      <i class="fas fa-user-circle" style="zoom: 0.6;"></i>
+      
+      <span>About</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/contact" class="waves-effect waves-light">
+      
+      <i class="fas fa-comments" style="zoom: 0.6;"></i>
+      
+      <span>Contact</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/friends" class="waves-effect waves-light">
+      
+      <i class="fas fa-address-book" style="zoom: 0.6;"></i>
+      
+      <span>Friends</span>
+    </a>
+    
+  </li>
+  
+  <li>
+    <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+      <i id="searchIcon" class="fas fa-search" title="Search" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+</ul>
+
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="/medias/logo.png" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">YoKuYou</div>
+        <div class="logo-desc">
+            
+            Never really desperate, only the lost of the soul.
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="/" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-home"></i>
+			
+			Index
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/tags" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-tags"></i>
+			
+			Tags
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-bookmark"></i>
+			
+			Categories
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/archives" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-archive"></i>
+			
+			Archives
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/about" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-user-circle"></i>
+			
+			About
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/contact" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-comments"></i>
+			
+			Contact
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/friends" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-address-book"></i>
+			
+			Friends
+		</a>
+          
+        </li>
+        
+        
+        <li><div class="divider"></div></li>
+        <li>
+            <a href="https://github.com/blinkfox/hexo-theme-matery" class="waves-effect waves-light" target="_blank">
+                <i class="fab fa-github-square fa-fw"></i>Fork Me
+            </a>
+        </li>
+        
+    </ul>
+</div>
+
+
+        </div>
+
+        
+            <style>
+    .nav-transparent .github-corner {
+        display: none !important;
+    }
+
+    .github-corner {
+        position: absolute;
+        z-index: 10;
+        top: 0;
+        right: 0;
+        border: 0;
+        transform: scale(1.1);
+    }
+
+    .github-corner svg {
+        color: #0f9d58;
+        fill: #fff;
+        height: 64px;
+        width: 64px;
+    }
+
+    .github-corner:hover .octo-arm {
+        animation: a 0.56s ease-in-out;
+    }
+
+    .github-corner .octo-arm {
+        animation: none;
+    }
+
+    @keyframes a {
+        0%,
+        to {
+            transform: rotate(0);
+        }
+        20%,
+        60% {
+            transform: rotate(-25deg);
+        }
+        40%,
+        80% {
+            transform: rotate(10deg);
+        }
+    }
+</style>
+
+<a href="https://github.com/blinkfox/hexo-theme-matery" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
+   data-tooltip="Fork Me" data-position="left" data-delay="50">
+    <svg viewBox="0 0 250 250" aria-hidden="true">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+              fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+              fill="currentColor" class="octo-body"></path>
+    </svg>
+</a>
+        
+    </nav>
+
+</header>
+
+    
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/3.jpg')">
+    <div class="container" style="right: 0px;left: 0px;">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <h1 class="description center-align post-title">深度测试和模板测试</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        width: 345px;
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        padding: 35px 0 15px 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content {
+        padding-bottom: 30px;
+        overflow: auto;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+
+        position: absolute;
+        right: 23.5vw;
+        display: block;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 15px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+</style>
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                    <div class="article-tag">
+                        
+                            <a href="/tags/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95-%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/">
+                                <span class="chip bg-color">深度测试&amp;模板测试</span>
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                </div>
+            </div>
+
+            <div class="post-info">
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-minus fa-fw"></i>Publish Date:&nbsp;&nbsp;
+                    2020-04-03
+                </div>
+                
+
+                
+
+                
+
+                
+
+                
+            </div>
+        </div>
+        <hr class="clearfix">
+
+        
+
+        
+
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <h3 id="深度测试"><a href="#深度测试" class="headerlink" title="深度测试"></a>深度测试</h3><p>现在我们来到了一个非常重要的专题：深度测试，它关乎着渲染过程中所有的遮挡关系，之前在画箱子的时候我们就开启了深度测试，下面来更加深入地学习深度缓冲中的深度值。</p>
+<p>深度缓冲存在每一个片段中，当开启了深度测试后<code>glEnable(GL_DEPTH_TEST)</code>,在绘制每个片元时就会去进行深度测试，通过则被绘制，否则就被丢弃，他是在片段着色器工作完成之后在屏幕空间运行的。屏幕空间坐标与通过OpenGL的glViewport所定义的视口密切相关，并且可以直接使用gl_FragCoord从片段着色器中直接访问。gl_FragCoord的x和y分量代表了片段的屏幕空间坐标（其中(0, 0)位于左下角），还包含了一个z分量，它包含了片段真正的深度值，z值就是需要与深度缓冲内容所对比的那个值。</p>
+<p>如果你启用了深度缓冲，你还应该在每个渲染迭代之前使用GL_DEPTH_BUFFER_BIT来清除深度缓冲，否则你会仍在使用上一次渲染迭代中的写入的深度值<code>glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)</code>。</p>
+<p>还有一个小技巧是当你想要使用深度缓存，但是不想去更新深度值的时候，可以使用<code>glDepthMask(GL_FALSE)</code>，去禁止深度缓冲的写入。</p>
+<h4 id="深度测试函数"><a href="#深度测试函数" class="headerlink" title="深度测试函数"></a>深度测试函数</h4><p>深度测试函数实际上就是告诉OpenGL在做深度测试的时候如何去舍弃片段<code>glDepthFunc(GL_LESS)</code>。默认的是GL_LESS，它会丢弃深度值大于等于当前深度缓冲值的所有片段。</p>
+<p>我们将之前的代码重写一遍，顺便巩固一下基础的知识，把LearnOpenGL上的箱子和平面坐标先直接复制上去，然后我们来写顶点着色器，需要两个位置，一个去存顶点一个去存纹理坐标。还需要输出一个纹理坐标。片段着色器就需要得到纹理坐标的输入然后用一个纹理采样器去接收。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//顶点着色器</span></span><br><span class="line"><span class="meta">#version 330 core 								</span></span><br><span class="line"><span class="keyword">layout</span> (<span class="keyword">location</span> = <span class="number">0</span>) <span class="keyword">in</span> <span class="type">vec3</span> aPos;</span><br><span class="line"><span class="keyword">layout</span> (<span class="keyword">location</span> = <span class="number">1</span>) <span class="keyword">in</span> <span class="type">vec2</span> aTexCoord;</span><br><span class="line"></span><br><span class="line"><span class="keyword">out</span> <span class="type">vec2</span> texCoord;</span><br><span class="line"></span><br><span class="line"><span class="keyword">uniform</span> <span class="type">mat4</span> model;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">mat4</span> projection;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">mat4</span> view;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> main()&#123;</span><br><span class="line">	texCoord = aTexCoord;</span><br><span class="line">	<span class="built_in">gl_Position</span> = projection * view * model * <span class="type">vec4</span>(aPos, <span class="number">1.0</span>f);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//片段着色器</span></span><br><span class="line"><span class="keyword">in</span> <span class="type">vec2</span> texCoord;</span><br><span class="line"></span><br><span class="line"><span class="keyword">out</span> <span class="type">vec4</span> fragColor;</span><br><span class="line"></span><br><span class="line"><span class="keyword">uniform</span> <span class="type">sampler2D</span> texture1;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> main()&#123;</span><br><span class="line">	fragColor = <span class="built_in">texture</span>(texture1, texCoord);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在main函数里去编译这两个着色器，然后设置VBO、VAO去画出箱子和平面。对于VBO是一个Buffer，我们需要进行三部曲：创建、生成、绑定，赋予数据，对于VAO，我们只需要创建、生成、绑定，然后用glDrawArray去画就行了：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//分别拿到箱子和平面的坐标并且画出来</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> cubeVAO, cubeVBO;</span><br><span class="line">glGenBuffers(<span class="number">1</span>, &amp;cubeVBO);</span><br><span class="line">glGenVertexArrays(<span class="number">1</span>, &amp;cubeVAO);</span><br><span class="line">glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);</span><br><span class="line">glBindVertexArray(cubeVAO);</span><br><span class="line">glBufferData(GL_ARRAY_BUFFER, <span class="keyword">sizeof</span>(cubeVertices), &amp;cubeVertices, GL_STATIC_DRAW);</span><br><span class="line">glVertexAttribPointer(<span class="number">0</span>, <span class="number">3</span>, GL_FLOAT, GL_FALSE, <span class="number">5</span> * <span class="keyword">sizeof</span>(<span class="keyword">float</span>), (<span class="keyword">void</span>*)<span class="number">0</span>);</span><br><span class="line">glEnableVertexAttribArray(<span class="number">0</span>);</span><br><span class="line">glVertexAttribPointer(<span class="number">1</span>, <span class="number">2</span>, GL_FLOAT, GL_FALSE, <span class="number">5</span> * <span class="keyword">sizeof</span>(<span class="keyword">float</span>), (<span class="keyword">void</span>*)(<span class="number">3</span> * <span class="keyword">sizeof</span>(<span class="keyword">float</span>)));</span><br><span class="line">glEnableVertexAttribArray(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> planeVAO, planeVBO;</span><br><span class="line">glGenBuffers(<span class="number">1</span>, &amp;planeVBO);</span><br><span class="line">glGenVertexArrays(<span class="number">1</span>, &amp;planeVAO);</span><br><span class="line">glBindBuffer(GL_ARRAY_BUFFER, planeVBO);</span><br><span class="line">glBindVertexArray(planeVAO);</span><br><span class="line">glBufferData(GL_ARRAY_BUFFER, <span class="keyword">sizeof</span>(planeVertices), &amp;planeVertices, GL_STATIC_DRAW);</span><br><span class="line">glVertexAttribPointer(<span class="number">0</span>, <span class="number">3</span>, GL_FLOAT, GL_FALSE, <span class="number">5</span> * <span class="keyword">sizeof</span>(<span class="keyword">float</span>), (<span class="keyword">void</span>*)<span class="number">0</span>);</span><br><span class="line">glEnableVertexAttribArray(<span class="number">0</span>);</span><br><span class="line">glVertexAttribPointer(<span class="number">1</span>, <span class="number">2</span>, GL_FLOAT, GL_FALSE, <span class="number">5</span> * <span class="keyword">sizeof</span>(<span class="keyword">float</span>), (<span class="keyword">void</span>*)(<span class="number">3</span> * (<span class="keyword">sizeof</span>(<span class="keyword">float</span>))));</span><br><span class="line">glEnableVertexAttribArray(<span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+
+<p>至于纹理我们直接把它加载到两个位置，然后再分别在画方块和画地板的时候给纹理采样器绑上不同的纹理就行：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//将图片加载到一号位</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> cubeTexture = LoadImageToGPU(<span class="string">&quot;marble.jpg&quot;</span>, GL_RGB, GL_RGB, <span class="number">0</span>);</span><br><span class="line"><span class="comment">//将图片加载到二号位</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> floorTexture = LoadImageToGPU(<span class="string">&quot;floor.png&quot;</span>, GL_RGB, GL_RGB, <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//给MVP矩阵赋值</span></span><br><span class="line">glm::mat4 model = glm::mat4(<span class="number">1.0f</span>);</span><br><span class="line">glUniformMatrix4fv(glad_glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;model&quot;</span>), <span class="number">1</span>, GL_FALSE, glm::value_ptr(model));</span><br><span class="line">glUniformMatrix4fv(glad_glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;view&quot;</span>), <span class="number">1</span>, GL_FALSE, glm::value_ptr(viewMat));</span><br><span class="line">glUniformMatrix4fv(glad_glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;projection&quot;</span>), <span class="number">1</span>, GL_FALSE, glm::value_ptr(projMat));</span><br><span class="line"></span><br><span class="line"><span class="comment">//把一号位的纹理送给纹理采样器</span></span><br><span class="line">glUniform1i(glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;texture1&quot;</span>), <span class="number">0</span>);</span><br><span class="line">glBindVertexArray(cubeVAO);<span class="comment">//在画之前绑定相应的VAO</span></span><br><span class="line">glDrawArrays(GL_TRIANGLES, <span class="number">0</span>, <span class="number">36</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//把二号位的纹理送给纹理采样器</span></span><br><span class="line">glUniform1i(glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;texture1&quot;</span>), <span class="number">1</span>);</span><br><span class="line">glBindVertexArray(planeVAO);<span class="comment">//绑定相应的VAO</span></span><br><span class="line">glDrawArrays(GL_TRIANGLES, <span class="number">0</span>, <span class="number">6</span>);</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以画出我们想要的场景，是不是对基础的操作又多了一点理解？</p>
+<img src="/2020/04/03/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/2.png" class="">
+
+<p><code>glUniform1i</code>实际上是给片段着色器里的纹理采样器一个我们刚刚加载的纹理的位置，我们可以加载很多纹理到我们指定的位置，然后把某个位置送给纹理采样器，就可以把这个位置上储存的纹理给采样器。所以加载纹理实际上是很简单的，具体看一看之前文章的纹理章节。</p>
+<p>现在我们开启深度测试并且设置舍弃的方式为GL_ALWAYS，这样在时间上后绘制的片元永远会把先绘制的片元挡住，所以你会看到地板把箱子遮住：</p>
+<img src="/2020/04/03/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/1.png" class="">
+
+<p>改为GL_LESS，他就会回到原来的状态。</p>
+<h4 id="深度值精度"><a href="#深度值精度" class="headerlink" title="深度值精度"></a>深度值精度</h4><p>深度缓冲包含了一个介于0.0和1.0之间的深度值，它将会与观察者视角所看见的场景中所有物体的z值进行比较。观察空间的z值（观察者视角所看到的空间中的物体的z值）可能是投影平截头体的<strong>近平面</strong>(Near)和<strong>远平面</strong>(Far)之间的任何值。于是我们需要一种方式来将这些观察空间的z值变换到[0, 1]范围之间，其中的一种方式就是将它们线性变换到[0, 1]范围之间，但是要想得到正确的投影，一般都要使用非线性方程来进行映射。它是与 1/z 成正比的。它做的就是在z值很小的时候提供非常高的精度，而在z值很远的时候提供更少的精度：</p>
+<img src="/2020/04/03/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/3.png" class="">
+
+
+
+<h4 id="深度缓冲可视化"><a href="#深度缓冲可视化" class="headerlink" title="深度缓冲可视化"></a>深度缓冲可视化</h4><p>片段着色器中有一个内建函数：gl_FragCoord，它的Z值包含了输出的片段的深度值，我们直接将这个深度值作为颜色输出，就可以看到场景中所有片段的深度值<code>fragColor = vec4(vec3(gl_FragCoord.z),1.0f)</code>。粗略一看全是白色：</p>
+<img src="/2020/04/03/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/5.png" class="">
+
+<p>但是当我们靠近时，颜色就会逐渐变深：</p>
+<img src="/2020/04/03/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/4.png" class="">
+
+<p>这很清楚地展示了之前说过的深度值的非线性性质。近处的物体比起远处的物体对深度值有着更大的影响。只需要移动几厘米就能让颜色从暗完全变白。现在我们来强行把非线性的转化为线性的：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 330 core                                     </span></span><br><span class="line"><span class="keyword">out</span> <span class="type">vec4</span> fragColor;</span><br><span class="line"></span><br><span class="line"><span class="type">float</span> near = <span class="number">0.1</span>; </span><br><span class="line"><span class="type">float</span> far  = <span class="number">100.0</span>; </span><br><span class="line"></span><br><span class="line"><span class="type">float</span> LinearizeDepth(<span class="type">float</span> depth) </span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">float</span> z = depth * <span class="number">2.0</span> - <span class="number">1.0</span>; <span class="comment">// back to NDC </span></span><br><span class="line">    <span class="keyword">return</span> (<span class="number">2.0</span> * near * far) / (far + near - z * (far - near));    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> main()&#123;</span><br><span class="line">	<span class="type">float</span> depth = LinearizeDepth(<span class="built_in">gl_FragCoord</span>.z) / far; </span><br><span class="line">    fragColor = <span class="type">vec4</span>(<span class="type">vec3</span>(depth), <span class="number">1.0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样一来，你再去移动视角，就会发现深度值的改变和距离是成正比的。</p>
+<h4 id="深度冲突（Z-Fighting）"><a href="#深度冲突（Z-Fighting）" class="headerlink" title="深度冲突（Z-Fighting）"></a>深度冲突（Z-Fighting）</h4><p>相信你在之前就可能发现一个奇怪的东西，当你进入箱子内部，你会发现箱子的底面和地板的纹理在不停闪烁：</p>
+<img src="/2020/04/03/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/6.png" class="">
+
+<p>这是因为两个平面或者三角形非常紧密地平行排列在一起时，深度缓冲没有足够的精度来决定两个形状哪个在前面。结果就是这两个形状不断地在切换前后顺序，特别是当你的视角移动时，会产生非常奇怪的视觉效果。</p>
+<p>这里箱子被放置在地板的同一高度上，这也就意味着箱子的底面和地板是共面的。这两个面的深度值都是一样的，所以深度测试没有办法决定应该显示哪一个。</p>
+<blockquote>
+<p>深度冲突是深度缓冲的一个常见问题，当物体在远处时效果会更明显（因为深度缓冲在z值比较大的时候有着更小的精度）</p>
+</blockquote>
+<p>这里可以采用多种方法去处理：</p>
+<h5 id="代码强行改"><a href="#代码强行改" class="headerlink" title="代码强行改"></a>代码强行改</h5><p>我们在两个会有冲突的面先后绘制的时候，使用<code>glPolygonOffset</code>函数去设置偏移量，就可以让这两个面的z有细微的差别，当前一个面绘制完成后使用这个函数，然后在下一个面的绘制时，就会采用这个函数带来的深度偏移。</p>
+<blockquote>
+<p>函数的原型为void APIENTRY glPolygonOffset (GLfloat factor, GLfloat units)，</p>
+<p>设置后深度偏移量的计算公式是Offset = DZ * factor+r * units，DZ和r是当前系统跟深度测试相关的系数，其中r是两个深度缓冲区间的最小间隔，一般情况下，factor和units都设置为1.0（或-1.0）个单位，基本上是一个比较稳妥的设定。</p>
+<p>正数表示当前的深度更深一些，显示的时候会被前景覆盖，设为负数表示深度较浅，会被绘制到屏幕上去。</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">glUniform1i(glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;texture1&quot;</span>), <span class="number">0</span>);</span><br><span class="line">glBindVertexArray(cubeVAO);</span><br><span class="line">glDrawArrays(GL_TRIANGLES, <span class="number">0</span>, <span class="number">36</span>);</span><br><span class="line"></span><br><span class="line">glEnable(GL_POLYGON_OFFSET_FILL);<span class="comment">//开启offset的使用</span></span><br><span class="line">glPolygonOffset(<span class="number">0.1f</span>, <span class="number">0.0f</span>);<span class="comment">//将后面的z变深</span></span><br><span class="line"></span><br><span class="line">glUniform1i(glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;texture1&quot;</span>), <span class="number">1</span>);</span><br><span class="line">glBindVertexArray(planeVAO);</span><br><span class="line">glDrawArrays(GL_TRIANGLES, <span class="number">0</span>, <span class="number">6</span>);</span><br><span class="line"></span><br><span class="line">glDisable(GL_POLYGON_OFFSET_FILL);<span class="comment">//绘制完后要马上关掉</span></span><br></pre></td></tr></table></figure>
+
+<p>这样就可以解决掉Z-Fighting：</p>
+<img src="/2020/04/03/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/7.png" class="">
+
+<h5 id="控制坐标"><a href="#控制坐标" class="headerlink" title="控制坐标"></a>控制坐标</h5><p>不要把多个物体摆得太靠近，就可以避免它们的一些三角形会重叠。我们将位置设置一点看不出来的偏移量，比如让箱子往上画0.01f，就可以解决这个问题。</p>
+<h5 id="更高精度的深度缓冲"><a href="#更高精度的深度缓冲" class="headerlink" title="更高精度的深度缓冲"></a>更高精度的深度缓冲</h5><p>大部分深度缓冲的精度都是24位的，但现在大部分的显卡都支持32位的深度缓冲，这将会极大地提高精度。所以，牺牲掉一些性能，你就能获得更高精度的深度测试，减少深度冲突。</p>
+<p>这些就是常用的解决方法，后面会深入去了解一下工业界或者在引擎实际开发中是用的什么方法去解决这个Z-Fighting。</p>
+<hr>
+<h3 id="模板测试"><a href="#模板测试" class="headerlink" title="模板测试"></a>模板测试</h3><p>模板测试(Stencil Test)和深度测试一样，它也可能会丢弃片段。接下来，被保留的片段会进入深度测试，它可能会丢弃更多的片段。</p>
+<p>一个模板缓冲中，每个模板值(Stencil Value)是8位的。所以每个像素/片段一共能有256种不同的模板值。模板缓冲操作允许我们在渲染片段时将模板缓冲设定为一个特定的值。通过在渲染时修改模板缓冲的内容，我们<strong>写入</strong>了模板缓冲。在同一个（或者接下来的）渲染迭代中，我们可以<strong>读取</strong>这些值，来决定丢弃还是保留某个片段。使用模板缓冲的的步骤如下：</p>
+<ul>
+<li>启用模板缓冲的写入。</li>
+<li>渲染物体，更新模板缓冲的内容。</li>
+<li>禁用模板缓冲的写入。</li>
+<li>渲染（其它）物体，这次根据模板缓冲的内容丢弃特定的片段。</li>
+</ul>
+<p>所以，通过使用模板缓冲，我们可以根据场景中已绘制的其它物体的片段，来决定是否丢弃特定的片段。</p>
+<h4 id="模板函数"><a href="#模板函数" class="headerlink" title="模板函数"></a>模板函数</h4><p>和深度测试一样，我们也可以通过使用glStencilFunc和glStencilOp这两个函数去指定什么时候该让模板缓冲通过，即什么时候片段需要被丢弃。</p>
+<p>glStencilFunc(GLenum func, GLint ref, GLuint mask)一共包含三个参数，它指定了如何让接下来的片段进行模板缓冲：</p>
+<ul>
+<li><code>func</code>：设置模板测试函数(Stencil Test Function)。这个测试函数将会应用到已储存的模板值上和glStencilFunc函数的<code>ref</code>值上。可用的选项有：<code>GL_NEVER、GL_LESS、GL_LEQUAL、GL_GREATER、GL_GEQUAL、GL_EQUAL、GL_NOTEQUAL和GL_ALWAYS。</code>它们的语义和深度缓冲的函数类似。</li>
+<li><code>ref</code>：设置了模板测试的参考值(Reference Value)。模板缓冲的内容将会与这个值进行比较。这个数值完全由你自己设置。</li>
+<li><code>mask</code>：设置一个掩码，它将会与参考值和储存的模板值在测试比较它们之前进行与(AND)运算。初始情况下所有位都为1。</li>
+</ul>
+<p>比如<code>glStencilFunc(GL_EQUAL, 1, 0xFF)</code>，它的参数会告诉OpenGL，只要一个片段的模板值等于(<code>GL_EQUAL</code>)参考值1，片段将会通过测试并被绘制，否则会被丢弃。</p>
+<p>但是glStencilFunc仅仅描述了OpenGL应该对模板缓冲内容做什么，而不是我们应该如何更新缓冲。这就需要glStencilOp这个函数。</p>
+<p>glStencilOp(GLenum sfail, GLenum dpfail, GLenum dppass)一共包含三个选项，我们能够设定每个选项应该采取的行为：</p>
+<ul>
+<li><code>sfail</code>：模板测试失败时采取的行为。</li>
+<li><code>dpfail</code>：模板测试通过，但深度测试失败时采取的行为。</li>
+<li><code>dppass</code>：模板测试和深度测试都通过时采取的行为。</li>
+</ul>
+<p>具体有哪些行为可以去看官方文档，但是有一些是很难用到的，默认情况下glStencilOp是设置为<code>(GL_KEEP, GL_KEEP, GL_KEEP)</code>，所以不论任何测试的结果是如何，模板缓冲都会保留它的值。默认的行为不会更新模板缓冲，所以如果你想写入模板缓冲的话，你需要至少对其中一个选项设置不同的值。这个一般在模板测试的开始指定一次就可以了。</p>
+<p>你还可以通过mask去设置是否对下面绘制的物体使用写入：</p>
+<p>glStencilMask(0xFF); // 每一位写入模板缓冲时都保持原样 </p>
+<p>glStencilMask(0x00); // 每一位在写入模板缓冲时都会变成0（禁用写入）</p>
+<h4 id="实战：物体轮廓"><a href="#实战：物体轮廓" class="headerlink" title="实战：物体轮廓"></a>实战：物体轮廓</h4><p>为了使用一下模板测试这个知识，我们来实战为箱子做一个轮廓效果。想一想你在打一些经营类小游戏的时候，当你选到某一个物体，它的轮廓会加深，提醒玩家选到了这个物体。</p>
+<p>为物体创建轮廓的步骤如下：</p>
+<ol>
+<li>在绘制（需要添加轮廓的）物体之前，将模板函数设置为GL_ALWAYS，每当物体的片段被渲染时，将模板缓冲更新为1。</li>
+<li>渲染物体。</li>
+<li>禁用模板写入以及深度测试。</li>
+<li>将每个物体缩放一点点。</li>
+<li>使用一个不同的片段着色器，输出一个单独的（边框）颜色。</li>
+<li>再次绘制物体，但只在它们片段的模板值不等于1时才绘制。</li>
+<li>再次启用模板写入和深度测试。</li>
+</ol>
+<p>主要的做法就是一开始我们正常绘制物体，把不想加边框的物体的模板值写入关掉，把模板值写入打开之后再画想要加边框的物体，这时我们启动模板缓冲写入，把所有要绘制的片段的模板值更新为1。然后我们再绘制放大了一点的箱子，同时把模板缓冲写入禁用，然后就只画模板缓冲值不为1的部分就可以画出边框了。</p>
+<p>所以这个画边框算法的框架看起来就像这样：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">glEnable(GL_DEPTH_TEST);</span><br><span class="line">glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);<span class="comment">//如果其中的一个测试失败了，我们什么都不做，我们仅仅保留当前储存在模板缓冲中的值。如果模板测试和深度测试都通过了，那么我们希望将储存的模板值设置为参考值，参考值能够通过</span></span><br><span class="line"></span><br><span class="line">glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT); <span class="comment">//清除上一次的缓存</span></span><br><span class="line"></span><br><span class="line">glStencilMask(<span class="number">0x00</span>); <span class="comment">// 保证我们在绘制我们不想加边框的时候不会更新模板缓冲，禁止模板写入</span></span><br><span class="line">normalShader.use();</span><br><span class="line">DrawSomething_WeDontNeedOutline();</span><br><span class="line"></span><br><span class="line">glStencilFunc(GL_ALWAYS, <span class="number">1</span>, <span class="number">0xFF</span>); <span class="comment">//所有片段总是更新缓冲为1，所有片段全部通过并且被绘制,这里不是1也可以，是你自己设置的模板值</span></span><br><span class="line">glStencilMask(<span class="number">0xFF</span>); <span class="comment">//启动模板写入</span></span><br><span class="line">DrawSomthing_WeNeedOutline();</span><br><span class="line"></span><br><span class="line"><span class="comment">//绘制大一点的物体</span></span><br><span class="line">glStencilFunc(GL_NOTEQUAL, <span class="number">1</span>, <span class="number">0xFF</span>);<span class="comment">//等于1的所有片段都被丢弃</span></span><br><span class="line">glStencilMask(<span class="number">0x00</span>); <span class="comment">//关闭缓冲写入</span></span><br><span class="line">glDisable(GL_DEPTH_TEST);</span><br><span class="line">shaderDrawOutline.use(); </span><br><span class="line">DrawSomthing_WeNeedOutline();</span><br><span class="line">glStencilMask(<span class="number">0xFF</span>);</span><br><span class="line">glEnable(GL_DEPTH_TEST);  </span><br></pre></td></tr></table></figure>
+
+
+
+<p>代码如下：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//只画边框的片段着色器</span></span><br><span class="line"><span class="meta">#version 330 core</span></span><br><span class="line"><span class="keyword">out</span> <span class="type">vec4</span> FragColor;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> main()</span><br><span class="line">&#123;</span><br><span class="line">    FragColor = <span class="type">vec4</span>(<span class="number">0.04</span>, <span class="number">0.28</span>, <span class="number">0.26</span>, <span class="number">1.0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>main：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line">Shader* myShader = <span class="keyword">new</span> Shader(<span class="string">&quot;vertexSource-Depth.vert&quot;</span>, <span class="string">&quot;fragmentSource-Depth.frag&quot;</span>);</span><br><span class="line">Shader* drawOutline = <span class="keyword">new</span> Shader(<span class="string">&quot;vertexSource-Depth.vert&quot;</span>, <span class="string">&quot;fragmentSource-Stencil.frag&quot;</span>);<span class="comment">//画边框的Shader</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//初始设置</span></span><br><span class="line">glEnable(GL_DEPTH_TEST);</span><br><span class="line">glDepthFunc(GL_LESS);</span><br><span class="line">glEnable(GL_STENCIL_TEST);</span><br><span class="line">glStencilFunc(GL_NOTEQUAL, <span class="number">1</span>, <span class="number">0xFF</span>);</span><br><span class="line">glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);<span class="comment">//提前定义好如何更新模板缓存</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//边框绘制</span></span><br><span class="line">glm::mat4 model = glm::mat4(<span class="number">1.0f</span>);</span><br><span class="line">viewMat = camera.GetViewMatrix();</span><br><span class="line">projMat = glm::perspective(glm::radians(<span class="number">45.0f</span>), <span class="number">800.0f</span> / <span class="number">600.0f</span>, <span class="number">0.1f</span>, <span class="number">100.0f</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//设置相关Uniform</span></span><br><span class="line">drawOutline-&gt;use();</span><br><span class="line">glUniformMatrix4fv(glad_glGetUniformLocation(drawOutline-&gt;ID, <span class="string">&quot;view&quot;</span>), <span class="number">1</span>, GL_FALSE, glm::value_ptr(viewMat));</span><br><span class="line">glUniformMatrix4fv(glad_glGetUniformLocation(drawOutline-&gt;ID, <span class="string">&quot;projection&quot;</span>), <span class="number">1</span>, GL_FALSE, glm::value_ptr(projMat));</span><br><span class="line">		</span><br><span class="line">myShader-&gt;use();</span><br><span class="line">glUniformMatrix4fv(glad_glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;view&quot;</span>), <span class="number">1</span>, GL_FALSE, glm::value_ptr(viewMat));</span><br><span class="line">glUniformMatrix4fv(glad_glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;projection&quot;</span>), <span class="number">1</span>, GL_FALSE, glm::value_ptr(projMat));</span><br><span class="line"></span><br><span class="line">glStencilMask(<span class="number">0x00</span>);</span><br><span class="line">glUniform1i(glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;texture1&quot;</span>), <span class="number">1</span>);</span><br><span class="line">glBindVertexArray(planeVAO);</span><br><span class="line">glUniformMatrix4fv(glad_glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;model&quot;</span>), <span class="number">1</span>, GL_FALSE, glm::value_ptr(model));</span><br><span class="line">glDrawArrays(GL_TRIANGLES, <span class="number">0</span>, <span class="number">6</span>);</span><br><span class="line"></span><br><span class="line">glStencilFunc(GL_ALWAYS, <span class="number">1</span>, <span class="number">0xFF</span>);</span><br><span class="line">glStencilMask(<span class="number">0xFF</span>);</span><br><span class="line">glUniform1i(glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;texture1&quot;</span>), <span class="number">0</span>);</span><br><span class="line">model = glm::translate(model, glm::vec3(<span class="number">-1.0f</span>, <span class="number">0.0f</span>, <span class="number">-1.0f</span>));</span><br><span class="line">glUniformMatrix4fv(glad_glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;model&quot;</span>), <span class="number">1</span>, GL_FALSE, glm::value_ptr(model));</span><br><span class="line">glBindVertexArray(cubeVAO);</span><br><span class="line">glDrawArrays(GL_TRIANGLES, <span class="number">0</span>, <span class="number">36</span>);</span><br><span class="line">model = glm::mat4(<span class="number">1.0f</span>);</span><br><span class="line">model = glm::translate(model, glm::vec3(<span class="number">2.0f</span>, <span class="number">0.0f</span>, <span class="number">0.0f</span>));</span><br><span class="line">glUniformMatrix4fv(glad_glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;model&quot;</span>), <span class="number">1</span>, GL_FALSE, glm::value_ptr(model));</span><br><span class="line">glDrawArrays(GL_TRIANGLES, <span class="number">0</span>, <span class="number">36</span>);</span><br><span class="line"></span><br><span class="line">glStencilFunc(GL_NOTEQUAL, <span class="number">1</span>, <span class="number">0xFF</span>);</span><br><span class="line">glStencilMask(<span class="number">0x00</span>);</span><br><span class="line">glDisable(GL_DEPTH_TEST);</span><br><span class="line">drawOutline-&gt;use();</span><br><span class="line"><span class="keyword">float</span> scale = <span class="number">1.1</span>;</span><br><span class="line"></span><br><span class="line">glBindVertexArray(cubeVAO);</span><br><span class="line">glUniform1i(glGetUniformLocation(myShader-&gt;ID, <span class="string">&quot;texture1&quot;</span>), <span class="number">0</span>);</span><br><span class="line">model = glm::mat4(<span class="number">1.0f</span>);</span><br><span class="line">model = glm::translate(model, glm::vec3(<span class="number">-1.0f</span>, <span class="number">0.0f</span>, <span class="number">-1.0f</span>));</span><br><span class="line">model = glm::scale(model, glm::vec3(scale, scale, scale));</span><br><span class="line">glUniformMatrix4fv(glad_glGetUniformLocation(drawOutline-&gt;ID, <span class="string">&quot;model&quot;</span>), <span class="number">1</span>, GL_FALSE, glm::value_ptr(model));</span><br><span class="line">glDrawArrays(GL_TRIANGLES, <span class="number">0</span>, <span class="number">36</span>);</span><br><span class="line"></span><br><span class="line">model = glm::mat4(<span class="number">1.0f</span>);</span><br><span class="line">model = glm::translate(model, glm::vec3(<span class="number">2.0f</span>, <span class="number">0.0f</span>, <span class="number">0.0f</span>));</span><br><span class="line">model = glm::scale(model, glm::vec3(scale, scale, scale));</span><br><span class="line">glUniformMatrix4fv(glad_glGetUniformLocation(drawOutline-&gt;ID, <span class="string">&quot;model&quot;</span>), <span class="number">1</span>, GL_FALSE, glm::value_ptr(model));</span><br><span class="line">glDrawArrays(GL_TRIANGLES, <span class="number">0</span>, <span class="number">36</span>);</span><br><span class="line">glStencilMask(<span class="number">0xFF</span>);</span><br><span class="line">glStencilFunc(GL_ALWAYS, <span class="number">0</span>, <span class="number">0xFF</span>);</span><br><span class="line">glEnable(GL_DEPTH_TEST);</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以得到画了边框的物体：</p>
+<img src="/2020/04/03/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/8.png" class="">
+
+<hr>
+<p>仔细想一想这个东西比深度测试更好玩，它可以用来实现物体边缘一些好玩的效果，比如发光、边框等等。它还可以在一个后视镜中绘制纹理，让它能够绘制到镜子形状中，或者使用一个叫做阴影体积(Shadow Volume)的模板缓冲技术渲染实时阴影。后面我在练习的时候会都做一做康康。</p>
+
+                
+            </div>
+            <hr/>
+
+            
+
+    <div class="reprint" id="reprint-statement">
+        
+            <div class="reprint__author">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-user">
+                        Author:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="/about" rel="external nofollow noreferrer">cdc</a>
+                </span>
+            </div>
+            <div class="reprint__type">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-link">
+                        Link:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="https://higashisan.github.io/2020/04/03/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/">https://higashisan.github.io/2020/04/03/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/</a>
+                </span>
+            </div>
+            <div class="reprint__notice">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-copyright">
+                        Reprint policy:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    All articles in this blog are used except for special statements
+                    <a href="https://creativecommons.org/licenses/by/4.0/deed.zh" rel="external nofollow noreferrer" target="_blank">CC BY 4.0</a>
+                    reprint polocy. If reproduced, please indicate source
+                    <a href="/about" target="_blank">cdc</a>
+                    !
+                </span>
+            </div>
+        
+    </div>
+
+    <script async defer>
+      document.addEventListener("copy", function (e) {
+        let toastHTML = '<span>Copied successfully, please follow the reprint policy of this article</span><button class="btn-flat toast-action" onclick="navToReprintStatement()" style="font-size: smaller">more</a>';
+        M.toast({html: toastHTML})
+      });
+
+      function navToReprintStatement() {
+        $("html, body").animate({scrollTop: $("#reprint-statement").offset().top - 80}, 800);
+      }
+    </script>
+
+
+
+            <div class="tag_share" style="display: block;">
+                <div class="post-meta__tag-list" style="display: inline-block;">
+                    
+                        <div class="article-tag">
+                            
+                                <a href="/tags/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95-%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/">
+                                    <span class="chip bg-color">深度测试&amp;模板测试</span>
+                                </a>
+                            
+                        </div>
+                    
+                </div>
+                <div class="post_share" style="zoom: 80%; width: fit-content; display: inline-block; float: right; margin: -0.15rem 0;">
+                    <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+<div id="article-share">
+
+    
+    <div class="social-share" data-sites="twitter,facebook,google,qq,qzone,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+    <script src="/libs/share/js/social-share.min.js"></script>
+    
+
+    
+
+</div>
+
+                </div>
+            </div>
+            
+                <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.4rem;
+        line-height: 38px;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-medium waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fas fa-times"></i></a>
+            <h4 class="reward-title">你的赏识是我前进的动力</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="/medias/reward/alipay.jpg" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="/medias/reward/wechat.png" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+
+            
+        </div>
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fas fa-chevron-left"></i>&nbsp;Previous</div>
+            <div class="card">
+                <a href="/2020/04/11/%E7%AB%8B%E6%96%B9%E4%BD%93%E8%B4%B4%E5%9B%BE/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/9.jpg" class="responsive-img" alt="立方体贴图">
+                        
+                        <span class="card-title">立方体贴图</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2020-04-11
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            cdc
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/%E7%AB%8B%E6%96%B9%E4%BD%93%E8%B4%B4%E5%9B%BE/">
+                        <span class="chip bg-color">立方体贴图</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                Next&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2020/03/27/OpenGL%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%9A%E5%85%89%E7%85%A7/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="OpenGL学习记录：光照">
+                        
+                        <span class="card-title">OpenGL学习记录：光照</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-03-27
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            cdc
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/OpenGL%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%9A%E5%85%89%E7%85%A7/">
+                        <span class="chip bg-color">OpenGL学习记录：光照</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+
+</div>
+
+
+
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFuction.js"></script>
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget card" style="background-color: white;">
+            <div class="toc-title"><i class="far fa-list-alt"></i>&nbsp;&nbsp;TOC</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fas fa-list-ul"></i>
+    </a>
+</div>
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            collapseDepth: Number('0'),
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h2, h3, h4').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).hide();
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).show();
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+
+    
+
+</main>
+
+
+
+
+    <footer class="page-footer bg-color">
+    
+        <link rel="stylesheet" href="/libs/aplayer/APlayer.min.css">
+<style>
+    .aplayer .aplayer-lrc p {
+        
+        display: none;
+        
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 16px !important;
+    }
+
+    .aplayer .aplayer-lrc p.aplayer-lrc-current {
+        
+        display: none;
+        
+        font-size: 15px;
+        color: #42b983;
+    }
+
+    
+    .aplayer.aplayer-fixed.aplayer-narrow .aplayer-body {
+        left: -66px !important;
+    }
+
+    .aplayer.aplayer-fixed.aplayer-narrow .aplayer-body:hover {
+        left: 0px !important;
+    }
+
+    
+</style>
+<div class="">
+    
+    <div class="row">
+        <meting-js class="col l8 offset-l2 m10 offset-m1 s12"
+                   server="tencent"
+                   type="playlist"
+                   id="8194788712"
+                   fixed='true'
+                   autoplay='true'
+                   theme='#42b983'
+                   loop='all'
+                   order='random'
+                   preload='auto'
+                   volume='0.7'
+                   list-folded='false'
+        >
+        </meting-js>
+    </div>
+</div>
+
+<script src="/libs/aplayer/APlayer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
+
+    
+    <div class="container row center-align" style="margin-bottom: 0px !important;">
+        <div class="col s12 m8 l8 copy-right">
+            Copyright&nbsp;&copy;
+            
+                <span id="year">2019-2021</span>
+            
+            <span id="year">2019</span>
+            <a href="/about" target="_blank">cdc</a>
+            |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>
+            |&nbsp;Theme&nbsp;<a href="https://github.com/blinkfox/hexo-theme-matery" target="_blank">Matery</a>
+            <br>
+            
+            
+            
+            
+            
+            
+            <span id="busuanzi_container_site_pv">
+                |&nbsp;<i class="far fa-eye"></i>&nbsp;总访问量:&nbsp;<span id="busuanzi_value_site_pv"
+                    class="white-color"></span>&nbsp;次
+            </span>
+            
+            
+            <span id="busuanzi_container_site_uv">
+                |&nbsp;<i class="fas fa-users"></i>&nbsp;总访问人数:&nbsp;<span id="busuanzi_value_site_uv"
+                    class="white-color"></span>&nbsp;人
+            </span>
+            
+            <br>
+            
+            <br>
+            
+        </div>
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/blinkfox" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fab fa-github"></i>
+    </a>
+
+
+
+    <a href="mailto:2923642767@qq.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fas fa-envelope-open"></i>
+    </a>
+
+
+
+
+
+
+
+    <a href="tencent://AddContact/?fromId=50&fromSubId=1&subcmd=all&uin=2923642767" class="tooltipped" target="_blank" data-tooltip="QQ联系我: 2923642767" data-position="top" data-delay="50">
+        <i class="fab fa-qq"></i>
+    </a>
+
+
+
+
+
+
+
+    <a href="/atom.xml" class="tooltipped" target="_blank" data-tooltip="RSS 订阅" data-position="top" data-delay="50">
+        <i class="fas fa-rss"></i>
+    </a>
+
+</div>
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+
+    <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fas fa-search"></i>&nbsp;&nbsp;Search</span>
+            <input type="search" id="searchInput" name="s" placeholder="Please enter a search keyword"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(function () {
+    var searchFunc = function (path, search_id, content_id) {
+        'use strict';
+        $.ajax({
+            url: path,
+            dataType: "xml",
+            success: function (xmlResponse) {
+                // get the contents from search data
+                var datas = $("entry", xmlResponse).map(function () {
+                    return {
+                        title: $("title", this).text(),
+                        content: $("content", this).text(),
+                        url: $("url", this).text()
+                    };
+                }).get();
+                var $input = document.getElementById(search_id);
+                var $resultContent = document.getElementById(content_id);
+                $input.addEventListener('input', function () {
+                    var str = '<ul class=\"search-result-list\">';
+                    var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                    $resultContent.innerHTML = "";
+                    if (this.value.trim().length <= 0) {
+                        return;
+                    }
+                    // perform local searching
+                    datas.forEach(function (data) {
+                        var isMatch = true;
+                        var data_title = data.title.trim().toLowerCase();
+                        var data_content = data.content.trim().replace(/<[^>]+>/g, "").toLowerCase();
+                        var data_url = data.url;
+                        data_url = data_url.indexOf('/') === 0 ? data.url : '/' + data_url;
+                        var index_title = -1;
+                        var index_content = -1;
+                        var first_occur = -1;
+                        // only match artiles with not empty titles and contents
+                        if (data_title !== '' && data_content !== '') {
+                            keywords.forEach(function (keyword, i) {
+                                index_title = data_title.indexOf(keyword);
+                                index_content = data_content.indexOf(keyword);
+                                if (index_title < 0 && index_content < 0) {
+                                    isMatch = false;
+                                } else {
+                                    if (index_content < 0) {
+                                        index_content = 0;
+                                    }
+                                    if (i === 0) {
+                                        first_occur = index_content;
+                                    }
+                                }
+                            });
+                        }
+                        // show search results
+                        if (isMatch) {
+                            str += "<li><a href='" + data_url + "' class='search-result-title'>" + data_title + "</a>";
+                            var content = data.content.trim().replace(/<[^>]+>/g, "");
+                            if (first_occur >= 0) {
+                                // cut out 100 characters
+                                var start = first_occur - 20;
+                                var end = first_occur + 80;
+                                if (start < 0) {
+                                    start = 0;
+                                }
+                                if (start === 0) {
+                                    end = 100;
+                                }
+                                if (end > content.length) {
+                                    end = content.length;
+                                }
+                                var match_content = content.substr(start, end);
+                                // highlight all keywords
+                                keywords.forEach(function (keyword) {
+                                    var regS = new RegExp(keyword, "gi");
+                                    match_content = match_content.replace(regS, "<em class=\"search-keyword\">" + keyword + "</em>");
+                                });
+
+                                str += "<p class=\"search-result\">" + match_content + "...</p>"
+                            }
+                            str += "</li>";
+                        }
+                    });
+                    str += "</ul>";
+                    $resultContent.innerHTML = str;
+                });
+            }
+        });
+    };
+
+    searchFunc('/search.xml', 'searchInput', 'searchResult');
+});
+</script>
+
+    <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
+
+
+    <script src="/libs/materialize/materialize.min.js"></script>
+    <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+    <script src="/libs/aos/aos.js"></script>
+    <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+    <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+    <script src="/js/matery.js"></script>
+
+    <!-- Baidu Analytics -->
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    <script src="/libs/others/clicklove.js" async="async"></script>
+    
+    
+    <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+    
+
+	
+    
+
+    
+
+    
+
+    
+    <script src="/libs/instantpage/instantpage.js" type="module"></script>
+    
+
+</body>
+
+</html>

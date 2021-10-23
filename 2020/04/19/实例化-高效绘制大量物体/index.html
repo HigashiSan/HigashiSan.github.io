@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Ray Marching, YoKuYou">
+    <meta name="keywords" content="实例化(高效绘制大量物体), YoKuYou">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>Ray Marching | YoKuYou</title>
+    <title>实例化(高效绘制大量物体) | YoKuYou</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -310,12 +310,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/11.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/14.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Ray Marching</h1>
+                    <h1 class="description center-align post-title">实例化(高效绘制大量物体)</h1>
                 </div>
             </div>
         </div>
@@ -431,8 +431,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/Ray-Marching-Shadow/">
-                                <span class="chip bg-color">Ray Marching Shadow</span>
+                            <a href="/tags/%E5%AE%9E%E4%BE%8B%E5%8C%96/">
+                                <span class="chip bg-color">实例化</span>
                             </a>
                         
                     </div>
@@ -447,7 +447,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>Publish Date:&nbsp;&nbsp;
-                    2021-10-06
+                    2020-04-19
                 </div>
                 
 
@@ -468,70 +468,33 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h3 id="Ray-Marching"><a href="#Ray-Marching" class="headerlink" title="Ray Marching"></a>Ray Marching</h3><p>思想就是光线前进，从摄像机到屏幕的一个像素发射一条射线，它以一定的步长前进，直到与物体发生相交，然后就计算这个像素的颜色。为了得到从摄像机到屏幕上像素的所有射线，要用到Camera Frustum。我们需要计算出视锥体四条棱对应的四个方向向量，raymarching实际做的也是后处理，把图像渲染到指定的Quad上，它的四个顶点就对应了我们求出来的四条视锥体向量，射线的方向就是摄像机到这个平面上某一点的向量，它是这四个向量的线性组合。</p>
-<p>求这个Camera Frustum的过程比较简单，求出来之后把它存在一个矩阵里面：</p>
-<img src="/2021/10/06/Ray-Marching/3.png" class="">
+                <h3 id="实例化"><a href="#实例化" class="headerlink" title="实例化"></a>实例化</h3><p>在之前我们绘制多个物体都是用for循环去实现，在每个循环里面单独绑定VAO，但是这样的做法会特别消耗性能。使用glDrawArrays或glDrawElements函数告诉GPU去绘制顶点数据会消耗更多的性能，因为OpenGL在绘制顶点数据之前需要做很多准备工作（比如告诉GPU该从哪个缓冲读取数据，从哪寻找顶点属性，而且这些命令都是在相对缓慢的CPU到GPU总线上进行的。所以，即便渲染顶点非常快，命令GPU去渲染就会变得很慢。</p>
+<p>实例化就是把数据一次性地发送给GPU，然后只使用一个绘制函数来绘制所有物体，这样可以避免CPU与GPU之间的过多通信，使用实例化渲染，只需要将glDrawArrays和glDrawElements的渲染调用分别改为glDrawArraysInstanced和glDrawElementsInstanced。这些渲染函数的<strong>实例化</strong>版本需要一个额外的参数：实例数量(Instance Count)，它能够设置我们需要渲染的实例个数。这样我们只需要将必须的数据发送到GPU一次，然后使用一次函数调用告诉GPU它应该如何绘制这些实例。GPU将会直接渲染这些实例，而不用不断地与CPU进行通信，从而节省了很多性能。</p>
+<p>而为了让每次绘制的物体的位置可以被我们调整，GLSL在顶点着色器中嵌入了一个内建变量：gl_InstanceID。在使用实例化渲染调用时，gl_InstanceID会从0开始，在每个实例被渲染时递增1。因为每个实例都有唯一的ID，我们可以建立一个数组，将ID与位置值对应起来，将每个实例放置在世界的不同位置。</p>
+<p>为了体验这个方法，我们去渲染很多个四边形试试。</p>
+<p>首先复制一下四边形的顶点和颜色数据：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> quadVertices[] = &#123;</span><br><span class="line">    <span class="comment">// 位置          // 颜色</span></span><br><span class="line">    <span class="number">-0.05f</span>,  <span class="number">0.05f</span>,  <span class="number">1.0f</span>, <span class="number">0.0f</span>, <span class="number">0.0f</span>,</span><br><span class="line">     <span class="number">0.05f</span>, <span class="number">-0.05f</span>,  <span class="number">0.0f</span>, <span class="number">1.0f</span>, <span class="number">0.0f</span>,</span><br><span class="line">    <span class="number">-0.05f</span>, <span class="number">-0.05f</span>,  <span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>,</span><br><span class="line"></span><br><span class="line">    <span class="number">-0.05f</span>,  <span class="number">0.05f</span>,  <span class="number">1.0f</span>, <span class="number">0.0f</span>, <span class="number">0.0f</span>,</span><br><span class="line">     <span class="number">0.05f</span>, <span class="number">-0.05f</span>,  <span class="number">0.0f</span>, <span class="number">1.0f</span>, <span class="number">0.0f</span>,   </span><br><span class="line">     <span class="number">0.05f</span>,  <span class="number">0.05f</span>,  <span class="number">0.0f</span>, <span class="number">1.0f</span>, <span class="number">1.0f</span>                   </span><br><span class="line">&#125;;  </span><br></pre></td></tr></table></figure>
 
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> Matrix4x4 <span class="title">CamFrustum</span>(<span class="params">Camera cam</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        Matrix4x4 frustum = Matrix4x4.identity;</span><br><span class="line">        <span class="built_in">float</span> halfHeight = Mathf.Tan((cam.fieldOfView * <span class="number">0.5f</span>) * Mathf.Deg2Rad);</span><br><span class="line"></span><br><span class="line">        Vector3 goUp = Vector3.up * halfHeight;</span><br><span class="line">        Vector3 goRight = Vector3.right * halfHeight * cam.aspect;</span><br><span class="line"></span><br><span class="line">        Vector3 TL = (-Vector3.forward - goRight + goUp);</span><br><span class="line">        Vector3 TR = (-Vector3.forward + goRight + goUp);</span><br><span class="line">        Vector3 BR = (-Vector3.forward + goRight - goUp);</span><br><span class="line">        Vector3 BL = (-Vector3.forward - goRight - goUp);</span><br><span class="line"></span><br><span class="line">        frustum.SetRow(<span class="number">0</span>, TL);</span><br><span class="line">        frustum.SetRow(<span class="number">1</span>, TR);</span><br><span class="line">        frustum.SetRow(<span class="number">2</span>, BR);</span><br><span class="line">        frustum.SetRow(<span class="number">3</span>, BL);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> frustum;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>顶点着色器&amp;片段着色器：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 330 core 								</span></span><br><span class="line"><span class="keyword">layout</span> (<span class="keyword">location</span> = <span class="number">0</span>) <span class="keyword">in</span> <span class="type">vec2</span> aPos;</span><br><span class="line"><span class="keyword">layout</span> (<span class="keyword">location</span> = <span class="number">1</span>) <span class="keyword">in</span> <span class="type">vec3</span> aColor;</span><br><span class="line"><span class="keyword">layout</span> (<span class="keyword">location</span> = <span class="number">2</span>) <span class="keyword">in</span> <span class="type">vec2</span> aOffset;<span class="comment">//实例化数组</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">out</span> <span class="type">vec3</span> color;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> main()&#123;</span><br><span class="line">	color = aColor;</span><br><span class="line">	<span class="built_in">gl_Position</span> = <span class="type">vec4</span>(aPos + aOffset, <span class="number">0.0</span>, <span class="number">1.0</span>);<span class="comment">//直接使用offset属性在每次绘制的时候改变四边形位置</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#version 330 core</span></span><br><span class="line"><span class="keyword">out</span> <span class="type">vec4</span> FragColor;</span><br><span class="line"></span><br><span class="line"><span class="keyword">in</span> <span class="type">vec3</span> fColor;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> main()</span><br><span class="line">&#123;</span><br><span class="line">    FragColor = <span class="type">vec4</span>(fColor, <span class="number">1.0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>我们根据像素的位置选择对应的向量，经过插值后传给片元着色器就能得到射线的方向:</p>
-<img src="/2021/10/06/Ray-Marching/5.png" class="">
+<p>首先，我们要去设置偏移量数组的值：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">glm::vec2 translations[<span class="number">100</span>];</span><br><span class="line"><span class="keyword">int</span> index = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">float</span> offset = <span class="number">0.1f</span>;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> y = <span class="number">-10</span>; y &lt; <span class="number">10</span>; y += <span class="number">2</span>)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> x = <span class="number">-10</span>; x &lt; <span class="number">10</span>; x += <span class="number">2</span>)</span><br><span class="line">    &#123;</span><br><span class="line">    	glm::vec2 translation;</span><br><span class="line"> 		translation.x = (<span class="keyword">float</span>)x / <span class="number">10.0f</span> + offset;</span><br><span class="line">   		translation.y = (<span class="keyword">float</span>)y / <span class="number">10.0f</span> + offset;</span><br><span class="line">    	translations[index++] = translation;</span><br><span class="line"> 	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<p>然后把偏移量存到buffer中：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GLuint instanceVBO;</span><br><span class="line">glGenBuffers(<span class="number">1</span>, &amp;instanceVBO);</span><br><span class="line">glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);</span><br><span class="line">glBufferData(GL_ARRAY_BUFFER, <span class="keyword">sizeof</span>(glm::vec2) * <span class="number">100</span>, &amp;translations[<span class="number">0</span>], GL_STATIC_DRAW);</span><br></pre></td></tr></table></figure>
 
+<p>最后去设置所有的VAO：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">GLuint quadVAO, quadVBO;</span><br><span class="line">glGenVertexArrays(<span class="number">1</span>, &amp;quadVAO);</span><br><span class="line">glGenBuffers(<span class="number">1</span>, &amp;quadVBO);</span><br><span class="line">glBindVertexArray(quadVAO);</span><br><span class="line">glBindBuffer(GL_ARRAY_BUFFER, quadVBO);<span class="comment">//后面解析quadVBO里面的数据</span></span><br><span class="line">glBufferData(GL_ARRAY_BUFFER, <span class="keyword">sizeof</span>(quadVertices), quadVertices, GL_STATIC_DRAW);</span><br><span class="line"></span><br><span class="line">glEnableVertexAttribArray(<span class="number">0</span>);<span class="comment">//存位置</span></span><br><span class="line">glVertexAttribPointer(<span class="number">0</span>, <span class="number">2</span>, GL_FLOAT, GL_FALSE, <span class="number">5</span> * <span class="keyword">sizeof</span>(<span class="keyword">float</span>), (<span class="keyword">void</span>*)<span class="number">0</span>);</span><br><span class="line">glEnableVertexAttribArray(<span class="number">1</span>);<span class="comment">//存颜色</span></span><br><span class="line">glVertexAttribPointer(<span class="number">1</span>, <span class="number">3</span>, GL_FLOAT, GL_FALSE, <span class="number">5</span> * <span class="keyword">sizeof</span>(<span class="keyword">float</span>), (<span class="keyword">void</span>*)(<span class="number">2</span> * <span class="keyword">sizeof</span>(<span class="keyword">float</span>)));</span><br><span class="line"></span><br><span class="line">glEnableVertexAttribArray(<span class="number">2</span>);<span class="comment">//存offset</span></span><br><span class="line">glBindBuffer(GL_ARRAY_BUFFER, instanceVBO); <span class="comment">//接下来解析instanceVBO里面的数据</span></span><br><span class="line">glVertexAttribPointer(<span class="number">2</span>, <span class="number">2</span>, GL_FLOAT, GL_FALSE, <span class="number">2</span> * <span class="keyword">sizeof</span>(<span class="keyword">float</span>), (<span class="keyword">void</span>*)<span class="number">0</span>);</span><br><span class="line">glVertexAttribDivisor(<span class="number">2</span>, <span class="number">1</span>); <span class="comment">//告诉OpenGL该什么时候更新顶点属性的内容至新一组数据。它的第一个参数是顶点属性的位置，第二个参数是属性除数。默认情况下是0，告诉OpenGL我们需要在顶点着色器的每次迭代时更新顶点属性。将它设置为1时，是在渲染一个新实例的时候更新顶点属性。这里的意思就是位于二号位的顶点属性每画出一个实例就要更新一次。</span></span><br></pre></td></tr></table></figure>
 
-<p>物体表面的定义则是通过Signed Distance Functions实现，它可以告诉光线走到某一点时离它最近的表面的距离。</p>
-<img src="/2021/10/06/Ray-Marching/1.png" class="">
+<p>最后画：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">myShader-&gt;use();</span><br><span class="line">glBindVertexArray(quadVAO);</span><br><span class="line">glDrawArraysInstanced(GL_TRIANGLES, <span class="number">0</span>, <span class="number">6</span>, <span class="number">100</span>);</span><br></pre></td></tr></table></figure>
 
-<p>比如对一个球面的定义：</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">float</span> <span class="title">sdSphere</span>(<span class="params">float3 p, <span class="built_in">float</span> s</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> length(p) - s;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>输入此时光线前进到的位置p，以及球的半径，当返回0时，就说明光线刚好与这个球面相交，所以我们可以认为当返回的值小于一个特别小的值的时候，就打到了这个球，所以这时就去做shading，就可以画出我们想象的然而并不存在的球。</p>
-<p>对于两个或者多个物体，我们还可以把他们合并，或者取共同部分，比如：</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Union</span></span><br><span class="line"><span class="function"><span class="built_in">float</span> <span class="title">opU</span>(<span class="params"><span class="built_in">float</span> d1, <span class="built_in">float</span> d2</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> min(d1, d2);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Subtraction</span></span><br><span class="line"><span class="function"><span class="built_in">float</span> <span class="title">opS</span>(<span class="params"><span class="built_in">float</span> d1, <span class="built_in">float</span> d2</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> max(-d1, d2);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Intersection</span></span><br><span class="line"><span class="function"><span class="built_in">float</span> <span class="title">opI</span>(<span class="params"><span class="built_in">float</span> d1, <span class="built_in">float</span> d2</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> max(d1, d2);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<img src="/2021/10/06/Ray-Marching/2.png" class="">
-
-
-
-<h3 id="着色"><a href="#着色" class="headerlink" title="着色"></a>着色</h3><p>为了让物体之间有正常的遮挡关系，我们要获取深度值，深度值直接与光线方向相乘就能得到深度。</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> depth = LinearEyeDepth(tex2D(_CameraDepthTexture, i.uv).r);</span><br><span class="line"><span class="comment">//得到视角空间下的深度值</span></span><br><span class="line">depth *= <span class="built_in">length</span>(i.ray);<span class="comment">//这个像素的深度,在后续raymarching的过程中，如果射线超过了这个深度，说明后面的东西被挡住了，就不用射线再继续前进获取着色</span></span><br><span class="line"></span><br><span class="line">fixed3 col = tex2D(_MainTex, i.uv);</span><br><span class="line">float3 rayDir = <span class="built_in">normalize</span>(i.ray.xyz);</span><br><span class="line">float3 rayOrigin = _WorldSpaceCameraPos;</span><br><span class="line">fixed4 result = RayMarching(rayOrigin, rayDir, depth);</span><br></pre></td></tr></table></figure>
-
-<p>Raymarching部分是重中之重，我们首先需要定义的是射线最远能到达的位置，也就是射线能够循环前进的次数。一根射线的定义是：</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">float3 p = ro + rd * t;</span><br></pre></td></tr></table></figure>
-
-<p>每一次都用SDF去求最近的距离，如果最近的距离小于我们设定的最小值，那就去做着色，如果大于，那就让射线继续向前移动</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">fixed4 RayMarching(float3 ro, float3 rd, <span class="type">float</span> depth)</span><br><span class="line">&#123;</span><br><span class="line">	fixed4 result = fixed4(<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">const</span> <span class="type">int</span> maxIteration = _MaxIterations;</span><br><span class="line">	<span class="type">float</span> t = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; maxIteration; i++)</span><br><span class="line">	&#123;</span><br><span class="line">        <span class="comment">//只判断深度这个深度前面的</span></span><br><span class="line">		<span class="keyword">if</span>(t &gt; _maxDst || t &gt;= depth)</span><br><span class="line">		&#123;</span><br><span class="line">			result = fixed4(<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		float3 p = ro + rd * t;</span><br><span class="line">		<span class="type">float</span> d = DstField(p);</span><br><span class="line">		<span class="keyword">if</span>(d &lt; _Accuracy)</span><br><span class="line">		&#123;</span><br><span class="line">			float3 n = GetNormal(p);<span class="comment">//近似方法获取这个点的法向量</span></span><br><span class="line">			float3 s = Shading(p, n);</span><br><span class="line"></span><br><span class="line">			result = fixed4(s,<span class="number">1</span>);</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		t += d;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>用梯度的方法去近似求一个点的法向量：</p>
-<img src="/2021/10/06/Ray-Marching/4.png" class="">
-
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">float3 <span class="title">GetNormal</span>(<span class="params">float3 p</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">const</span> <span class="built_in">float</span> offset = <span class="number">0.0001</span>;</span><br><span class="line">	float3 normal = float3(</span><br><span class="line">	DstField(float3(p.x + offset, p.y, p.z)) - DstField(float3(p.x - offset, p.y, p.z)),</span><br><span class="line">	DstField(float3(p.x, p.y + offset, p.z)) - DstField(float3(p.x, p.y - offset, p.z)),</span><br><span class="line">	DstField(float3(p.x, p.y, p.z + offset)) - DstField(float3(p.x, p.y, p.z - offset)));</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> normalize(normal);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>就可以用实例化的方法画出这100个四边形：</p>
+<img src="/2020/04/19/%E5%AE%9E%E4%BE%8B%E5%8C%96-%E9%AB%98%E6%95%88%E7%BB%98%E5%88%B6%E5%A4%A7%E9%87%8F%E7%89%A9%E4%BD%93/1.png" class="">
 
 
 
-<h3 id="Shading"><a href="#Shading" class="headerlink" title="Shading"></a>Shading</h3><p>在shading里面我们需要去做光照、阴影、环境光遮蔽的计算。</p>
-<h4 id="阴影"><a href="#阴影" class="headerlink" title="阴影"></a>阴影</h4><p>射线假如打到了一个点，那么以这个点为原点向灯的方向进步，如果又打到了另外一个物体，那么这个点就是阴影。我们可以用一个最远和最近距离去决定这个阴影射线的长度，为了避免生成硬阴影，需要用一个参数去衡量一个点到阴影范围的远近，并且这个参数的值在阴影部分一定要为0，或者接近0。所以我们用 h / t这个参数，t是射线已经前进了的距离，h是通过SDF求得的距离，当它很小时，说明阴影射线打到了一个物体，这个  h / t 也就趋近0，那么它黑色的程度就应该越大。</p>
-<p>对于每一根射线，我们都在一个for循环里找到这个参数的最小值，它衡量了这个点的阴影程度：</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> SoftShadow(float3 ro, float3 rd, <span class="type">float</span> mint, <span class="type">float</span> maxt, <span class="type">float</span> k)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">float</span> result = <span class="number">1.0</span>;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">float</span> t = mint; t &lt; maxt; )</span><br><span class="line">	&#123;	<span class="comment">//找到这个阴影射线的阴影范围内的阴影程度最小值</span></span><br><span class="line">		<span class="type">float</span> h = DstField(ro + rd * t);</span><br><span class="line">		<span class="keyword">if</span>(h &lt; <span class="number">0.001</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="number">0.0</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		result = <span class="built_in">min</span>(result, k * h / t);</span><br><span class="line">		t += h;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="AO-环境光遮蔽"><a href="#AO-环境光遮蔽" class="headerlink" title="AO 环境光遮蔽"></a>AO 环境光遮蔽</h4><p>AO主要用来描绘物体和物体相交或靠近的时候遮挡周围漫反射光线的效果，开了AO画面会变得暗一些，特别是一些物体凹进去或者相交的地方，会让投射出的阴影看起来更真实。这个的实现就是用法线进步去判断附近是否有物体，附近的物体离得越近，他就越“黑”。</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> AmbientOcclusion(float3 p, float3 n)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">float</span> <span class="built_in">step</span> = _AoStepSize;</span><br><span class="line">	<span class="type">float</span> ao = <span class="number">0.0</span>;</span><br><span class="line">	<span class="type">float</span> dist;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">1</span>; i &lt;= _AoIterations; i++ )</span><br><span class="line">	&#123;</span><br><span class="line">		dist = <span class="built_in">step</span> * i;</span><br><span class="line">		ao += <span class="built_in">max</span>(<span class="number">0.0</span>, (dist - DstField(p + n * dist)) / dist);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> (<span class="number">1.0</span> - ao * _AoIntensity);<span class="comment">//返回一个0~1的值，其实就是遮蔽的程度</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>最终的shading就是把上面的到参数和颜色相乘：</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">float3 Shading(float3 p, float3 n)</span><br><span class="line">&#123;</span><br><span class="line">    float3 result;</span><br><span class="line"></span><br><span class="line">    float3 color = _MainColor.rgb;</span><br><span class="line">    float3 light = (_LightCol * <span class="built_in">dot</span>(-_LightDir, n) * <span class="number">0.5</span> + <span class="number">0.5</span>) * 	_LightIntensity;</span><br><span class="line"></span><br><span class="line">    <span class="type">float</span> shadow = SoftShadow(p, -_LightDir, _ShadowDst.x, _ShadowDst.y, _ShadowSoft) * <span class="number">0.5</span> + <span class="number">0.5</span>;</span><br><span class="line">    shadow = <span class="built_in">max</span>(<span class="number">0.0</span>, <span class="built_in">pow</span>(shadow, _ShadowIntensity));</span><br><span class="line"></span><br><span class="line">    <span class="type">float</span> ao = AmbientOcclusion(p, n);</span><br><span class="line"></span><br><span class="line">    result = color * light * shadow * ao;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-<p>最后用实现的效果：</p>
-<img src="/2021/10/06/Ray-Marching/6.png" class="">
-
-
-
-<p>附：</p>
-<p><a target="_blank" rel="noopener" href="https://www.iquilezles.org/www/articles/distfunctions/distfunctions.htm">https://www.iquilezles.org/www/articles/distfunctions/distfunctions.htm</a></p>
-<p>一个有各种SDF函数和各种组合集合体方式的网站</p>
 
                 
             </div>
@@ -558,7 +521,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://higashisan.github.io/2021/10/06/Ray-Marching/">https://higashisan.github.io/2021/10/06/Ray-Marching/</a>
+                    <a href="https://higashisan.github.io/2020/04/19/%E5%AE%9E%E4%BE%8B%E5%8C%96-%E9%AB%98%E6%95%88%E7%BB%98%E5%88%B6%E5%A4%A7%E9%87%8F%E7%89%A9%E4%BD%93/">https://higashisan.github.io/2020/04/19/%E5%AE%9E%E4%BE%8B%E5%8C%96-%E9%AB%98%E6%95%88%E7%BB%98%E5%88%B6%E5%A4%A7%E9%87%8F%E7%89%A9%E4%BD%93/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -596,8 +559,8 @@
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/Ray-Marching-Shadow/">
-                                    <span class="chip bg-color">Ray Marching Shadow</span>
+                                <a href="/tags/%E5%AE%9E%E4%BE%8B%E5%8C%96/">
+                                    <span class="chip bg-color">实例化</span>
                                 </a>
                             
                         </div>
@@ -771,13 +734,13 @@
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;Previous</div>
             <div class="card">
-                <a href="/2021/10/08/%E7%A8%8B%E5%BA%8F%E5%8C%96%E7%94%9F%E6%88%90%E5%BC%80%E6%94%BE%E4%B8%96%E7%95%8C%E6%97%A0%E5%B0%BD%E5%9C%B0%E5%BD%A2/">
+                <a href="/2020/04/20/%E6%B7%B7%E5%90%88-%E9%9D%A2%E5%89%94%E9%99%A4/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/17.jpg" class="responsive-img" alt="程序化生成开放世界地形一">
+                        <img src="/medias/featureimages/5.jpg" class="responsive-img" alt="混合&amp;面剔除">
                         
-                        <span class="card-title">程序化生成开放世界地形一</span>
+                        <span class="card-title">混合&amp;面剔除</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -788,7 +751,7 @@
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2021-10-08
+                            <i class="far fa-clock fa-fw icon-date"></i>2020-04-20
                         </span>
                         <span class="publish-author">
                             
@@ -801,8 +764,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/%E7%A8%8B%E5%BA%8F%E5%8C%96%E7%94%9F%E6%88%90/">
-                        <span class="chip bg-color">程序化生成</span>
+                    <a href="/tags/%E6%B7%B7%E5%90%88-%E9%9D%A2%E5%89%94%E9%99%A4/">
+                        <span class="chip bg-color">混合&amp;面剔除</span>
                     </a>
                     
                 </div>
@@ -816,13 +779,13 @@
                 Next&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2021/09/10/%E5%8F%AF%E4%BA%A4%E4%BA%92%E9%9B%AA%E5%9C%B0%E8%BD%A8%E8%BF%B9%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/">
+                <a href="/2020/04/11/%E7%AB%8B%E6%96%B9%E4%BD%93%E8%B4%B4%E5%9B%BE/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="可交互雪地轨迹实现思路">
+                        <img src="/medias/featureimages/9.jpg" class="responsive-img" alt="立方体贴图">
                         
-                        <span class="card-title">可交互雪地轨迹实现思路</span>
+                        <span class="card-title">立方体贴图</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -833,7 +796,7 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2021-09-10
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-04-11
                             </span>
                         <span class="publish-author">
                             
@@ -846,8 +809,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/RenderTexture%E3%80%81%E9%9B%AA%E5%9C%B0%E4%BA%A4%E4%BA%92/">
-                        <span class="chip bg-color">RenderTexture、雪地交互</span>
+                    <a href="/tags/%E7%AB%8B%E6%96%B9%E4%BD%93%E8%B4%B4%E5%9B%BE/">
+                        <span class="chip bg-color">立方体贴图</span>
                     </a>
                     
                 </div>

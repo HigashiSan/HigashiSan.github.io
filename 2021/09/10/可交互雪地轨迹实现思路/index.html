@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Ray Marching, YoKuYou">
+    <meta name="keywords" content="可交互雪地轨迹实现思路, YoKuYou">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>Ray Marching | YoKuYou</title>
+    <title>可交互雪地轨迹实现思路 | YoKuYou</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -310,12 +310,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/11.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/8.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Ray Marching</h1>
+                    <h1 class="description center-align post-title">可交互雪地轨迹实现思路</h1>
                 </div>
             </div>
         </div>
@@ -431,8 +431,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/Ray-Marching-Shadow/">
-                                <span class="chip bg-color">Ray Marching Shadow</span>
+                            <a href="/tags/RenderTexture%E3%80%81%E9%9B%AA%E5%9C%B0%E4%BA%A4%E4%BA%92/">
+                                <span class="chip bg-color">RenderTexture、雪地交互</span>
                             </a>
                         
                     </div>
@@ -447,7 +447,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>Publish Date:&nbsp;&nbsp;
-                    2021-10-06
+                    2021-09-10
                 </div>
                 
 
@@ -468,70 +468,39 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h3 id="Ray-Marching"><a href="#Ray-Marching" class="headerlink" title="Ray Marching"></a>Ray Marching</h3><p>思想就是光线前进，从摄像机到屏幕的一个像素发射一条射线，它以一定的步长前进，直到与物体发生相交，然后就计算这个像素的颜色。为了得到从摄像机到屏幕上像素的所有射线，要用到Camera Frustum。我们需要计算出视锥体四条棱对应的四个方向向量，raymarching实际做的也是后处理，把图像渲染到指定的Quad上，它的四个顶点就对应了我们求出来的四条视锥体向量，射线的方向就是摄像机到这个平面上某一点的向量，它是这四个向量的线性组合。</p>
-<p>求这个Camera Frustum的过程比较简单，求出来之后把它存在一个矩阵里面：</p>
-<img src="/2021/10/06/Ray-Marching/3.png" class="">
+                <h3 id="Unity雪地轨迹实现"><a href="#Unity雪地轨迹实现" class="headerlink" title="Unity雪地轨迹实现"></a>Unity雪地轨迹实现</h3><p>暑假看了黑神话悟空新发的演示视频，感觉它的雪地做得和大表哥的真的有得一拼了，最近查了查资料，做了一个没有添加粒子的雪地交互轨迹效果，大部分雪地交互轨迹制作应该也是这种方法，不过他们应该在碰撞体和雪接触时按照某种算法去设置了雪粒子飞溅的效果。</p>
+<p>对于轨迹的实现，主要是用RenderTexture去做，我们首先创建一个texture，它用来记录轨迹，挂有碰撞体的物体与雪面发生碰撞时，我们在这个texture上的对应位置画上一个颜色，然后在雪地的细分着色器里对这个texture采样，有颜色的就是轨迹，然后用这个数值对地形的高度进行变化，就可以得到类似雪被压过的效果。</p>
+<h4 id="C-部分"><a href="#C-部分" class="headerlink" title="C#部分"></a>C#部分</h4><p>为了测试我使用了一个小车模型，所以要找到车的四个轮子，然后与雪地做碰撞的计算。</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Shader drawShader;<span class="comment">//画轨迹的shader</span></span><br><span class="line"><span class="keyword">public</span> GameObject snowTerrain;</span><br><span class="line"><span class="keyword">public</span> Transform[] wheels;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> Material drawMaterial;</span><br><span class="line"><span class="keyword">private</span> Material snowMaterial;<span class="comment">//雪地的material</span></span><br><span class="line"><span class="keyword">private</span> RenderTexture splatMap;</span><br><span class="line"></span><br><span class="line">RaycastHit groundHit;</span><br><span class="line"><span class="keyword">private</span> <span class="built_in">int</span> layerMask;</span><br><span class="line"></span><br><span class="line">snowMaterial = snowTerrain.GetComponent&lt;MeshRenderer&gt;().material;</span><br><span class="line">snowMaterial.SetTexture(<span class="string">&quot;_Splat&quot;</span>, splatMap = <span class="keyword">new</span> RenderTexture (<span class="number">1024</span>,<span class="number">1024</span>,<span class="number">0</span>,RenderTextureFormat.ARGBFloat));<span class="comment">//这就是那个画轨迹的Texture</span></span><br></pre></td></tr></table></figure>
 
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> Matrix4x4 <span class="title">CamFrustum</span>(<span class="params">Camera cam</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        Matrix4x4 frustum = Matrix4x4.identity;</span><br><span class="line">        <span class="built_in">float</span> halfHeight = Mathf.Tan((cam.fieldOfView * <span class="number">0.5f</span>) * Mathf.Deg2Rad);</span><br><span class="line"></span><br><span class="line">        Vector3 goUp = Vector3.up * halfHeight;</span><br><span class="line">        Vector3 goRight = Vector3.right * halfHeight * cam.aspect;</span><br><span class="line"></span><br><span class="line">        Vector3 TL = (-Vector3.forward - goRight + goUp);</span><br><span class="line">        Vector3 TR = (-Vector3.forward + goRight + goUp);</span><br><span class="line">        Vector3 BR = (-Vector3.forward + goRight - goUp);</span><br><span class="line">        Vector3 BL = (-Vector3.forward - goRight - goUp);</span><br><span class="line"></span><br><span class="line">        frustum.SetRow(<span class="number">0</span>, TL);</span><br><span class="line">        frustum.SetRow(<span class="number">1</span>, TR);</span><br><span class="line">        frustum.SetRow(<span class="number">2</span>, BR);</span><br><span class="line">        frustum.SetRow(<span class="number">3</span>, BL);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> frustum;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先是用来在texture上画轨迹的Shader，也就是一个Unlit Shader，为了得到碰撞的坐标，使用射线的方法去实现。</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="built_in">int</span> i=<span class="number">0</span>; i &lt; wheels.Length; i++)&#123;</span><br><span class="line">	<span class="keyword">if</span>(Physics.Raycast(wheels[i].position, -Vector3.up, <span class="keyword">out</span> groundHit, <span class="number">1f</span>, layerMask))&#123;</span><br><span class="line">		<span class="keyword">if</span>(lastWheelPos[i] == wheels[i].position) <span class="keyword">return</span>;</span><br><span class="line">        </span><br><span class="line">		drawMaterial.SetVector(<span class="string">&quot;_Coordinate&quot;</span>,<span class="keyword">new</span> Vector4(groundHit.textureCoord.x,groundHit.textureCoord.y,<span class="number">0</span>,<span class="number">0</span>));</span><br><span class="line">		RenderTexture temp = RenderTexture.GetTemporary(splatMap.width,splatMap.height,<span class="number">0</span>,RenderTextureFormat.ARGBFloat);</span><br><span class="line"></span><br><span class="line">		drawMaterial.SetFloat(<span class="string">&quot;_TrackWidth&quot;</span>, wheels[i].GetComponent&lt;MeshRenderer&gt;().bounds.size.z);</span><br><span class="line">		drawMaterial.SetFloat(<span class="string">&quot;_TrackWeight&quot;</span>, trackWeight);</span><br><span class="line"></span><br><span class="line">		Graphics.Blit(splatMap,temp);</span><br><span class="line">		Graphics.Blit(temp,splatMap,drawMaterial);</span><br><span class="line">		RenderTexture.ReleaseTemporary(temp);</span><br><span class="line"></span><br><span class="line">		lastWheelPos[i] = wheels[i].position;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>我们根据像素的位置选择对应的向量，经过插值后传给片元着色器就能得到射线的方向:</p>
-<img src="/2021/10/06/Ray-Marching/5.png" class="">
-
-
-
-<p>物体表面的定义则是通过Signed Distance Functions实现，它可以告诉光线走到某一点时离它最近的表面的距离。</p>
-<img src="/2021/10/06/Ray-Marching/1.png" class="">
-
-<p>比如对一个球面的定义：</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">float</span> <span class="title">sdSphere</span>(<span class="params">float3 p, <span class="built_in">float</span> s</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> length(p) - s;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>输入此时光线前进到的位置p，以及球的半径，当返回0时，就说明光线刚好与这个球面相交，所以我们可以认为当返回的值小于一个特别小的值的时候，就打到了这个球，所以这时就去做shading，就可以画出我们想象的然而并不存在的球。</p>
-<p>对于两个或者多个物体，我们还可以把他们合并，或者取共同部分，比如：</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Union</span></span><br><span class="line"><span class="function"><span class="built_in">float</span> <span class="title">opU</span>(<span class="params"><span class="built_in">float</span> d1, <span class="built_in">float</span> d2</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> min(d1, d2);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Subtraction</span></span><br><span class="line"><span class="function"><span class="built_in">float</span> <span class="title">opS</span>(<span class="params"><span class="built_in">float</span> d1, <span class="built_in">float</span> d2</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> max(-d1, d2);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Intersection</span></span><br><span class="line"><span class="function"><span class="built_in">float</span> <span class="title">opI</span>(<span class="params"><span class="built_in">float</span> d1, <span class="built_in">float</span> d2</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> max(d1, d2);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<img src="/2021/10/06/Ray-Marching/2.png" class="">
+<p>简单来说就是遍历每一个轮子，然后从轮子往下打一根射线，碰到了地面，就把这里的坐标传给着色器，有个小trick就是我临时创建了一个rendertexture temp，然后把轨迹图放到temp里面，紧接着把这个temp传回原来的texture的时候用画轨迹的shader去处理它。</p>
+<p>画好之后再把这个texture给雪地shader的轨迹图：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">snowMaterial.SetTexture(<span class="string">&quot;_Splat&quot;</span>, splatMap = <span class="keyword">new</span> RenderTexture(<span class="number">1024</span>,<span class="number">1024</span>,<span class="number">0</span>,RenderTextureFormat.ARGBFloat));</span><br></pre></td></tr></table></figure>
 
 
 
-<h3 id="着色"><a href="#着色" class="headerlink" title="着色"></a>着色</h3><p>为了让物体之间有正常的遮挡关系，我们要获取深度值，深度值直接与光线方向相乘就能得到深度。</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> depth = LinearEyeDepth(tex2D(_CameraDepthTexture, i.uv).r);</span><br><span class="line"><span class="comment">//得到视角空间下的深度值</span></span><br><span class="line">depth *= <span class="built_in">length</span>(i.ray);<span class="comment">//这个像素的深度,在后续raymarching的过程中，如果射线超过了这个深度，说明后面的东西被挡住了，就不用射线再继续前进获取着色</span></span><br><span class="line"></span><br><span class="line">fixed3 col = tex2D(_MainTex, i.uv);</span><br><span class="line">float3 rayDir = <span class="built_in">normalize</span>(i.ray.xyz);</span><br><span class="line">float3 rayOrigin = _WorldSpaceCameraPos;</span><br><span class="line">fixed4 result = RayMarching(rayOrigin, rayDir, depth);</span><br></pre></td></tr></table></figure>
-
-<p>Raymarching部分是重中之重，我们首先需要定义的是射线最远能到达的位置，也就是射线能够循环前进的次数。一根射线的定义是：</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">float3 p = ro + rd * t;</span><br></pre></td></tr></table></figure>
-
-<p>每一次都用SDF去求最近的距离，如果最近的距离小于我们设定的最小值，那就去做着色，如果大于，那就让射线继续向前移动</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">fixed4 RayMarching(float3 ro, float3 rd, <span class="type">float</span> depth)</span><br><span class="line">&#123;</span><br><span class="line">	fixed4 result = fixed4(<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">const</span> <span class="type">int</span> maxIteration = _MaxIterations;</span><br><span class="line">	<span class="type">float</span> t = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; maxIteration; i++)</span><br><span class="line">	&#123;</span><br><span class="line">        <span class="comment">//只判断深度这个深度前面的</span></span><br><span class="line">		<span class="keyword">if</span>(t &gt; _maxDst || t &gt;= depth)</span><br><span class="line">		&#123;</span><br><span class="line">			result = fixed4(<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		float3 p = ro + rd * t;</span><br><span class="line">		<span class="type">float</span> d = DstField(p);</span><br><span class="line">		<span class="keyword">if</span>(d &lt; _Accuracy)</span><br><span class="line">		&#123;</span><br><span class="line">			float3 n = GetNormal(p);<span class="comment">//近似方法获取这个点的法向量</span></span><br><span class="line">			float3 s = Shading(p, n);</span><br><span class="line"></span><br><span class="line">			result = fixed4(s,<span class="number">1</span>);</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		t += d;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>用梯度的方法去近似求一个点的法向量：</p>
-<img src="/2021/10/06/Ray-Marching/4.png" class="">
-
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">float3 <span class="title">GetNormal</span>(<span class="params">float3 p</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">const</span> <span class="built_in">float</span> offset = <span class="number">0.0001</span>;</span><br><span class="line">	float3 normal = float3(</span><br><span class="line">	DstField(float3(p.x + offset, p.y, p.z)) - DstField(float3(p.x - offset, p.y, p.z)),</span><br><span class="line">	DstField(float3(p.x, p.y + offset, p.z)) - DstField(float3(p.x, p.y - offset, p.z)),</span><br><span class="line">	DstField(float3(p.x, p.y, p.z + offset)) - DstField(float3(p.x, p.y, p.z - offset)));</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> normalize(normal);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="Shader部分"><a href="#Shader部分" class="headerlink" title="Shader部分"></a>Shader部分</h4><p>我们需要的是两个Shader，一个是Standard Surface Shader用来做雪地的曲面细分，另外一个是一个Unlit shader，它是用来在一个RenderTexture上画出物体走过的轨迹。</p>
+<h5 id="Unlit-Shader"><a href="#Unlit-Shader" class="headerlink" title="Unlit Shader"></a>Unlit Shader</h5><p>我们只需要对frag函数进行改动，首先对原本的texture进行采样，然后我们接收传进来的发生碰撞的碰撞点坐标，与此时某个像素点的坐标做距离运算，这个值小说明这个点越靠近轨迹，为了把这个值作为一个参数，我们先把它反转，然后把它限制在0~1之间，再对他进行乘方运算，这样就可以控制轨迹的宽度越靠近轨迹，它的乘方就会越接近1。然后与我们设置的颜色相乘，接近1的地方就会被画上轨迹颜色：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">fixed4 frag (v2f i) : SV_Target</span><br><span class="line">&#123;</span><br><span class="line">	fixed4 col &#x3D; tex2D(_MainTex, i.uv);</span><br><span class="line"></span><br><span class="line">	float draw &#x3D; pow(saturate(1 - distance(i.uv, _Coordinate.xy)), 500 &#x2F; _TrackWidth);</span><br><span class="line">	fixed4 drawcol &#x3D; _Color * (draw * _TrackWeight);</span><br><span class="line"></span><br><span class="line">	return saturate(col + drawcol);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
 
-<h3 id="Shading"><a href="#Shading" class="headerlink" title="Shading"></a>Shading</h3><p>在shading里面我们需要去做光照、阴影、环境光遮蔽的计算。</p>
-<h4 id="阴影"><a href="#阴影" class="headerlink" title="阴影"></a>阴影</h4><p>射线假如打到了一个点，那么以这个点为原点向灯的方向进步，如果又打到了另外一个物体，那么这个点就是阴影。我们可以用一个最远和最近距离去决定这个阴影射线的长度，为了避免生成硬阴影，需要用一个参数去衡量一个点到阴影范围的远近，并且这个参数的值在阴影部分一定要为0，或者接近0。所以我们用 h / t这个参数，t是射线已经前进了的距离，h是通过SDF求得的距离，当它很小时，说明阴影射线打到了一个物体，这个  h / t 也就趋近0，那么它黑色的程度就应该越大。</p>
-<p>对于每一根射线，我们都在一个for循环里找到这个参数的最小值，它衡量了这个点的阴影程度：</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> SoftShadow(float3 ro, float3 rd, <span class="type">float</span> mint, <span class="type">float</span> maxt, <span class="type">float</span> k)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">float</span> result = <span class="number">1.0</span>;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">float</span> t = mint; t &lt; maxt; )</span><br><span class="line">	&#123;	<span class="comment">//找到这个阴影射线的阴影范围内的阴影程度最小值</span></span><br><span class="line">		<span class="type">float</span> h = DstField(ro + rd * t);</span><br><span class="line">		<span class="keyword">if</span>(h &lt; <span class="number">0.001</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="number">0.0</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		result = <span class="built_in">min</span>(result, k * h / t);</span><br><span class="line">		t += h;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="Surface-shader"><a href="#Surface-shader" class="headerlink" title="Surface shader"></a>Surface shader</h5><p>这里就是具体去实现地形的效果，我们只需要对轨迹图进行采样，然后把采样的值乘以个控制系数，然后去改变地形的y值就可以了，轨迹部分的地形就会凹陷下去。这个采样的数值也要拿来作为地面纹理和雪纹理插值的系数。</p>
+<p>Surface Shader的编译指令：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#pragma surface surf Standard fullforwardshadows vertex:disp tessellate:tessDistance</span></span><br><span class="line">    </span><br><span class="line"><span class="type">void</span> disp (<span class="keyword">inout</span> appdata v)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">float</span> d = tex2Dlod(_Splat, float4(v.texcoord.xy,<span class="number">0</span>,<span class="number">0</span>)).r * 			_Displacement;<span class="comment">//对轨迹图进行采样</span></span><br><span class="line">	v.vertex.xyz -= v.normal * d;</span><br><span class="line">	v.vertex.xyz += v.normal * _Displacement;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> surf (Input IN, <span class="keyword">inout</span> SurfaceOutputStandard o)</span><br><span class="line">&#123;</span><br><span class="line">	half amount = tex2Dlod(_Splat, float4(IN.uv_Splat,<span class="number">0</span>,<span class="number">0</span>)).r;</span><br><span class="line">	fixed4 c = lerp(tex2D(_SnowTex,IN.uv_SnowTex) * 					_SnowColor,tex2D(_GroundTex,IN.uv_GroundTex)*_GroundColor,amount);</span><br><span class="line">    <span class="comment">//凹陷部分雪到地面的插值过渡</span></span><br><span class="line">	</span><br><span class="line">    o.Albedo = c.rgb;    </span><br><span class="line">	o.Metallic = _Metallic;</span><br><span class="line">	o.Smoothness = _Glossiness;</span><br><span class="line">	o.Alpha = c.a;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
 
-<h4 id="AO-环境光遮蔽"><a href="#AO-环境光遮蔽" class="headerlink" title="AO 环境光遮蔽"></a>AO 环境光遮蔽</h4><p>AO主要用来描绘物体和物体相交或靠近的时候遮挡周围漫反射光线的效果，开了AO画面会变得暗一些，特别是一些物体凹进去或者相交的地方，会让投射出的阴影看起来更真实。这个的实现就是用法线进步去判断附近是否有物体，附近的物体离得越近，他就越“黑”。</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> AmbientOcclusion(float3 p, float3 n)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">float</span> <span class="built_in">step</span> = _AoStepSize;</span><br><span class="line">	<span class="type">float</span> ao = <span class="number">0.0</span>;</span><br><span class="line">	<span class="type">float</span> dist;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">1</span>; i &lt;= _AoIterations; i++ )</span><br><span class="line">	&#123;</span><br><span class="line">		dist = <span class="built_in">step</span> * i;</span><br><span class="line">		ao += <span class="built_in">max</span>(<span class="number">0.0</span>, (dist - DstField(p + n * dist)) / dist);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> (<span class="number">1.0</span> - ao * _AoIntensity);<span class="comment">//返回一个0~1的值，其实就是遮蔽的程度</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>最终的shading就是把上面的到参数和颜色相乘：</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">float3 Shading(float3 p, float3 n)</span><br><span class="line">&#123;</span><br><span class="line">    float3 result;</span><br><span class="line"></span><br><span class="line">    float3 color = _MainColor.rgb;</span><br><span class="line">    float3 light = (_LightCol * <span class="built_in">dot</span>(-_LightDir, n) * <span class="number">0.5</span> + <span class="number">0.5</span>) * 	_LightIntensity;</span><br><span class="line"></span><br><span class="line">    <span class="type">float</span> shadow = SoftShadow(p, -_LightDir, _ShadowDst.x, _ShadowDst.y, _ShadowSoft) * <span class="number">0.5</span> + <span class="number">0.5</span>;</span><br><span class="line">    shadow = <span class="built_in">max</span>(<span class="number">0.0</span>, <span class="built_in">pow</span>(shadow, _ShadowIntensity));</span><br><span class="line"></span><br><span class="line">    <span class="type">float</span> ao = AmbientOcclusion(p, n);</span><br><span class="line"></span><br><span class="line">    result = color * light * shadow * ao;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>大概效果：</p>
+<img src="/2021/09/10/%E5%8F%AF%E4%BA%A4%E4%BA%92%E9%9B%AA%E5%9C%B0%E8%BD%A8%E8%BF%B9%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/2.png" class="">
 
 
 
-<p>最后用实现的效果：</p>
-<img src="/2021/10/06/Ray-Marching/6.png" class="">
 
 
-
-<p>附：</p>
-<p><a target="_blank" rel="noopener" href="https://www.iquilezles.org/www/articles/distfunctions/distfunctions.htm">https://www.iquilezles.org/www/articles/distfunctions/distfunctions.htm</a></p>
-<p>一个有各种SDF函数和各种组合集合体方式的网站</p>
 
                 
             </div>
@@ -558,7 +527,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://higashisan.github.io/2021/10/06/Ray-Marching/">https://higashisan.github.io/2021/10/06/Ray-Marching/</a>
+                    <a href="https://higashisan.github.io/2021/09/10/%E5%8F%AF%E4%BA%A4%E4%BA%92%E9%9B%AA%E5%9C%B0%E8%BD%A8%E8%BF%B9%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/">https://higashisan.github.io/2021/09/10/%E5%8F%AF%E4%BA%A4%E4%BA%92%E9%9B%AA%E5%9C%B0%E8%BD%A8%E8%BF%B9%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -596,8 +565,8 @@
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/Ray-Marching-Shadow/">
-                                    <span class="chip bg-color">Ray Marching Shadow</span>
+                                <a href="/tags/RenderTexture%E3%80%81%E9%9B%AA%E5%9C%B0%E4%BA%A4%E4%BA%92/">
+                                    <span class="chip bg-color">RenderTexture、雪地交互</span>
                                 </a>
                             
                         </div>
@@ -771,13 +740,13 @@
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;Previous</div>
             <div class="card">
-                <a href="/2021/10/08/%E7%A8%8B%E5%BA%8F%E5%8C%96%E7%94%9F%E6%88%90%E5%BC%80%E6%94%BE%E4%B8%96%E7%95%8C%E6%97%A0%E5%B0%BD%E5%9C%B0%E5%BD%A2/">
+                <a href="/2021/10/06/Ray-Marching/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/17.jpg" class="responsive-img" alt="程序化生成开放世界地形一">
+                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="Ray Marching">
                         
-                        <span class="card-title">程序化生成开放世界地形一</span>
+                        <span class="card-title">Ray Marching</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -788,7 +757,7 @@
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2021-10-08
+                            <i class="far fa-clock fa-fw icon-date"></i>2021-10-06
                         </span>
                         <span class="publish-author">
                             
@@ -801,8 +770,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/%E7%A8%8B%E5%BA%8F%E5%8C%96%E7%94%9F%E6%88%90/">
-                        <span class="chip bg-color">程序化生成</span>
+                    <a href="/tags/Ray-Marching-Shadow/">
+                        <span class="chip bg-color">Ray Marching Shadow</span>
                     </a>
                     
                 </div>
@@ -816,13 +785,13 @@
                 Next&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2021/09/10/%E5%8F%AF%E4%BA%A4%E4%BA%92%E9%9B%AA%E5%9C%B0%E8%BD%A8%E8%BF%B9%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/">
+                <a href="/2020/05/30/Unity%E5%B1%8F%E5%B9%95%E5%90%8E%E5%A4%84%E7%90%86%E5%85%A5%E9%97%A8/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="可交互雪地轨迹实现思路">
+                        <img src="/medias/featureimages/13.jpg" class="responsive-img" alt="Unity屏幕特效知识总结">
                         
-                        <span class="card-title">可交互雪地轨迹实现思路</span>
+                        <span class="card-title">Unity屏幕特效知识总结</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -833,7 +802,7 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2021-09-10
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-05-30
                             </span>
                         <span class="publish-author">
                             
@@ -846,8 +815,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/RenderTexture%E3%80%81%E9%9B%AA%E5%9C%B0%E4%BA%A4%E4%BA%92/">
-                        <span class="chip bg-color">RenderTexture、雪地交互</span>
+                    <a href="/tags/Image-Effect/">
+                        <span class="chip bg-color">Image Effect</span>
                     </a>
                     
                 </div>

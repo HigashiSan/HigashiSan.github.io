@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Ray Marching, YoKuYou">
+    <meta name="keywords" content="Unity Shader 夜视仪效果实现思路, YoKuYou">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>Ray Marching | YoKuYou</title>
+    <title>Unity Shader 夜视仪效果实现思路 | YoKuYou</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -310,12 +310,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/11.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/0.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Ray Marching</h1>
+                    <h1 class="description center-align post-title">Unity Shader 夜视仪效果实现思路</h1>
                 </div>
             </div>
         </div>
@@ -431,8 +431,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/Ray-Marching-Shadow/">
-                                <span class="chip bg-color">Ray Marching Shadow</span>
+                            <a href="/tags/Post-Screen/">
+                                <span class="chip bg-color">Post-Screen</span>
                             </a>
                         
                     </div>
@@ -447,7 +447,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>Publish Date:&nbsp;&nbsp;
-                    2021-10-06
+                    2021-10-20
                 </div>
                 
 
@@ -468,70 +468,47 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h3 id="Ray-Marching"><a href="#Ray-Marching" class="headerlink" title="Ray Marching"></a>Ray Marching</h3><p>思想就是光线前进，从摄像机到屏幕的一个像素发射一条射线，它以一定的步长前进，直到与物体发生相交，然后就计算这个像素的颜色。为了得到从摄像机到屏幕上像素的所有射线，要用到Camera Frustum。我们需要计算出视锥体四条棱对应的四个方向向量，raymarching实际做的也是后处理，把图像渲染到指定的Quad上，它的四个顶点就对应了我们求出来的四条视锥体向量，射线的方向就是摄像机到这个平面上某一点的向量，它是这四个向量的线性组合。</p>
-<p>求这个Camera Frustum的过程比较简单，求出来之后把它存在一个矩阵里面：</p>
-<img src="/2021/10/06/Ray-Marching/3.png" class="">
+                <h3 id="夜视仪效果"><a href="#夜视仪效果" class="headerlink" title="夜视仪效果"></a>夜视仪效果</h3><p>在玩射击类游戏的时候，有时候玩家可以开启夜视仪的功能，这里总结一下这种夜视效果的实现方法，同理，刺客信条里的鹰眼效果，也是类似的做法，使用屏幕后处理的方法去做即可。对于夜视仪的效果：</p>
+<img src="/2021/10/20/Unity-Shader-%E5%A4%9C%E8%A7%86%E4%BB%AA%E6%95%88%E6%9E%9C%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/1.png" class="">
 
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> Matrix4x4 <span class="title">CamFrustum</span>(<span class="params">Camera cam</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        Matrix4x4 frustum = Matrix4x4.identity;</span><br><span class="line">        <span class="built_in">float</span> halfHeight = Mathf.Tan((cam.fieldOfView * <span class="number">0.5f</span>) * Mathf.Deg2Rad);</span><br><span class="line"></span><br><span class="line">        Vector3 goUp = Vector3.up * halfHeight;</span><br><span class="line">        Vector3 goRight = Vector3.right * halfHeight * cam.aspect;</span><br><span class="line"></span><br><span class="line">        Vector3 TL = (-Vector3.forward - goRight + goUp);</span><br><span class="line">        Vector3 TR = (-Vector3.forward + goRight + goUp);</span><br><span class="line">        Vector3 BR = (-Vector3.forward + goRight - goUp);</span><br><span class="line">        Vector3 BL = (-Vector3.forward - goRight - goUp);</span><br><span class="line"></span><br><span class="line">        frustum.SetRow(<span class="number">0</span>, TL);</span><br><span class="line">        frustum.SetRow(<span class="number">1</span>, TR);</span><br><span class="line">        frustum.SetRow(<span class="number">2</span>, BR);</span><br><span class="line">        frustum.SetRow(<span class="number">3</span>, BL);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> frustum;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>我们根据像素的位置选择对应的向量，经过插值后传给片元着色器就能得到射线的方向:</p>
-<img src="/2021/10/06/Ray-Marching/5.png" class="">
+<p>要实现的就是三个东西：整体的色调改变、闪烁的黑色噪点、屏幕扭曲(畸变)。</p>
+<p>在顶点着色器里，要先将剪裁空间顶点坐标转变为屏幕空间坐标：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">o.screenPos = ComputeScreenPos(o.vertex);</span><br></pre></td></tr></table></figure>
 
 
 
-<p>物体表面的定义则是通过Signed Distance Functions实现，它可以告诉光线走到某一点时离它最近的表面的距离。</p>
-<img src="/2021/10/06/Ray-Marching/1.png" class="">
-
-<p>比如对一个球面的定义：</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">float</span> <span class="title">sdSphere</span>(<span class="params">float3 p, <span class="built_in">float</span> s</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> length(p) - s;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>输入此时光线前进到的位置p，以及球的半径，当返回0时，就说明光线刚好与这个球面相交，所以我们可以认为当返回的值小于一个特别小的值的时候，就打到了这个球，所以这时就去做shading，就可以画出我们想象的然而并不存在的球。</p>
-<p>对于两个或者多个物体，我们还可以把他们合并，或者取共同部分，比如：</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Union</span></span><br><span class="line"><span class="function"><span class="built_in">float</span> <span class="title">opU</span>(<span class="params"><span class="built_in">float</span> d1, <span class="built_in">float</span> d2</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> min(d1, d2);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Subtraction</span></span><br><span class="line"><span class="function"><span class="built_in">float</span> <span class="title">opS</span>(<span class="params"><span class="built_in">float</span> d1, <span class="built_in">float</span> d2</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> max(-d1, d2);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Intersection</span></span><br><span class="line"><span class="function"><span class="built_in">float</span> <span class="title">opI</span>(<span class="params"><span class="built_in">float</span> d1, <span class="built_in">float</span> d2</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> max(d1, d2);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<img src="/2021/10/06/Ray-Marching/2.png" class="">
+<h4 id="镜头畸变"><a href="#镜头畸变" class="headerlink" title="镜头畸变"></a>镜头畸变</h4><p>去百度就可以搜到好几种常用的镜头畸变方法，这里使用桶形畸变的方法，直接使用别人总结出来的数学公式即可，就是先把纹理坐标的原点从左下角移到中心，将纹理坐标基于距离进行扭曲之后再移回左下角：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">fixed2 center = i.uv - <span class="number">0.5</span>;</span><br><span class="line">half radius = <span class="built_in">pow</span>(center.x, <span class="number">2</span>) + (center.y, <span class="number">2</span>);</span><br><span class="line">half distortion = <span class="number">1</span> + <span class="built_in">sqrt</span>(radius) * radius * _Distortion;</span><br><span class="line">half2 uvScreen = center * distortion * _Scale + <span class="number">0.5</span>;</span><br><span class="line">fixed4 screen = tex2D(_MainTex, uvScreen);</span><br></pre></td></tr></table></figure>
 
 
 
-<h3 id="着色"><a href="#着色" class="headerlink" title="着色"></a>着色</h3><p>为了让物体之间有正常的遮挡关系，我们要获取深度值，深度值直接与光线方向相乘就能得到深度。</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> depth = LinearEyeDepth(tex2D(_CameraDepthTexture, i.uv).r);</span><br><span class="line"><span class="comment">//得到视角空间下的深度值</span></span><br><span class="line">depth *= <span class="built_in">length</span>(i.ray);<span class="comment">//这个像素的深度,在后续raymarching的过程中，如果射线超过了这个深度，说明后面的东西被挡住了，就不用射线再继续前进获取着色</span></span><br><span class="line"></span><br><span class="line">fixed3 col = tex2D(_MainTex, i.uv);</span><br><span class="line">float3 rayDir = <span class="built_in">normalize</span>(i.ray.xyz);</span><br><span class="line">float3 rayOrigin = _WorldSpaceCameraPos;</span><br><span class="line">fixed4 result = RayMarching(rayOrigin, rayDir, depth);</span><br></pre></td></tr></table></figure>
-
-<p>Raymarching部分是重中之重，我们首先需要定义的是射线最远能到达的位置，也就是射线能够循环前进的次数。一根射线的定义是：</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">float3 p = ro + rd * t;</span><br></pre></td></tr></table></figure>
-
-<p>每一次都用SDF去求最近的距离，如果最近的距离小于我们设定的最小值，那就去做着色，如果大于，那就让射线继续向前移动</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">fixed4 RayMarching(float3 ro, float3 rd, <span class="type">float</span> depth)</span><br><span class="line">&#123;</span><br><span class="line">	fixed4 result = fixed4(<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">const</span> <span class="type">int</span> maxIteration = _MaxIterations;</span><br><span class="line">	<span class="type">float</span> t = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; maxIteration; i++)</span><br><span class="line">	&#123;</span><br><span class="line">        <span class="comment">//只判断深度这个深度前面的</span></span><br><span class="line">		<span class="keyword">if</span>(t &gt; _maxDst || t &gt;= depth)</span><br><span class="line">		&#123;</span><br><span class="line">			result = fixed4(<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		float3 p = ro + rd * t;</span><br><span class="line">		<span class="type">float</span> d = DstField(p);</span><br><span class="line">		<span class="keyword">if</span>(d &lt; _Accuracy)</span><br><span class="line">		&#123;</span><br><span class="line">			float3 n = GetNormal(p);<span class="comment">//近似方法获取这个点的法向量</span></span><br><span class="line">			float3 s = Shading(p, n);</span><br><span class="line"></span><br><span class="line">			result = fixed4(s,<span class="number">1</span>);</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		t += d;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>用梯度的方法去近似求一个点的法向量：</p>
-<img src="/2021/10/06/Ray-Marching/4.png" class="">
-
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">float3 <span class="title">GetNormal</span>(<span class="params">float3 p</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">const</span> <span class="built_in">float</span> offset = <span class="number">0.0001</span>;</span><br><span class="line">	float3 normal = float3(</span><br><span class="line">	DstField(float3(p.x + offset, p.y, p.z)) - DstField(float3(p.x - offset, p.y, p.z)),</span><br><span class="line">	DstField(float3(p.x, p.y + offset, p.z)) - DstField(float3(p.x, p.y - offset, p.z)),</span><br><span class="line">	DstField(float3(p.x, p.y, p.z + offset)) - DstField(float3(p.x, p.y, p.z - offset)));</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> normalize(normal);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="画面亮度饱和度颜色"><a href="#画面亮度饱和度颜色" class="headerlink" title="画面亮度饱和度颜色"></a>画面亮度饱和度颜色</h4><figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">screen *= _Brightness;</span><br><span class="line"></span><br><span class="line">fixed4 luminance = Luminance(screen.rgb);<span class="comment">//经验公式得到色彩明度</span></span><br><span class="line">screen = lerp(luminance, screen, _Saturation);</span><br><span class="line"></span><br><span class="line">fixed4 grey = fixed4(<span class="number">0.5</span>,<span class="number">0.5</span>,<span class="number">0.5</span>,<span class="number">1</span>);<span class="comment">//得到0对比度的值</span></span><br><span class="line">screen = lerp(grey, screen, _Contrast);<span class="comment">//做插值</span></span><br><span class="line"></span><br><span class="line">screen *= _VisionColor;</span><br></pre></td></tr></table></figure>
 
 
 
-<h3 id="Shading"><a href="#Shading" class="headerlink" title="Shading"></a>Shading</h3><p>在shading里面我们需要去做光照、阴影、环境光遮蔽的计算。</p>
-<h4 id="阴影"><a href="#阴影" class="headerlink" title="阴影"></a>阴影</h4><p>射线假如打到了一个点，那么以这个点为原点向灯的方向进步，如果又打到了另外一个物体，那么这个点就是阴影。我们可以用一个最远和最近距离去决定这个阴影射线的长度，为了避免生成硬阴影，需要用一个参数去衡量一个点到阴影范围的远近，并且这个参数的值在阴影部分一定要为0，或者接近0。所以我们用 h / t这个参数，t是射线已经前进了的距离，h是通过SDF求得的距离，当它很小时，说明阴影射线打到了一个物体，这个  h / t 也就趋近0，那么它黑色的程度就应该越大。</p>
-<p>对于每一根射线，我们都在一个for循环里找到这个参数的最小值，它衡量了这个点的阴影程度：</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> SoftShadow(float3 ro, float3 rd, <span class="type">float</span> mint, <span class="type">float</span> maxt, <span class="type">float</span> k)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">float</span> result = <span class="number">1.0</span>;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">float</span> t = mint; t &lt; maxt; )</span><br><span class="line">	&#123;	<span class="comment">//找到这个阴影射线的阴影范围内的阴影程度最小值</span></span><br><span class="line">		<span class="type">float</span> h = DstField(ro + rd * t);</span><br><span class="line">		<span class="keyword">if</span>(h &lt; <span class="number">0.001</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="number">0.0</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		result = <span class="built_in">min</span>(result, k * h / t);</span><br><span class="line">		t += h;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="闪烁的黑色噪点"><a href="#闪烁的黑色噪点" class="headerlink" title="闪烁的黑色噪点"></a>闪烁的黑色噪点</h4><p>使用一个噪点图，然后对它进行采样：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">float2 uvNoise = i.uv * _NoiseAmount;</span><br><span class="line"><span class="comment">//闪烁效果，在C#脚本里面对RandomValue取随机值</span></span><br><span class="line">uvNoise.x -= <span class="built_in">sin</span>(_RandomValue);</span><br><span class="line">uvNoise.y += <span class="built_in">sin</span>(_RandomValue + <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">fixed noise = tex2D(_NoiseMap, uvNoise).r;</span><br><span class="line">screen *= noise;</span><br></pre></td></tr></table></figure>
 
+<p>对于这个噪点图我们不一定需要美术去帮我们做，也可以自己生成，我们也能自己去控制噪点的大小以及密集程度。首先使用柏林噪声去生成一个噪点图：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span>[,] noiseMap = new <span class="type">float</span>[mapWidth, mapHeight];</span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> x = <span class="number">0</span>; x &lt; mapWidth; x++)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> y = <span class="number">0</span>; y &lt; mapHeight; y++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="type">float</span> sampleX = x / noiseScale;<span class="comment">//控制噪声密集程度</span></span><br><span class="line">		<span class="type">float</span> sampleY = y / noiseScale;</span><br><span class="line"></span><br><span class="line">		<span class="type">float</span> perlinValue = Mathf.PerlinNoise(sampleX, sampleY);</span><br><span class="line">		noiseMap[x, y] = perlinValue;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<p>然后根据这里的值（范围是0~1），去生成ColorMap，对于每一个点的像素，我们都用一个从黑色到白色的lerp，lerp的值就是刚刚存的噪点值：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Color[] colorMap = new Color[mapWidth * mapHeight];</span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> x = <span class="number">0</span>; x &lt; mapWidth; x++)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> y = <span class="number">0</span>; y &lt; mapHeight; y++)</span><br><span class="line">	&#123;</span><br><span class="line">		colorMap[y * mapWidth + x] = Color.Lerp(Color.black, Color.white, noiseMap[x, y]);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> colorMap;</span><br></pre></td></tr></table></figure>
 
-<h4 id="AO-环境光遮蔽"><a href="#AO-环境光遮蔽" class="headerlink" title="AO 环境光遮蔽"></a>AO 环境光遮蔽</h4><p>AO主要用来描绘物体和物体相交或靠近的时候遮挡周围漫反射光线的效果，开了AO画面会变得暗一些，特别是一些物体凹进去或者相交的地方，会让投射出的阴影看起来更真实。这个的实现就是用法线进步去判断附近是否有物体，附近的物体离得越近，他就越“黑”。</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> AmbientOcclusion(float3 p, float3 n)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">float</span> <span class="built_in">step</span> = _AoStepSize;</span><br><span class="line">	<span class="type">float</span> ao = <span class="number">0.0</span>;</span><br><span class="line">	<span class="type">float</span> dist;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">1</span>; i &lt;= _AoIterations; i++ )</span><br><span class="line">	&#123;</span><br><span class="line">		dist = <span class="built_in">step</span> * i;</span><br><span class="line">		ao += <span class="built_in">max</span>(<span class="number">0.0</span>, (dist - DstField(p + n * dist)) / dist);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> (<span class="number">1.0</span> - ao * _AoIntensity);<span class="comment">//返回一个0~1的值，其实就是遮蔽的程度</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后就是生成一个噪点图texture，然后在着色器里面把它拿去采样：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Texture2D generatedTexture;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">GenerateTexture</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Color[] colorMap = <span class="keyword">new</span> Color[textureHeight * textureWidth];</span><br><span class="line">	colorMap = GenerateNoiseTexture(textureWidth, textureHeight, noiseScale);</span><br><span class="line"></span><br><span class="line">	generatedTexture = <span class="keyword">new</span> Texture2D(textureWidth, textureHeight);</span><br><span class="line">	generatedTexture.filterMode = FilterMode.Bilinear;</span><br><span class="line">	generatedTexture.wrapMode = TextureWrapMode.Repeat;</span><br><span class="line">	generatedTexture.SetPixels(colorMap);</span><br><span class="line">	generatedTexture.Apply();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Start</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//获取屏幕Quad的宽和高，作为NoiseTexture的大小</span></span><br><span class="line">	textureWidth = Screen.width;</span><br><span class="line">	textureHeight = Screen.height;</span><br><span class="line">	GenerateTexture();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>最终的shading就是把上面的到参数和颜色相乘：</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">float3 Shading(float3 p, float3 n)</span><br><span class="line">&#123;</span><br><span class="line">    float3 result;</span><br><span class="line"></span><br><span class="line">    float3 color = _MainColor.rgb;</span><br><span class="line">    float3 light = (_LightCol * <span class="built_in">dot</span>(-_LightDir, n) * <span class="number">0.5</span> + <span class="number">0.5</span>) * 	_LightIntensity;</span><br><span class="line"></span><br><span class="line">    <span class="type">float</span> shadow = SoftShadow(p, -_LightDir, _ShadowDst.x, _ShadowDst.y, _ShadowSoft) * <span class="number">0.5</span> + <span class="number">0.5</span>;</span><br><span class="line">    shadow = <span class="built_in">max</span>(<span class="number">0.0</span>, <span class="built_in">pow</span>(shadow, _ShadowIntensity));</span><br><span class="line"></span><br><span class="line">    <span class="type">float</span> ao = AmbientOcclusion(p, n);</span><br><span class="line"></span><br><span class="line">    result = color * light * shadow * ao;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>对于Texture2D.SetPixels方法，Unity对它的描述是：</p>
+<p>“This function takes a color array and changes the  pixel colors of the whole mip level of the texture. Call Apply to actually upload  the changed pixels to the graphics card”</p>
+<p>它接收的是一个一维数组，返回的数组放在2D的数组中，像素被从左到右，从上到下的方式排列。数组的大小是这个mip等级的宽乘以高。这也对应了我们之前设置ColorMap的方式。</p>
+<h4 id="暗角效果"><a href="#暗角效果" class="headerlink" title="暗角效果"></a>暗角效果</h4><p>很多情况下为了给人是从夜视仪的视角去看，还可以做一个暗角效果，就是让屏幕的四个角边缘渐变成黑色：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">half circle = <span class="built_in">distance</span>(i.screenPos.xy, fixed2(<span class="number">0.5</span>, <span class="number">0.5</span>));</span><br><span class="line">fixed vignette = <span class="number">1</span> - saturate(<span class="built_in">pow</span>(circle, _VignetteFalloff));</span><br><span class="line">screen *= <span class="built_in">pow</span>(vignette, _VignetteIntensity);</span><br></pre></td></tr></table></figure>
 
+<p>首先求得每一个像素到屏幕中心的距离，这个数值越往外面越大，可以使用VignetteFalloff去控制从黑到白的渐变范围，然后要把数值限制在0~1内，因为中心是0，所以要把数值反转一下，最后再对这个暗角值做乘方，就可以控制它的漆黑程度。</p>
+<p>最后效果：</p>
+<img src="/2021/10/20/Unity-Shader-%E5%A4%9C%E8%A7%86%E4%BB%AA%E6%95%88%E6%9E%9C%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/2.png" class="">
 
-
-<p>最后用实现的效果：</p>
-<img src="/2021/10/06/Ray-Marching/6.png" class="">
-
-
-
-<p>附：</p>
-<p><a target="_blank" rel="noopener" href="https://www.iquilezles.org/www/articles/distfunctions/distfunctions.htm">https://www.iquilezles.org/www/articles/distfunctions/distfunctions.htm</a></p>
-<p>一个有各种SDF函数和各种组合集合体方式的网站</p>
+<p>哎感觉hexo在文章里放视频好麻烦，这样有点看不出黑色噪点闪烁的效果。。。</p>
 
                 
             </div>
@@ -558,7 +535,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://higashisan.github.io/2021/10/06/Ray-Marching/">https://higashisan.github.io/2021/10/06/Ray-Marching/</a>
+                    <a href="https://higashisan.github.io/2021/10/20/Unity-Shader-%E5%A4%9C%E8%A7%86%E4%BB%AA%E6%95%88%E6%9E%9C%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/">https://higashisan.github.io/2021/10/20/Unity-Shader-%E5%A4%9C%E8%A7%86%E4%BB%AA%E6%95%88%E6%9E%9C%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -596,8 +573,8 @@
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/Ray-Marching-Shadow/">
-                                    <span class="chip bg-color">Ray Marching Shadow</span>
+                                <a href="/tags/Post-Screen/">
+                                    <span class="chip bg-color">Post-Screen</span>
                                 </a>
                             
                         </div>
@@ -767,17 +744,18 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;Previous</div>
+                <i class="far fa-dot-circle"></i>&nbsp;Current
+            </div>
             <div class="card">
-                <a href="/2021/10/08/%E7%A8%8B%E5%BA%8F%E5%8C%96%E7%94%9F%E6%88%90%E5%BC%80%E6%94%BE%E4%B8%96%E7%95%8C%E6%97%A0%E5%B0%BD%E5%9C%B0%E5%BD%A2/">
+                <a href="/2021/10/20/Unity-Shader-%E5%A4%9C%E8%A7%86%E4%BB%AA%E6%95%88%E6%9E%9C%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/17.jpg" class="responsive-img" alt="程序化生成开放世界地形一">
+                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="Unity Shader 夜视仪效果实现思路">
                         
-                        <span class="card-title">程序化生成开放世界地形一</span>
+                        <span class="card-title">Unity Shader 夜视仪效果实现思路</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -787,9 +765,9 @@
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2021-10-08
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2021-10-20
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -798,11 +776,12 @@
                         </span>
                     </div>
                 </div>
+
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/%E7%A8%8B%E5%BA%8F%E5%8C%96%E7%94%9F%E6%88%90/">
-                        <span class="chip bg-color">程序化生成</span>
+                    <a href="/tags/Post-Screen/">
+                        <span class="chip bg-color">Post-Screen</span>
                     </a>
                     
                 </div>
@@ -816,13 +795,13 @@
                 Next&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2021/09/10/%E5%8F%AF%E4%BA%A4%E4%BA%92%E9%9B%AA%E5%9C%B0%E8%BD%A8%E8%BF%B9%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/">
+                <a href="/2021/10/19/Houdini%E7%A8%8B%E5%BA%8F%E5%8C%96%E7%94%9F%E6%88%90%E5%AD%A6%E4%B9%A0/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="可交互雪地轨迹实现思路">
+                        <img src="/medias/featureimages/9.jpg" class="responsive-img" alt="Houdini程序化生成岩石流程">
                         
-                        <span class="card-title">可交互雪地轨迹实现思路</span>
+                        <span class="card-title">Houdini程序化生成岩石流程</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -833,7 +812,7 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2021-09-10
+                                <i class="far fa-clock fa-fw icon-date"></i>2021-10-19
                             </span>
                         <span class="publish-author">
                             
@@ -842,14 +821,6 @@
                             
                         </span>
                     </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/RenderTexture%E3%80%81%E9%9B%AA%E5%9C%B0%E4%BA%A4%E4%BA%92/">
-                        <span class="chip bg-color">RenderTexture、雪地交互</span>
-                    </a>
-                    
                 </div>
                 
             </div>
