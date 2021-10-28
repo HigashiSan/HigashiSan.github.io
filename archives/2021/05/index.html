@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Archives: 2020/5, YoKuYou">
+    <meta name="keywords" content="Archives: 2021/5, YoKuYou">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>Archives: 2020/5 | YoKuYou</title>
+    <title>Archives: 2021/5 | YoKuYou</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -446,7 +446,7 @@
             
             
             <div class="cd-timeline-img year" data-aos="zoom-in-up">
-                <a href="/archives/2020">2020</a>
+                <a href="/archives/2021">2021</a>
             </div>
             
 
@@ -454,36 +454,36 @@
             
             
             <div class="cd-timeline-img month" data-aos="zoom-in-up">
-                <a href="/archives/2020/05">05</a>
+                <a href="/archives/2021/05">05</a>
             </div>
             
 
             
             <div class="cd-timeline-img day" data-aos="zoom-in-up">
-                <span>30</span>
+                <span>14</span>
             </div>
             <article class="cd-timeline-content" data-aos="fade-up">
                 <div class="article col s12 m6">
                     <div class="card">
-                        <a href="/2020/05/30/Unity%E5%B1%8F%E5%B9%95%E5%90%8E%E5%A4%84%E7%90%86%E5%85%A5%E9%97%A8/">
+                        <a href="/2021/05/14/Unity-SRP-%E4%BA%8C-Draw-Calls/">
                             <div class="card-image">
                                 
                                 
-                                <img src="/medias/featureimages/13.jpg" class="responsive-img" alt="Unity屏幕特效知识总结">
+                                <img src="/medias/featureimages/10.jpg" class="responsive-img" alt="Unity SRP(二) Draw Calls">
                                 
-                                <span class="card-title">Unity屏幕特效知识总结</span>
+                                <span class="card-title">Unity SRP(二) Draw Calls</span>
                             </div>
                         </a>
                         <div class="card-content article-content">
                             <div class="summary block-with-text">
                                 
-                                    屏幕后处理特效最近看了看Unity一种专门的Shader类别，Image Effect，一般有两种：GrabPass和Post-Processing
-GrabPass用来抓取物体所在屏幕位置的渲染图像，然后把这张Texture传递给接下来的
+                                    Draw Call要绘制某些东西，CPU必须告诉GPU要绘制什么以及如何绘制，每次CPU准备好数据向GPU发送绘制命令就是Draw Call。
+Unity SRP 的shader语言现在采用的不是CG，而是HLSL，理由大概就是CG已经很久
                                 
                             </div>
                             <div class="publish-info">
                                 <span class="publish-date">
-                                    <i class="far fa-clock fa-fw icon-date"></i>2020-05-30
+                                    <i class="far fa-clock fa-fw icon-date"></i>2021-05-14
                                 </span>
                                 <span class="publish-author">
                                     
@@ -497,7 +497,62 @@ GrabPass用来抓取物体所在屏幕位置的渲染图像，然后把这张Tex
                         
                         <div class="card-action article-tags">
                             
-                            <a href="/tags/Image-Effect/"><span class="chip bg-color">Image Effect</span></a>
+                            <a href="/tags/SRP/"><span class="chip bg-color">SRP</span></a>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+            </article>
+        </div>
+        
+        <div class="cd-timeline-block">
+
+            
+            
+
+            
+            
+
+            
+            <div class="cd-timeline-img day" data-aos="zoom-in-up">
+                <span>10</span>
+            </div>
+            <article class="cd-timeline-content" data-aos="fade-up">
+                <div class="article col s12 m6">
+                    <div class="card">
+                        <a href="/2021/05/10/Unity-SRP-%E4%B8%80-Create-a-pipeline/">
+                            <div class="card-image">
+                                
+                                
+                                <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="Unity SRP(一) Create a pipeline">
+                                
+                                <span class="card-title">Unity SRP(一) Create a pipeline</span>
+                            </div>
+                        </a>
+                        <div class="card-content article-content">
+                            <div class="summary block-with-text">
+                                
+                                    Scriptable Render Pipeline回顾一下渲染管线，渲染时需要决定画哪些物体，画在哪里，然后在什么时候画，物体之间的遮挡关系等等，渲染管线就是一条工作流水线，去安排这一切的操作。unity2018之前有两种内置的渲染管线：
+                                
+                            </div>
+                            <div class="publish-info">
+                                <span class="publish-date">
+                                    <i class="far fa-clock fa-fw icon-date"></i>2021-05-10
+                                </span>
+                                <span class="publish-author">
+                                    
+                                    <i class="fas fa-user fa-fw"></i>
+                                    cdc
+                                    
+                                </span>
+                            </div>
+                        </div>
+
+                        
+                        <div class="card-action article-tags">
+                            
+                            <a href="/tags/SRP/"><span class="chip bg-color">SRP</span></a>
                             
                         </div>
                         

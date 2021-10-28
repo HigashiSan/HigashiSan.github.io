@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Unity屏幕特效知识总结, YoKuYou">
+    <meta name="keywords" content="Unity SRP(二) Draw Calls, YoKuYou">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>Unity屏幕特效知识总结 | YoKuYou</title>
+    <title>Unity SRP(二) Draw Calls | YoKuYou</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -310,12 +310,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/13.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/10.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Unity屏幕特效知识总结</h1>
+                    <h1 class="description center-align post-title">Unity SRP(二) Draw Calls</h1>
                 </div>
             </div>
         </div>
@@ -431,8 +431,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/Image-Effect/">
-                                <span class="chip bg-color">Image Effect</span>
+                            <a href="/tags/SRP/">
+                                <span class="chip bg-color">SRP</span>
                             </a>
                         
                     </div>
@@ -447,7 +447,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>Publish Date:&nbsp;&nbsp;
-                    2020-05-30
+                    2021-05-14
                 </div>
                 
 
@@ -468,47 +468,104 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h3 id="屏幕后处理特效"><a href="#屏幕后处理特效" class="headerlink" title="屏幕后处理特效"></a>屏幕后处理特效</h3><p>最近看了看Unity一种专门的Shader类别，Image Effect，一般有两种：GrabPass和Post-Processing</p>
-<h4 id="GrabPass"><a href="#GrabPass" class="headerlink" title="GrabPass"></a>GrabPass</h4><p>用来抓取物体所在屏幕位置的渲染图像，然后把这张Texture传递给接下来的Pass进行图像处理。它也是写在SubShader中的，使用时可以采用默认方式或者指定方式：</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GrabPass &#123;“TextureName”&#125;</span><br><span class="line"><span class="comment">//Default: _GrabTexture</span></span><br></pre></td></tr></table></figure>
+                <h3 id="Draw-Call"><a href="#Draw-Call" class="headerlink" title="Draw Call"></a>Draw Call</h3><p>要绘制某些东西，CPU必须告诉GPU要绘制什么以及如何绘制，每次CPU准备好数据向GPU发送绘制命令就是Draw Call。</p>
+<p>Unity SRP 的shader语言现在采用的不是CG，而是HLSL，理由大概就是CG已经很久没有更新了，已经落后了，Unity使用的就是HLSL，而SRP的Shader使用HLSLPROGRAM以及.hlsl的原因就是本来使用的就是hlsl编译器，同时也没有必要支持旧的built-in的头文件。</p>
+<h3 id="HLSL"><a href="#HLSL" class="headerlink" title="HLSL"></a>HLSL</h3><p>创建一个新的Unlit Shader，删掉默认的CG代码，使用HLSL去写Shader代码。</p>
+<p>设置好基本的两个着色器，然后要自己写好需要incude的file，文件结构如下：</p>
+<img src="/2021/05/14/Unity-SRP-%E4%BA%8C-Draw-Calls/1.png" class="">
 
-<p>需要注意的是，当我们抓取好grabPos后，使用这个纹理坐标对抓取的图像进行采样时，要使用tex2Dproj函数，它是将坐标从正交投影转换为透视投影，返回一个0~1的值。</p>
-<h4 id="Post-Processing"><a href="#Post-Processing" class="headerlink" title="Post-Processing"></a>Post-Processing</h4><p>后处理效果本质就是对要显示在屏幕前面的那个四边形面片进行处理，相当于把经过了渲染管线之后的照片拿到ps里面做最后的处理。实现后处理需要C#与shader共同作用，这个C#脚本需要把摄像机的RenderImage以RenderTexture的方式传递给关联Shader，shader处理完之后再传回脚本。</p>
-<p>这个机制在Unity中是使用OnRenderImage实现的，它的source参数是摄像机渲染完的那个texture，destination是经过shader处理之后将要输出到屏幕上的texture。整个流程大概是：摄像机在这一帧渲染好的暂时储存在source中，然后显卡调用shader对它进行处理，处理完成之后的图像通过Graphics.Blit（source，destination，material，-1）转移到destination，等待输出到屏幕。source则会继续接收下一帧摄像机渲染好的图像。最后一个参数默认-1，会依次调用各个pass，如果指定了具体的数字，那就会调用对应的pass。</p>
-<p>在shader中，_MainTex是一个固定的名字，用于接收摄像机的RenderTexture，不能改变它。而且在pass中为了避免对场景中的物体产生影响，要关闭几何体剔除和深度写入（避免挡住后面要渲染的物体），并且深度测试必须总是通过。</p>
-<p>后处理标配的状态标志：</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Cull Off</span><br><span class="line">ZTest Always</span><br><span class="line">ZWrite Off</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">Shader &quot;Unlit&#x2F;Unlit&quot;</span><br><span class="line">&#123;</span><br><span class="line">    Properties</span><br><span class="line">    &#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    SubShader</span><br><span class="line">    &#123;</span><br><span class="line">        Pass</span><br><span class="line">        &#123;</span><br><span class="line">            HLSLPROGRAM</span><br><span class="line">            #pragma vertex UnlitPassVertex</span><br><span class="line">            #pragma fragment UnlitPassFragment</span><br><span class="line">            #include &quot;UnlitPass.hlsl&quot;</span><br><span class="line">            ENDHLSL</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<p>防止在文件被包含一次以上的情况下导致代码重复：</p>
+<p>UnityPass.hlsl中的代码：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#ifndef CUSTOM_UNLIT_PASS_INCLUDED</span></span><br><span class="line"><span class="meta">#define CUSTOM_UNLIT_PASS_INCLUDED</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#include &quot;../ShaderLibrary/Common.hlsl&quot;</span></span><br><span class="line"></span><br><span class="line">float4 UnlitPassVertex(float3 positionOS : POSITION) : SV_POSITION</span><br><span class="line">&#123;</span><br><span class="line">    float3 positionWS = TransformObjectToWorld(positionOS.xyz);</span><br><span class="line">    <span class="keyword">return</span> TransformWorldToHClip(positionWS);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">float4 UnlitPassFragment() : SV_Target</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0.0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#endif</span></span><br></pre></td></tr></table></figure>
 
+<p>Common.hlsl:</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#ifndef CUSTOM_COMMON_INCLUDED</span></span><br><span class="line"><span class="meta">#define CUSTOM_COMMON_INCLUDED</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#include &quot;UnityInput.hlsl&quot;</span></span><br><span class="line"></span><br><span class="line">float3 TransformObjectToWorld(float3 positionOS)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> mul(unity_ObjectToWorld, float4(positionOS, <span class="number">1.0</span>)).xyz;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">float4 TransformWorldToHClip(float3 positionWS)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> mul(unity_MatrixVP, float4(positionWS, <span class="number">1.0</span>));</span><br><span class="line">&#125;</span><br><span class="line">	</span><br><span class="line"><span class="meta">#endif</span></span><br></pre></td></tr></table></figure>
 
+<p>UnityInput.hlsl，放我们需要的各种内置矩阵、变量：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#ifndef CUSTOM_UNITY_INPUT_INCLUDED</span></span><br><span class="line"><span class="meta">#define CUSTOM_UNITY_INPUT_INCLUDED</span></span><br><span class="line"></span><br><span class="line">float4x4 unity_ObjectToWorld;</span><br><span class="line">float4x4 unity_MatrixVP;</span><br><span class="line"></span><br><span class="line"><span class="meta">#endif</span></span><br></pre></td></tr></table></figure>
 
-
-
-
-
-
-
-
-
+<p>这样这个hlslshader就能正确编译，得到一个circle：</p>
+<img src="/2021/05/14/Unity-SRP-%E4%BA%8C-Draw-Calls/2.png" class="">
 
 
 
+<h3 id="Core-Library"><a href="#Core-Library" class="headerlink" title="Core Library"></a>Core Library</h3><p>刚刚定义的两个函数其实就包含在Core RP Pipeline包中。核心库定义了许多更有用和重要的东西，所以直接使用这个包就行了，不用什么都自己写。</p>
+<p>在Common.hlsl里面：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#ifndef CUSTOM_COMMON_INCLUDED</span></span><br><span class="line"><span class="meta">#define CUSTOM_COMMON_INCLUDED</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#include &quot;Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl&quot;</span></span><br><span class="line"><span class="meta">#include &quot;UnityInput.hlsl&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#define UNITY_MATRIX_M unity_ObjectToWorld</span></span><br><span class="line"><span class="meta">#define UNITY_MATRIX_I_M unity_WorldToObject</span></span><br><span class="line"><span class="meta">#define UNITY_MATRIX_V unity_MatrixV</span></span><br><span class="line"><span class="meta">#define UNITY_MATRIX_VP unity_MatrixVP</span></span><br><span class="line"><span class="meta">#define UNITY_MATRIX_P glstate_matrix_projection</span></span><br><span class="line">	</span><br><span class="line"><span class="meta">#include &quot;Packages/com.unity.render-pipelines.core/ShaderLibrary/SpaceTransforms.hlsl&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#endif</span></span><br></pre></td></tr></table></figure>
 
 
 
+<p>对于UnlitPass.hlsl，增加一个颜色控制：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">float4 _BaseColor;</span><br><span class="line"></span><br><span class="line">float4 UnlitPassVertex (float3 positionOS : POSITION) : SV_POSITION &#123;</span><br><span class="line">	float3 positionWS = TransformObjectToWorld(positionOS);</span><br><span class="line">	<span class="keyword">return</span> TransformWorldToHClip(positionWS);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">float4 UnlitPassFragment () : SV_TARGET &#123;</span><br><span class="line">	<span class="keyword">return</span> _BaseColor;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在shader里暴露出这个参数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Properties</span><br><span class="line">    &#123;</span><br><span class="line">        _BaseColor(&quot;Color&quot;, Color) &#x3D; (1,1,1,1)</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 
 
 
+<h3 id="SRP-Batcher"><a href="#SRP-Batcher" class="headerlink" title="SRP Batcher"></a>SRP Batcher</h3><p>unity2018之后引入的超厉害的东西，正常的drawcall是很花时间的，srp批处理就能很好地缓解这个问题。它在GPU上缓存材质属性，这样它们就不必在每次绘制调用时都发送。这既减少了必须通信的数据量，又减少了CPU在每次draw调用中必须做的工作。但这只有在着色器遵循一个严格的结构来统一数据时才有效。</p>
+<p>所有的材质属性必须在一个具体的内存缓冲区中定义，而不是在全局。这通过使用UnityPerMaterial名称将BaseColor声明包装在cbuffer块中来实现。它通过将_BaseColor放在一个特定的常量内存缓冲区中来隔离它，尽管它仍然可以在全局级别上访问。通常这个会用<strong>CBUFFER_START</strong>  <strong>CBUFFER_END</strong>来代替，避免有些平台不支持。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">CBUFFER_START(UnityPerMaterial)</span><br><span class="line">	float4 _BaseColor;</span><br><span class="line">CBUFFER_END</span><br></pre></td></tr></table></figure>
+
+<p>正常情况下如果有很多个物体使用一个材质进行渲染，每一个物体都要产生一个drawcall，批处理就是让这些物体使用单个drawcall。</p>
+<p>将要使用的属性全部定义在缓冲区之后，再编译这个材质，就变成compatible了：</p>
+<img src="/2021/05/14/Unity-SRP-%E4%BA%8C-Draw-Calls/3.png" class="">
+
+<p>shader compatible之后，就是在管线中enable SRP batcher，因为只需要在管线创建时启动就好，在构造方法里enable就行：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public CustomRenderPipeline()</span><br><span class="line">&#123;</span><br><span class="line">	GraphicsSettings.useScriptableRenderPipelineBatching = <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用了Batcher之后，同样是渲染9个unlit材质的物体，有9个batch saved了</p>
+<img src="/2021/05/14/Unity-SRP-%E4%BA%8C-Draw-Calls/4.png" class="">
 
 
 
+<h3 id="材质参数修改"><a href="#材质参数修改" class="headerlink" title="材质参数修改"></a>材质参数修改</h3><p>之所以能够batch，是因为每个物体都使用了一样的材质，这时如果去修改_baseColor的值，所有的物体颜色都会变，下面使用MaterialPropertyBlock去实现单独修改物体材质属性：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">PerObjectMaterialProperties</span> : <span class="title">MonoBehaviour</span> &#123;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">static</span> <span class="built_in">int</span> baseColorId = Shader.PropertyToID(<span class="string">&quot;_BaseColor&quot;</span>);<span class="comment">//得到材质属性的位置</span></span><br><span class="line">    <span class="comment">//设置新值的地方</span></span><br><span class="line">    <span class="keyword">static</span> MaterialPropertyBlock block;</span><br><span class="line">	</span><br><span class="line">	[<span class="meta">SerializeField</span>]</span><br><span class="line">	Color baseColor = Color.white;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Awake</span> (<span class="params"></span>)</span> &#123;</span><br><span class="line">		OnValidate();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">OnValidate</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (block == <span class="literal">null</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            block = <span class="keyword">new</span> MaterialPropertyBlock();</span><br><span class="line">        &#125;</span><br><span class="line">        block.SetColor(baseColorId, baseColor);</span><br><span class="line">        <span class="comment">//把改变赋给挂有这个材质的物体</span></span><br><span class="line">        GetComponent&lt;Renderer&gt;().SetPropertyBlock(block);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<img src="/2021/05/14/Unity-SRP-%E4%BA%8C-Draw-Calls/5.png" class="">
+
+<p>这样就可以单独修改共用材质物体的颜色，但同时SRP batcher的数量也会变少，因为不支持这种单独属性。</p>
+<h3 id="GPU-Instancing"><a href="#GPU-Instancing" class="headerlink" title="GPU Instancing"></a>GPU Instancing</h3><p>另外一种优化的方法就是GPU实例化，它可以在共用材质的情况下减少batch的数量。</p>
+<p>原理：如果绘制<em>1000</em>个物体，它将一个模型的<em>vbo</em>提交给一次给显卡，至于<em>1000</em>个物体不同的位置，状态，颜色等等将他们整合成一个<em>per instance attribute</em>的<em>buffer</em>给<em>gpu</em>，在显卡上区别绘制，它大大减少提交次数。即可以只用一个DrawCall，和附带的参数，画出很多物体。而在其中一个实例化单位时，GPU会根据目前这个实例化单位的索引，从Buffer中获取对应的属性，比如位置颜色等等。</p>
+<p>首先加上支持GPU Instancing的渲染指令：#pragma multi_compile_instancing，然后材质面板上就会出现是否实例化的勾选框，然后在材质里面勾选：</p>
+<img src="/2021/05/14/Unity-SRP-%E4%BA%8C-Draw-Calls/6.png" class="">
+
+<p>然后需要引入一个Library：UnityInstancing.hlsl，它所做的是重新定义一些宏来访问实例化的数据数组。但要做到这一点，它需要知道当前被渲染对象的索引，索引是通过顶点数据提供的。所以在输入的顶点属性结构体里面要给出它的引索ID：UNITY_VERTEX_INPUT_INSTANCE_ID</p>
+<p>定义在a2v、v2f结构体中，生成索引</p>
+<p>UNITY_INSTANCING_BUFFER_START ~ END</p>
+<p>用于在这个起止区域内定义属性，这些属性就是实例化单位需要用到的属性，只有写在这里的属性才能通过索引正确得到</p>
+<p>UNITY_SETUP_INSTANCE_ID</p>
+<p>定义在着色器的起始位置，使顶点着色器（或片段着色器）可以正确的访问到实例化单位的索引</p>
+<p>UNITY_TRANSFER_INSTANCE_ID</p>
+<p>引索拷贝，在片段着色器中，把输入结构的引索复制到输出结构</p>
+<p>UNITY_ACCESS_INSTANCED_PROP</p>
+<p>得到这个单位在Buffer中对应的属性</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">UNITY_INSTANCING_BUFFER_START(UnityPerMaterial)</span><br><span class="line"><span class="comment">//将_BaseColor作为一个Instance参数</span></span><br><span class="line">UNITY_DEFINE_INSTANCED_PROP(float4, _BaseColor)</span><br><span class="line">UNITY_INSTANCING_BUFFER_END(UnityPerMaterial)</span><br><span class="line"></span><br><span class="line"><span class="function">float4 <span class="title">UnlitPassVertex</span> (<span class="params">Attributes input</span>) : SV_POSITION</span> &#123;</span><br><span class="line">	UNITY_SETUP_INSTANCE_ID(input);</span><br><span class="line">	float3 positionWS = TransformObjectToWorld(input.positionOS);</span><br><span class="line">	<span class="keyword">return</span> TransformWorldToHClip(positionWS);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于fragment同样也要它的ID，并且同样需要使用一个宏去让Index Enable:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">float4 UnlitPassFragment (Varyings input) : SV_TARGET &#123;</span><br><span class="line">	UNITY_SETUP_INSTANCE_ID(input);</span><br><span class="line">	return UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _BaseColor);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>现在unity就可以只使用一个batch去渲染这些共用了材质的物体，而且这些物体都有自己的可调变的材质属性，在FrameDebug里面你只看得到一个drawmesh：</p>
+<img src="/2021/05/14/Unity-SRP-%E4%BA%8C-Draw-Calls/7.png" class="">
+
+<p>一个batch的大小也是有限制的，当超过这个限制的时候，就要用到多个batch了。</p>
+<h3 id="Drawing-Many-Instanced-Meshes"><a href="#Drawing-Many-Instanced-Meshes" class="headerlink" title="Drawing Many Instanced Meshes"></a>Drawing Many Instanced Meshes</h3><p>创建一个挂着MeshBall的物体，实现使用一个drawcall去渲染成百上千的物体。unity可以在update函数中调用DrawMeshInstanced实现批次渲染。</p>
+<img src="/2021/05/14/Unity-SRP-%E4%BA%8C-Draw-Calls/8.png" class="">
 
 
 
+<h3 id="Dynamic-Batching"><a href="#Dynamic-Batching" class="headerlink" title="Dynamic Batching"></a>Dynamic Batching</h3><p>第三种减少DrawCall的方法，将多个共享相同材质的mesh组合成一个更大的mesh，然后绘制出来。</p>
+<p>改变DrawSettings的参数，disable掉SRP Batch</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> drawingSettings = <span class="keyword">new</span> DrawingSettings(</span><br><span class="line">			unlitShaderTagId, sortingSettings</span><br><span class="line">) &#123;</span><br><span class="line">	enableDynamicBatching = <span class="literal">true</span>,</span><br><span class="line">	enableInstancing = <span class="literal">false</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
 
 
+<h3 id="Transparency"><a href="#Transparency" class="headerlink" title="Transparency"></a>Transparency</h3><p>后面来创建不透明材质，不透明和透明渲染之间的主要区别在于是如何处理之前的渲染结果和之后渲染的结果之间的混合。所以直接在Unlit Shader里面进行修改就可以：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">Enum(UnityEngine.Rendering.BlendMode)</span>] _SrcBlend (<span class="string">&quot;Src Blend&quot;</span>, Float) = <span class="number">1</span></span><br><span class="line">[<span class="meta">Enum(UnityEngine.Rendering.BlendMode)</span>] _DstBlend (<span class="string">&quot;Dst Blend&quot;</span>, Float) = <span class="number">0</span></span><br></pre></td></tr></table></figure>
 
+<p>然后用Blend指令就可以定义透明效果。而且渲染透明物体时，需要关闭深度写入。</p>
 
                 
             </div>
@@ -535,7 +592,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://higashisan.github.io/2020/05/30/Unity%E5%B1%8F%E5%B9%95%E5%90%8E%E5%A4%84%E7%90%86%E5%85%A5%E9%97%A8/">https://higashisan.github.io/2020/05/30/Unity%E5%B1%8F%E5%B9%95%E5%90%8E%E5%A4%84%E7%90%86%E5%85%A5%E9%97%A8/</a>
+                    <a href="https://higashisan.github.io/2021/05/14/Unity-SRP-%E4%BA%8C-Draw-Calls/">https://higashisan.github.io/2021/05/14/Unity-SRP-%E4%BA%8C-Draw-Calls/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -573,8 +630,8 @@
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/Image-Effect/">
-                                    <span class="chip bg-color">Image Effect</span>
+                                <a href="/tags/SRP/">
+                                    <span class="chip bg-color">SRP</span>
                                 </a>
                             
                         </div>
@@ -748,6 +805,51 @@
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;Previous</div>
             <div class="card">
+                <a href="/2021/09/10/%E5%8F%AF%E4%BA%A4%E4%BA%92%E9%9B%AA%E5%9C%B0%E8%BD%A8%E8%BF%B9%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="可交互雪地轨迹实现思路">
+                        
+                        <span class="card-title">可交互雪地轨迹实现思路</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2021-09-10
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            cdc
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/RenderTexture%E3%80%81%E9%9B%AA%E5%9C%B0%E4%BA%A4%E4%BA%92/">
+                        <span class="chip bg-color">RenderTexture、雪地交互</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                Next&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
                 <a href="/2021/05/10/Unity-SRP-%E4%B8%80-Create-a-pipeline/">
                     <div class="card-image">
                         
@@ -764,9 +866,9 @@
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2021-05-10
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2021-05-10
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -780,51 +882,6 @@
                     
                     <a href="/tags/SRP/">
                         <span class="chip bg-color">SRP</span>
-                    </a>
-                    
-                </div>
-                
-            </div>
-        </div>
-        
-        
-        <div class="article col s12 m6" data-aos="fade-up">
-            <div class="article-badge right-badge text-color">
-                Next&nbsp;<i class="fas fa-chevron-right"></i>
-            </div>
-            <div class="card">
-                <a href="/2020/04/20/%E6%B7%B7%E5%90%88-%E9%9D%A2%E5%89%94%E9%99%A4/">
-                    <div class="card-image">
-                        
-                        
-                        <img src="/medias/featureimages/5.jpg" class="responsive-img" alt="混合&amp;面剔除">
-                        
-                        <span class="card-title">混合&amp;面剔除</span>
-                    </div>
-                </a>
-                <div class="card-content article-content">
-                    <div class="summary block-with-text">
-                        
-                            
-                        
-                    </div>
-                    <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2020-04-20
-                            </span>
-                        <span class="publish-author">
-                            
-                            <i class="fas fa-user fa-fw"></i>
-                            cdc
-                            
-                        </span>
-                    </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/%E6%B7%B7%E5%90%88-%E9%9D%A2%E5%89%94%E9%99%A4/">
-                        <span class="chip bg-color">混合&amp;面剔除</span>
                     </a>
                     
                 </div>

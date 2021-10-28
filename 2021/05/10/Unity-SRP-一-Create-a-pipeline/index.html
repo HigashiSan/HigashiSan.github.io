@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Unity屏幕特效知识总结, YoKuYou">
+    <meta name="keywords" content="Unity SRP(一) Create a pipeline, YoKuYou">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>Unity屏幕特效知识总结 | YoKuYou</title>
+    <title>Unity SRP(一) Create a pipeline | YoKuYou</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -310,12 +310,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/13.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/0.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Unity屏幕特效知识总结</h1>
+                    <h1 class="description center-align post-title">Unity SRP(一) Create a pipeline</h1>
                 </div>
             </div>
         </div>
@@ -431,8 +431,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/Image-Effect/">
-                                <span class="chip bg-color">Image Effect</span>
+                            <a href="/tags/SRP/">
+                                <span class="chip bg-color">SRP</span>
                             </a>
                         
                     </div>
@@ -447,7 +447,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>Publish Date:&nbsp;&nbsp;
-                    2020-05-30
+                    2021-05-10
                 </div>
                 
 
@@ -468,47 +468,81 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h3 id="屏幕后处理特效"><a href="#屏幕后处理特效" class="headerlink" title="屏幕后处理特效"></a>屏幕后处理特效</h3><p>最近看了看Unity一种专门的Shader类别，Image Effect，一般有两种：GrabPass和Post-Processing</p>
-<h4 id="GrabPass"><a href="#GrabPass" class="headerlink" title="GrabPass"></a>GrabPass</h4><p>用来抓取物体所在屏幕位置的渲染图像，然后把这张Texture传递给接下来的Pass进行图像处理。它也是写在SubShader中的，使用时可以采用默认方式或者指定方式：</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GrabPass &#123;“TextureName”&#125;</span><br><span class="line"><span class="comment">//Default: _GrabTexture</span></span><br></pre></td></tr></table></figure>
+                <h2 id="Scriptable-Render-Pipeline"><a href="#Scriptable-Render-Pipeline" class="headerlink" title="Scriptable Render Pipeline"></a>Scriptable Render Pipeline</h2><p>回顾一下渲染管线，渲染时需要决定画哪些物体，画在哪里，然后在什么时候画，物体之间的遮挡关系等等，渲染管线就是一条工作流水线，去安排这一切的操作。unity2018之前有两种内置的渲染管线：Deferred、Froward。但内置的管线的内容都是固定的，我会记录一下自己搭建一条完整的srp的过程，然后实现各种效果。</p>
+<h3 id="Pipeline-Asset"><a href="#Pipeline-Asset" class="headerlink" title="Pipeline Asset"></a>Pipeline Asset</h3><p>首先要创建一个Asset，RenderPipelineAsset的主要目的是帮助Unity创建一个渲染管线实例，RenderPipelineAsset自身其实就是存储各渲染管线的配置。通过override RenderPipeline CreatePipeline()方法来创建一个渲染管线实例，因为现在还没定义自己的渲染管线，所以现在先返回Null。</p>
+<img src="/2021/05/10/Unity-SRP-%E4%B8%80-Create-a-pipeline/1.png" class="">
 
-<p>需要注意的是，当我们抓取好grabPos后，使用这个纹理坐标对抓取的图像进行采样时，要使用tex2Dproj函数，它是将坐标从正交投影转换为透视投影，返回一个0~1的值。</p>
-<h4 id="Post-Processing"><a href="#Post-Processing" class="headerlink" title="Post-Processing"></a>Post-Processing</h4><p>后处理效果本质就是对要显示在屏幕前面的那个四边形面片进行处理，相当于把经过了渲染管线之后的照片拿到ps里面做最后的处理。实现后处理需要C#与shader共同作用，这个C#脚本需要把摄像机的RenderImage以RenderTexture的方式传递给关联Shader，shader处理完之后再传回脚本。</p>
-<p>这个机制在Unity中是使用OnRenderImage实现的，它的source参数是摄像机渲染完的那个texture，destination是经过shader处理之后将要输出到屏幕上的texture。整个流程大概是：摄像机在这一帧渲染好的暂时储存在source中，然后显卡调用shader对它进行处理，处理完成之后的图像通过Graphics.Blit（source，destination，material，-1）转移到destination，等待输出到屏幕。source则会继续接收下一帧摄像机渲染好的图像。最后一个参数默认-1，会依次调用各个pass，如果指定了具体的数字，那就会调用对应的pass。</p>
-<p>在shader中，_MainTex是一个固定的名字，用于接收摄像机的RenderTexture，不能改变它。而且在pass中为了避免对场景中的物体产生影响，要关闭几何体剔除和深度写入（避免挡住后面要渲染的物体），并且深度测试必须总是通过。</p>
-<p>后处理标配的状态标志：</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Cull Off</span><br><span class="line">ZTest Always</span><br><span class="line">ZWrite Off</span><br></pre></td></tr></table></figure>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">CreateAssetMenu(menuName = <span class="meta-string">&quot;Rendering/Custom Render Pipeline&quot;</span>)</span>]</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">CustomRenderPipelineAsset</span> : <span class="title">RenderPipelineAsset</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">override</span> RenderPipeline <span class="title">CreatePipeline</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<p>然后创建我们的asset：</p>
+<img src="/2021/05/10/Unity-SRP-%E4%B8%80-Create-a-pipeline/2.png" class="">
 
+<p>这个时候就会变得一切漆黑，因为此时引擎没有渲染出来任何物体，而且graphics里面的一些选项也不见了。</p>
+<h3 id="Render-Pipeline-Instance"><a href="#Render-Pipeline-Instance" class="headerlink" title="Render Pipeline Instance"></a>Render Pipeline Instance</h3><p>创建pipeline实例，新建一个C#脚本，继承自RenderPipeline，在这里面需要去复写Render方法去创建一个具体的Pipeline，然后在CustomRenderPipelineAsset.createPipeline里去返回这个实例：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">CustomRenderPipeline</span> : <span class="title">RenderPipeline</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Render</span>(<span class="params">ScriptableRenderContext context, Camera[] cameras</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> System.NotImplementedException();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">CustomRenderPipelineAsset</span> : <span class="title">RenderPipelineAsset</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">override</span> RenderPipeline <span class="title">CreatePipeline</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> CustomRenderPipeline();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<p>这个时候已经有了我们创建的具体的pipeline了，但是它还没有效果，因为他还没有去渲染任何东西。</p>
+<h3 id="Rendering"><a href="#Rendering" class="headerlink" title="Rendering"></a>Rendering</h3><p>Unity就是使用context和active状态的camera作为参数，调用pipeline中的render函数，进行渲染。这个过程对game 窗口，scene窗口和材质预览窗口都一样。我们现在要做的就是正确的设置好各参数，用正确的顺序绘制出应该被渲染的东西。</p>
+<p>因为每个Camera是单独渲染的，再专门为摄像机新建一个类：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">CameraRenderer</span> </span><br><span class="line">&#123;</span><br><span class="line">    ScriptableRenderContext context;</span><br><span class="line"></span><br><span class="line">    Camera _camera;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Render</span>(<span class="params">ScriptableRenderContext context, Camera camera</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">this</span>.context = context;</span><br><span class="line">        <span class="keyword">this</span>._camera = camera;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<p>然后在CustomRenderPipeline创建出一个pipeline实例时，用它去渲染所有的相机，所以在CustomRenderPipeline的实例里面：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Render</span>(<span class="params">ScriptableRenderContext context, Camera[] cameras</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">foreach</span> (Camera camera <span class="keyword">in</span> cameras)</span><br><span class="line">	&#123;</span><br><span class="line">		renderer.Render(context, camera);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<p>这个loop在后面可以去实现不同的渲染方式，比如有的采用延迟渲染，有的渲染第一人称视角等等。</p>
+<p>srp最重要的也就是这个RenderPipeline实例，它在已经定义好的Render函数里面调用每个摄像机进行渲染，人为控制管线的流程也就是在每个摄像机类里面去实现的。</p>
+<h3 id="Draw-SkyBox"><a href="#Draw-SkyBox" class="headerlink" title="Draw  SkyBox"></a>Draw  SkyBox</h3><p>CameraRenderer.Render里面去画摄像机能看到的物体，我们在Render里面的每个command都是存在buffer里的，它们是排着队的，必须使用submit命令才能执行这个command。要正确的渲染Skybox和整个场景，还需要通过Camera的位置和视角设置MVP矩阵，要将Camera中的配置信息通过SetupCameraProperties函数写入Context中。</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Render</span>(<span class="params">ScriptableRenderContext context, Camera camera</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">this</span>.context = context;</span><br><span class="line">	<span class="keyword">this</span>.camera = camera;</span><br><span class="line"></span><br><span class="line">	Setup();</span><br><span class="line">	DrawVisibleGeometry();</span><br><span class="line">	Submit();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Setup</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	context.SetupCameraProperties(camera);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">DrawVisibleGeometry</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	context.DrawSkybox(camera);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Submit</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	context.Submit();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+<img src="/2021/05/10/Unity-SRP-%E4%B8%80-Create-a-pipeline/3.png" class="">
 
 
 
+<h3 id="Command-Buffers"><a href="#Command-Buffers" class="headerlink" title="Command Buffers"></a>Command Buffers</h3><p>Context 直到Submit才会进行实际的渲染，在这之前，我们需要配置它并且将comands加入其中等之后执行。一些任务比如绘制Skybox有专门的函数实现，但是画其它物体或者做其它操作的时候就没有这种内置函数了，所以要专门的一个buffer。</p>
+<p>设置Command Buffer：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="built_in">string</span> bufferName = <span class="string">&quot;Render Camera&quot;</span>;</span><br><span class="line">CommandBuffer buffer = <span class="keyword">new</span> CommandBuffer</span><br><span class="line">&#123;</span><br><span class="line">	name = bufferName</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>使用时，需要用到BeginSample，EndSample，这个范围内就属于Render Camera这个Command Buffer的范围。为了得到正确的渲染图像，还需要clearrendertarget：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Setup</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//先设置好摄像机的matrix，再clear</span></span><br><span class="line">	buffer.ClearRenderTarget(<span class="literal">true</span>, <span class="literal">true</span>, Color.clear);</span><br><span class="line">	buffer.BeginSample(bufferName);</span><br><span class="line">	ExecuteBuffer();</span><br><span class="line">	context.SetupCameraProperties(camera);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Submit</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	buffer.EndSample(bufferName);</span><br><span class="line">	ExecuteBuffer();</span><br><span class="line">	context.Submit();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ExecuteBuffer</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	context.ExecuteCommandBuffer(buffer);</span><br><span class="line">	buffer.Clear();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
 
+<img src="/2021/05/10/Unity-SRP-%E4%B8%80-Create-a-pipeline/4.png" class="">
+
+<p>可以看到成功清除掉color和depth Buffer以及stencil</p>
+<h3 id="Culling"><a href="#Culling" class="headerlink" title="Culling"></a>Culling</h3><p>在渲染物体之前，需要先通过摄像机的视椎体对物体进行裁剪剔除，只渲染那些能被看见的物体。</p>
+<p>通过ScriptableCullingParameters结构体和 CullResults.GetCullingParameters 函数，可以针对某个Camera得到裁剪的配置信息：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">bool</span> <span class="title">Cull</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	ScriptableCullingParameters p;<span class="comment">//存摄像机设置和信息的结构</span></span><br><span class="line">	<span class="keyword">if</span> (camera.TryGetCullingParameters(<span class="keyword">out</span> p))<span class="comment">//是否能得到摄像机的属性信息和matrix</span></span><br><span class="line">	&#123;</span><br><span class="line">        cullingResults = context.Cull(<span class="keyword">ref</span> p);<span class="comment">//cull之后的结果</span></span><br><span class="line">		<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为是剔除，所以在draw之前进行：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Render</span>(<span class="params">ScriptableRenderContext context, Camera camera</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">this</span>.context = context;</span><br><span class="line">	<span class="keyword">this</span>.camera = camera;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!Cull())</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	Setup();</span><br><span class="line">	DrawVisibleGeometry();</span><br><span class="line">	Submit();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
 
+<h3 id="Draw-Geometry"><a href="#Draw-Geometry" class="headerlink" title="Draw Geometry"></a>Draw Geometry</h3><p>通过culling得到可视化信息后，就可以用DrawRenderer去进行绘制，它需要三个参数，cullingresult以及drawingSettings、filteringSettings：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> ShaderTagId unlitShaderTagId = <span class="keyword">new</span> ShaderTagId(<span class="string">&quot;SRPDefaultUnlit&quot;</span>);</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">DrawVisibleGeometry</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">var</span> sortingSettings = <span class="keyword">new</span> SortingSettings(camera)</span><br><span class="line">	&#123;</span><br><span class="line">		criteria = SortingCriteria.CommonOpaque<span class="comment">//从前向后的顺序渲染不透明物体</span></span><br><span class="line">	&#125;;</span><br><span class="line">    <span class="comment">//SortingCriteria 决定渲染时物体的顺序</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> drawingSettings = <span class="keyword">new</span> DrawingSettings(</span><br><span class="line">		unlitShaderTagId, sortingSettings</span><br><span class="line">	);</span><br><span class="line">	<span class="keyword">var</span> filteringSettings = <span class="keyword">new</span> 	FilteringSettings(RenderQueueRange.all);</span><br><span class="line"></span><br><span class="line">	context.DrawRenderers(</span><br><span class="line">	cullingResults, <span class="keyword">ref</span> drawingSettings, <span class="keyword">ref</span> filteringSettings</span><br><span class="line">	);</span><br><span class="line"></span><br><span class="line">	context.DrawSkybox(camera);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以画出所有Unlit Shader：</p>
+<img src="/2021/05/10/Unity-SRP-%E4%B8%80-Create-a-pipeline/5.png" class="">
+
+<p>可以看到这里还有个问题，透明物体被天空覆盖了，所以要修改一下渲染的顺序。</p>
+<p>先渲染不透明的物体，然后是天空盒，最后是透明物体：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> sortingSettings = <span class="keyword">new</span> SortingSettings(camera)</span><br><span class="line">&#123;</span><br><span class="line">	criteria = SortingCriteria.CommonOpaque</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> drawingSettings = <span class="keyword">new</span> DrawingSettings(unlitShaderTagId, sortingSettings);</span><br><span class="line"><span class="keyword">var</span> filteringSettings = <span class="keyword">new</span> FilteringSettings(RenderQueueRange.opaque);</span><br><span class="line"></span><br><span class="line">context.DrawRenderers(cullingResults, <span class="keyword">ref</span> drawingSettings, <span class="keyword">ref</span> filteringSettings);</span><br><span class="line"></span><br><span class="line">context.DrawSkybox(camera);</span><br><span class="line"></span><br><span class="line">sortingSettings.criteria = SortingCriteria.CommonTransparent;</span><br><span class="line">drawingSettings.sortingSettings = sortingSettings;</span><br><span class="line">filteringSettings.renderQueueRange = RenderQueueRange.transparent;</span><br><span class="line"></span><br><span class="line">context.DrawRenderers(cullingResults, <span class="keyword">ref</span> drawingSettings, <span class="keyword">ref</span> filteringSettings);</span><br></pre></td></tr></table></figure>
+
+<img src="/2021/05/10/Unity-SRP-%E4%B8%80-Create-a-pipeline/6.png" class="">
 
 
 
+<h3 id="Draw-Gizmos"><a href="#Draw-Gizmos" class="headerlink" title="Draw  Gizmos"></a>Draw  Gizmos</h3><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">partial</span> <span class="keyword">void</span> <span class="title">DrawGizmos</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (Handles.ShouldRenderGizmos())</span><br><span class="line">	&#123;</span><br><span class="line">		context.DrawGizmos(camera, GizmoSubset.PreImageEffects);</span><br><span class="line">		context.DrawGizmos(camera, GizmoSubset.PostImageEffects);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Draw-Unity-UI"><a href="#Draw-Unity-UI" class="headerlink" title="Draw Unity UI"></a>Draw Unity UI</h3><p>添加一个UI物件时，它能成功在Game窗口被渲染出来，因为它是独立渲染的，不依靠我们的自定义管线，它的默认Render Mode是Screen Space - OverLay。UI在Scene里面是使用World Space Mode渲染的，所以它会显得很大。现在把它在Scene里面画出来：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">partial</span> <span class="keyword">void</span> <span class="title">PrepareForSceneWindow</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (camera.cameraType == CameraType.SceneView)</span><br><span class="line">	&#123;</span><br><span class="line">            				    	ScriptableRenderContext.EmitWorldGeometryForSceneView(camera);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Multiple-Cameras"><a href="#Multiple-Cameras" class="headerlink" title="Multiple  Cameras"></a>Multiple  Cameras</h3><p>多相机的渲染会比较麻烦，需要小心地设置渲染顺序，也就是对ClearFlag的设置。</p>
 
                 
             </div>
@@ -535,7 +569,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://higashisan.github.io/2020/05/30/Unity%E5%B1%8F%E5%B9%95%E5%90%8E%E5%A4%84%E7%90%86%E5%85%A5%E9%97%A8/">https://higashisan.github.io/2020/05/30/Unity%E5%B1%8F%E5%B9%95%E5%90%8E%E5%A4%84%E7%90%86%E5%85%A5%E9%97%A8/</a>
+                    <a href="https://higashisan.github.io/2021/05/10/Unity-SRP-%E4%B8%80-Create-a-pipeline/">https://higashisan.github.io/2021/05/10/Unity-SRP-%E4%B8%80-Create-a-pipeline/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -573,8 +607,8 @@
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/Image-Effect/">
-                                    <span class="chip bg-color">Image Effect</span>
+                                <a href="/tags/SRP/">
+                                    <span class="chip bg-color">SRP</span>
                                 </a>
                             
                         </div>
@@ -748,13 +782,13 @@
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;Previous</div>
             <div class="card">
-                <a href="/2021/05/10/Unity-SRP-%E4%B8%80-Create-a-pipeline/">
+                <a href="/2021/05/14/Unity-SRP-%E4%BA%8C-Draw-Calls/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="Unity SRP(一) Create a pipeline">
+                        <img src="/medias/featureimages/10.jpg" class="responsive-img" alt="Unity SRP(二) Draw Calls">
                         
-                        <span class="card-title">Unity SRP(一) Create a pipeline</span>
+                        <span class="card-title">Unity SRP(二) Draw Calls</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -765,7 +799,7 @@
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2021-05-10
+                            <i class="far fa-clock fa-fw icon-date"></i>2021-05-14
                         </span>
                         <span class="publish-author">
                             
@@ -793,13 +827,13 @@
                 Next&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2020/04/20/%E6%B7%B7%E5%90%88-%E9%9D%A2%E5%89%94%E9%99%A4/">
+                <a href="/2020/05/30/Unity%E5%B1%8F%E5%B9%95%E5%90%8E%E5%A4%84%E7%90%86%E5%85%A5%E9%97%A8/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/5.jpg" class="responsive-img" alt="混合&amp;面剔除">
+                        <img src="/medias/featureimages/13.jpg" class="responsive-img" alt="Unity屏幕特效知识总结">
                         
-                        <span class="card-title">混合&amp;面剔除</span>
+                        <span class="card-title">Unity屏幕特效知识总结</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -810,7 +844,7 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2020-04-20
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-05-30
                             </span>
                         <span class="publish-author">
                             
@@ -823,8 +857,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/%E6%B7%B7%E5%90%88-%E9%9D%A2%E5%89%94%E9%99%A4/">
-                        <span class="chip bg-color">混合&amp;面剔除</span>
+                    <a href="/tags/Image-Effect/">
+                        <span class="chip bg-color">Image Effect</span>
                     </a>
                     
                 </div>

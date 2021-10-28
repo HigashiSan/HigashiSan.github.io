@@ -362,6 +362,182 @@
             
             <div class="article col s12 m6 l4" data-aos="zoom-in">
                 <div class="card">
+                    <a href="/2020/04/19/%E5%AE%9E%E4%BE%8B%E5%8C%96-%E9%AB%98%E6%95%88%E7%BB%98%E5%88%B6%E5%A4%A7%E9%87%8F%E7%89%A9%E4%BD%93/">
+                        <div class="card-image">
+                            
+                            
+                            <img src="/medias/featureimages/14.jpg" class="responsive-img" alt="实例化(高效绘制大量物体)">
+                            
+                            <span class="card-title">实例化(高效绘制大量物体)</span>
+                        </div>
+                    </a>
+
+                    <div class="card-content article-content">
+                        <div class="summary block-with-text">
+                            
+                                实例化在之前我们绘制多个物体都是用for循环去实现，在每个循环里面单独绑定VAO，但是这样的做法会特别消耗性能。使用glDrawArrays或glDrawElements函数告诉GPU去绘制顶点数据会消耗更多的性能，因为OpenGL在绘制顶
+                            
+                        </div>
+                        <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-04-19
+                            </span>
+                            <span class="publish-author">
+                                
+                                <i class="fas fa-user fa-fw"></i>
+                                cdc
+                                
+                            </span>
+                        </div>
+                    </div>
+
+                    
+                    <div class="card-action article-tags">
+                        
+                        <a href="/tags/%E5%AE%9E%E4%BE%8B%E5%8C%96/">
+                            <span class="chip bg-color">实例化</span>
+                        </a>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+            
+            <div class="article col s12 m6 l4" data-aos="zoom-in">
+                <div class="card">
+                    <a href="/2020/04/11/%E7%AB%8B%E6%96%B9%E4%BD%93%E8%B4%B4%E5%9B%BE/">
+                        <div class="card-image">
+                            
+                            
+                            <img src="/medias/featureimages/9.jpg" class="responsive-img" alt="立方体贴图">
+                            
+                            <span class="card-title">立方体贴图</span>
+                        </div>
+                    </a>
+
+                    <div class="card-content article-content">
+                        <div class="summary block-with-text">
+                            
+                                立方体贴图立方体贴图其实就是一个包含了六个纹理的纹理，我们所有生成和绑定纹理的操作都是一样的，唯一不同的就是当我们把纹理加载到GPU时需要用一个循环去加载六个纹理。对于skybox的顶点着色器和片段着色器：
+1234567891011121
+                            
+                        </div>
+                        <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-04-11
+                            </span>
+                            <span class="publish-author">
+                                
+                                <i class="fas fa-user fa-fw"></i>
+                                cdc
+                                
+                            </span>
+                        </div>
+                    </div>
+
+                    
+                    <div class="card-action article-tags">
+                        
+                        <a href="/tags/%E7%AB%8B%E6%96%B9%E4%BD%93%E8%B4%B4%E5%9B%BE/">
+                            <span class="chip bg-color">立方体贴图</span>
+                        </a>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+            
+            <div class="article col s12 m6 l4" data-aos="zoom-in">
+                <div class="card">
+                    <a href="/2020/04/03/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/">
+                        <div class="card-image">
+                            
+                            
+                            <img src="/medias/featureimages/3.jpg" class="responsive-img" alt="深度测试和模板测试">
+                            
+                            <span class="card-title">深度测试和模板测试</span>
+                        </div>
+                    </a>
+
+                    <div class="card-content article-content">
+                        <div class="summary block-with-text">
+                            
+                                深度测试现在我们来到了一个非常重要的专题：深度测试，它关乎着渲染过程中所有的遮挡关系，之前在画箱子的时候我们就开启了深度测试，下面来更加深入地学习深度缓冲中的深度值。
+深度缓冲存在每一个片段中，当开启了深度测试后glEnable(GL_DE
+                            
+                        </div>
+                        <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-04-03
+                            </span>
+                            <span class="publish-author">
+                                
+                                <i class="fas fa-user fa-fw"></i>
+                                cdc
+                                
+                            </span>
+                        </div>
+                    </div>
+
+                    
+                    <div class="card-action article-tags">
+                        
+                        <a href="/tags/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95-%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/">
+                            <span class="chip bg-color">深度测试&amp;模板测试</span>
+                        </a>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+            
+            <div class="article col s12 m6 l4" data-aos="zoom-in">
+                <div class="card">
+                    <a href="/2020/03/27/OpenGL%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%9A%E5%85%89%E7%85%A7/">
+                        <div class="card-image">
+                            
+                            
+                            <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="OpenGL学习记录：光照">
+                            
+                            <span class="card-title">OpenGL学习记录：光照</span>
+                        </div>
+                    </a>
+
+                    <div class="card-content article-content">
+                        <div class="summary block-with-text">
+                            
+                                光照篇终于是来到了光照篇，这一章会比上一章更加复杂一些，代码量也会增加很多，屏住呼吸，我们一起踏上旅程吧~~~！
+首先我们要对之前的代码做一些修改，之前加载纹理的代码写得太丑了，我们这里把它写成一个加载、生成纹理的方法：
+123456789
+                            
+                        </div>
+                        <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-03-27
+                            </span>
+                            <span class="publish-author">
+                                
+                                <i class="fas fa-user fa-fw"></i>
+                                cdc
+                                
+                            </span>
+                        </div>
+                    </div>
+
+                    
+                    <div class="card-action article-tags">
+                        
+                        <a href="/tags/OpenGL%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%9A%E5%85%89%E7%85%A7/">
+                            <span class="chip bg-color">OpenGL学习记录：光照</span>
+                        </a>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+            
+            <div class="article col s12 m6 l4" data-aos="zoom-in">
+                <div class="card">
                     <a href="/2020/03/19/OpenGL-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/">
                         <div class="card-image">
                             
