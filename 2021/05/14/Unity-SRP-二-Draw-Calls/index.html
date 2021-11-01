@@ -505,11 +505,10 @@
 
 
 
-<h3 id="SRP-Batcher"><a href="#SRP-Batcher" class="headerlink" title="SRP Batcher"></a>SRP Batcher</h3><p>unity2018之后引入的超厉害的东西，正常的drawcall是很花时间的，srp批处理就能很好地缓解这个问题。它在GPU上缓存材质属性，这样它们就不必在每次绘制调用时都发送。这既减少了必须通信的数据量，又减少了CPU在每次draw调用中必须做的工作。但这只有在着色器遵循一个严格的结构来统一数据时才有效。</p>
-<p>所有的材质属性必须在一个具体的内存缓冲区中定义，而不是在全局。这通过使用UnityPerMaterial名称将BaseColor声明包装在cbuffer块中来实现。它通过将_BaseColor放在一个特定的常量内存缓冲区中来隔离它，尽管它仍然可以在全局级别上访问。通常这个会用<strong>CBUFFER_START</strong>  <strong>CBUFFER_END</strong>来代替，避免有些平台不支持。</p>
+<h3 id="SRP-Batcher"><a href="#SRP-Batcher" class="headerlink" title="SRP Batcher"></a>SRP Batcher</h3><p>unity2018之后引入的超厉害的东西，正常的drawcall是很花时间的，srp批处理就能很好地缓解这个问题。它在GPU上缓存材质属性，这样它们就不必在每次绘制调用时都发送。但DrawCall的数量本身是没有变的，只是每次不需要再向GPU传送材质数据，GPU会自动得到缓存的数据。</p>
+<p>批处理所需的材质属性必须在一个具体的内存缓冲区中定义，而不是在全局。这通过UnityPerMaterial名称将BaseColor声明包装在cbuffer块中来实现。这样就把_BaseColor放在一个特定的常量内存缓冲区中，但它仍然可以在全局级别上访问。通常这个会用<strong>CBUFFER_START</strong>  <strong>CBUFFER_END</strong>来代替，避免有些平台不支持。</p>
 <figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">CBUFFER_START(UnityPerMaterial)</span><br><span class="line">	float4 _BaseColor;</span><br><span class="line">CBUFFER_END</span><br></pre></td></tr></table></figure>
 
-<p>正常情况下如果有很多个物体使用一个材质进行渲染，每一个物体都要产生一个drawcall，批处理就是让这些物体使用单个drawcall。</p>
 <p>将要使用的属性全部定义在缓冲区之后，再编译这个材质，就变成compatible了：</p>
 <img src="/2021/05/14/Unity-SRP-%E4%BA%8C-Draw-Calls/3.png" class="">
 
@@ -805,13 +804,13 @@
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;Previous</div>
             <div class="card">
-                <a href="/2021/09/10/%E5%8F%AF%E4%BA%A4%E4%BA%92%E9%9B%AA%E5%9C%B0%E8%BD%A8%E8%BF%B9%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/">
+                <a href="/2021/05/16/Unity-SRP-%E4%B8%89-BRDF-Lighting/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="可交互雪地轨迹实现思路">
+                        <img src="/medias/featureimages/5.jpg" class="responsive-img" alt="Unity-SRP(三)BRDF Lighting">
                         
-                        <span class="card-title">可交互雪地轨迹实现思路</span>
+                        <span class="card-title">Unity-SRP(三)BRDF Lighting</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -822,7 +821,7 @@
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2021-09-10
+                            <i class="far fa-clock fa-fw icon-date"></i>2021-05-16
                         </span>
                         <span class="publish-author">
                             
@@ -835,8 +834,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/RenderTexture%E3%80%81%E9%9B%AA%E5%9C%B0%E4%BA%A4%E4%BA%92/">
-                        <span class="chip bg-color">RenderTexture、雪地交互</span>
+                    <a href="/tags/SRP/">
+                        <span class="chip bg-color">SRP</span>
                     </a>
                     
                 </div>
