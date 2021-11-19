@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="可交互雪地轨迹实现思路, YoKuYou">
+    <meta name="keywords" content="Tessellation Shader的底层实现, YoKuYou">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>可交互雪地轨迹实现思路 | YoKuYou</title>
+    <title>Tessellation Shader的底层实现 | YoKuYou</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -310,12 +310,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/8.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/1.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">可交互雪地轨迹实现思路</h1>
+                    <h1 class="description center-align post-title">Tessellation Shader的底层实现</h1>
                 </div>
             </div>
         </div>
@@ -431,8 +431,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/RenderTexture%E3%80%81%E9%9B%AA%E5%9C%B0%E4%BA%A4%E4%BA%92/">
-                                <span class="chip bg-color">RenderTexture、雪地交互</span>
+                            <a href="/tags/Tessellation-Shader/">
+                                <span class="chip bg-color">Tessellation Shader</span>
                             </a>
                         
                     </div>
@@ -447,7 +447,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>Publish Date:&nbsp;&nbsp;
-                    2021-09-10
+                    2020-03-08
                 </div>
                 
 
@@ -468,39 +468,36 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h3 id="Unity雪地轨迹实现"><a href="#Unity雪地轨迹实现" class="headerlink" title="Unity雪地轨迹实现"></a>Unity雪地轨迹实现</h3><p>暑假看了黑神话悟空新发的演示视频，感觉它的雪地做得和大表哥的真的有得一拼了，最近查了查资料，做了一个没有添加粒子的雪地交互轨迹效果，大部分雪地交互轨迹制作应该也是这种方法，不过他们应该在碰撞体和雪接触时按照某种算法去设置了雪粒子飞溅的效果。</p>
-<p>对于轨迹的实现，主要是用RenderTexture去做，我们首先创建一个texture，它用来记录轨迹，挂有碰撞体的物体与雪面发生碰撞时，我们在这个texture上的对应位置画上一个颜色，然后在雪地的细分着色器里对这个texture采样，有颜色的就是轨迹，然后用这个数值对地形的高度进行变化，就可以得到类似雪被压过的效果。</p>
-<h4 id="C-部分"><a href="#C-部分" class="headerlink" title="C#部分"></a>C#部分</h4><p>为了测试我使用了一个小车模型，所以要找到车的四个轮子，然后与雪地做碰撞的计算。</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Shader drawShader;<span class="comment">//画轨迹的shader</span></span><br><span class="line"><span class="keyword">public</span> GameObject snowTerrain;</span><br><span class="line"><span class="keyword">public</span> Transform[] wheels;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> Material drawMaterial;</span><br><span class="line"><span class="keyword">private</span> Material snowMaterial;<span class="comment">//雪地的material</span></span><br><span class="line"><span class="keyword">private</span> RenderTexture splatMap;</span><br><span class="line"></span><br><span class="line">RaycastHit groundHit;</span><br><span class="line"><span class="keyword">private</span> <span class="built_in">int</span> layerMask;</span><br><span class="line"></span><br><span class="line">snowMaterial = snowTerrain.GetComponent&lt;MeshRenderer&gt;().material;</span><br><span class="line">snowMaterial.SetTexture(<span class="string">&quot;_Splat&quot;</span>, splatMap = <span class="keyword">new</span> RenderTexture (<span class="number">1024</span>,<span class="number">1024</span>,<span class="number">0</span>,RenderTextureFormat.ARGBFloat));<span class="comment">//这就是那个画轨迹的Texture</span></span><br></pre></td></tr></table></figure>
+                <h4 id="Tessellation-Shader"><a href="#Tessellation-Shader" class="headerlink" title="Tessellation Shader"></a>Tessellation Shader</h4><p>总结一下在vertex和fragment shader里面如何使用曲面细分着色器，在Surface shader里面这个过程已经被高度封装好了，所以非常简单，直接tessellation ：tess调用处理函数就行了，要在vertex-frag shader里面做就需要完全了解它的底层实现。</p>
+<p>这个shader和Geometry Shader是顶点着色器之后的可选着色器，是在光栅化之前最后对顶点做操作的机会。为了使用细分着色器，在顶点着色器里面就可以不对顶点做任何的操作，直接把数据传到细分着色器。</p>
+<p>细分着色器是由三个阶段实现的：</p>
+<h5 id="Hull-Shader"><a href="#Hull-Shader" class="headerlink" title="Hull Shader"></a>Hull Shader</h5><p>传入InputPatch数据以及SV_OutputControlPointID，曲面细分可以处理三角形、四边形或者线。patch是一个mesh vertices的集合，对于这个输入参数需要定义它是怎样的structure和个数，SV_OutputControlPointID则是需要传入的id，每次向tessellation stage传送的数据包只能有一个，是一个unsighed integer，用来确定具体是哪一个。</p>
+<p>然后还需要指定如何进行细分：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//确定要细分的是什么图元</span></span><br><span class="line">[UNITY_domain(&quot;tri&quot;)]</span><br><span class="line"><span class="comment">//对于每套的输入数据有几个控制点</span></span><br><span class="line">[UNITY_outputcontrolpoints(<span class="number">3</span>)]</span><br><span class="line"><span class="comment">//顺时针或者逆时针的定义</span></span><br><span class="line">[UNITY_outputtopology(&quot;triangle_cw&quot;)]</span><br><span class="line"><span class="comment">//细分方式</span></span><br><span class="line">[UNITY_partitioning(&quot;integer&quot;)]</span><br><span class="line"><span class="comment">//会被如何cut，传入一个细分控制函数</span></span><br><span class="line">[UNITY_patchconstantfunc(&quot;MyPatchConstantFunction&quot;)]</span><br></pre></td></tr></table></figure>
 
-<p>首先是用来在texture上画轨迹的Shader，也就是一个Unlit Shader，为了得到碰撞的坐标，使用射线的方法去实现。</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="built_in">int</span> i=<span class="number">0</span>; i &lt; wheels.Length; i++)&#123;</span><br><span class="line">	<span class="keyword">if</span>(Physics.Raycast(wheels[i].position, -Vector3.up, <span class="keyword">out</span> groundHit, <span class="number">1f</span>, layerMask))&#123;</span><br><span class="line">		<span class="keyword">if</span>(lastWheelPos[i] == wheels[i].position) <span class="keyword">return</span>;</span><br><span class="line">        </span><br><span class="line">		drawMaterial.SetVector(<span class="string">&quot;_Coordinate&quot;</span>,<span class="keyword">new</span> Vector4(groundHit.textureCoord.x,groundHit.textureCoord.y,<span class="number">0</span>,<span class="number">0</span>));</span><br><span class="line">		RenderTexture temp = RenderTexture.GetTemporary(splatMap.width,splatMap.height,<span class="number">0</span>,RenderTextureFormat.ARGBFloat);</span><br><span class="line"></span><br><span class="line">		drawMaterial.SetFloat(<span class="string">&quot;_TrackWidth&quot;</span>, wheels[i].GetComponent&lt;MeshRenderer&gt;().bounds.size.z);</span><br><span class="line">		drawMaterial.SetFloat(<span class="string">&quot;_TrackWeight&quot;</span>, trackWeight);</span><br><span class="line"></span><br><span class="line">		Graphics.Blit(splatMap,temp);</span><br><span class="line">		Graphics.Blit(temp,splatMap,drawMaterial);</span><br><span class="line">		RenderTexture.ReleaseTemporary(temp);</span><br><span class="line"></span><br><span class="line">		lastWheelPos[i] = wheels[i].position;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>简单来说就是遍历每一个轮子，然后从轮子往下打一根射线，碰到了地面，就把这里的坐标传给着色器，有个小trick就是我临时创建了一个rendertexture temp，然后把轨迹图放到temp里面，紧接着把这个temp传回原来的texture的时候用画轨迹的shader去处理它。</p>
-<p>画好之后再把这个texture给雪地shader的轨迹图：</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">snowMaterial.SetTexture(<span class="string">&quot;_Splat&quot;</span>, splatMap = <span class="keyword">new</span> RenderTexture(<span class="number">1024</span>,<span class="number">1024</span>,<span class="number">0</span>,RenderTextureFormat.ARGBFloat));</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="Shader部分"><a href="#Shader部分" class="headerlink" title="Shader部分"></a>Shader部分</h4><p>我们需要的是两个Shader，一个是Standard Surface Shader用来做雪地的曲面细分，另外一个是一个Unlit shader，它是用来在一个RenderTexture上画出物体走过的轨迹。</p>
-<h5 id="Unlit-Shader"><a href="#Unlit-Shader" class="headerlink" title="Unlit Shader"></a>Unlit Shader</h5><p>我们只需要对frag函数进行改动，首先对原本的texture进行采样，然后我们接收传进来的发生碰撞的碰撞点坐标，与此时某个像素点的坐标做距离运算，这个值小说明这个点越靠近轨迹，为了把这个值作为一个参数，我们先把它反转，然后把它限制在0~1之间，再对他进行乘方运算，这样就可以控制轨迹的宽度越靠近轨迹，它的乘方就会越接近1。然后与我们设置的颜色相乘，接近1的地方就会被画上轨迹颜色：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">fixed4 frag (v2f i) : SV_Target</span><br><span class="line">&#123;</span><br><span class="line">	fixed4 col &#x3D; tex2D(_MainTex, i.uv);</span><br><span class="line"></span><br><span class="line">	float draw &#x3D; pow(saturate(1 - distance(i.uv, _Coordinate.xy)), 500 &#x2F; _TrackWidth);</span><br><span class="line">	fixed4 drawcol &#x3D; _Color * (draw * _TrackWeight);</span><br><span class="line"></span><br><span class="line">	return saturate(col + drawcol);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="Tessellation-Stage"><a href="#Tessellation-Stage" class="headerlink" title="Tessellation Stage"></a>Tessellation Stage</h5><p>不可编程，由硬件完成，根据hull shader的数据进行细分，但它并不会生成新的顶点，只是对之前的顶点生成了重心坐标，之后Domain Shader才用这些数据去生成新的坐标点。</p>
+<h5 id="Domain-Shader"><a href="#Domain-Shader" class="headerlink" title="Domain Shader"></a>Domain Shader</h5><p>把细分过的顶点坐标，投影到Clip Space。在domain shader中，TessellationFactors、细分过的顶点数据、重心坐标(SV_DomainLocation)会作为(u,v,w)输入，使用这个和实际顶点位置一来计算得到实际的顶点坐标。</p>
+<h4 id="Okk，来实践"><a href="#Okk，来实践" class="headerlink" title="Okk，来实践"></a>Okk，来实践</h4><p>首先是顶点着色器相关的处理流程：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#pragma vertex vert</span></span><br><span class="line">struct vertexInput</span><br><span class="line">&#123;</span><br><span class="line">	float4 vertex : POSITION;</span><br><span class="line">	float3 normal : NORMAL;</span><br><span class="line">	float4 tangent : TANGENT;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">struct vertexOutput</span><br><span class="line">&#123;</span><br><span class="line">	float4 vertex : SV_POSITION;</span><br><span class="line">	float3 normal : NORMAL;</span><br><span class="line">	float4 tangent : TANGENT;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">//在顶点着色器中不做任何变换操作</span></span><br><span class="line">vertexInput vert(vertexInput v)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">return</span> v;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vertexOutput tessVertTransformed(vertexInput v)</span><br><span class="line">&#123;</span><br><span class="line">	vertexOutput o;</span><br><span class="line">	o.vertex = UnityObjectToClipPos(v.vertex);</span><br><span class="line">	o.normal = v.normal;</span><br><span class="line">	o.tangent = v.tangent;</span><br><span class="line">	<span class="keyword">return</span> o;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
 
-<h5 id="Surface-shader"><a href="#Surface-shader" class="headerlink" title="Surface shader"></a>Surface shader</h5><p>这里就是具体去实现地形的效果，我们只需要对轨迹图进行采样，然后把采样的值乘以个控制系数，然后去改变地形的y值就可以了，轨迹部分的地形就会凹陷下去。这个采样的数值也要拿来作为地面纹理和雪纹理插值的系数。</p>
-<p>Surface Shader的编译指令：</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#pragma surface surf Standard fullforwardshadows vertex:disp tessellate:tessDistance</span></span><br><span class="line">    </span><br><span class="line"><span class="type">void</span> disp (<span class="keyword">inout</span> appdata v)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">float</span> d = tex2Dlod(_Splat, float4(v.texcoord.xy,<span class="number">0</span>,<span class="number">0</span>)).r * 			_Displacement;<span class="comment">//对轨迹图进行采样</span></span><br><span class="line">	v.vertex.xyz -= v.normal * d;</span><br><span class="line">	v.vertex.xyz += v.normal * _Displacement;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> surf (Input IN, <span class="keyword">inout</span> SurfaceOutputStandard o)</span><br><span class="line">&#123;</span><br><span class="line">	half amount = tex2Dlod(_Splat, float4(IN.uv_Splat,<span class="number">0</span>,<span class="number">0</span>)).r;</span><br><span class="line">	fixed4 c = lerp(tex2D(_SnowTex,IN.uv_SnowTex) * 					_SnowColor,tex2D(_GroundTex,IN.uv_GroundTex)*_GroundColor,amount);</span><br><span class="line">    <span class="comment">//凹陷部分雪到地面的插值过渡</span></span><br><span class="line">	</span><br><span class="line">    o.Albedo = c.rgb;    </span><br><span class="line">	o.Metallic = _Metallic;</span><br><span class="line">	o.Smoothness = _Glossiness;</span><br><span class="line">	o.Alpha = c.a;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>进入细分着色器，首先是Hull Shader：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[UNITY_domain(&quot;tri&quot;)]</span><br><span class="line">[UNITY_outputcontrolpoints(<span class="number">3</span>)]</span><br><span class="line">[UNITY_outputtopology(&quot;triangle_cw&quot;)]</span><br><span class="line">[UNITY_partitioning(&quot;integer&quot;)]</span><br><span class="line">[UNITY_patchconstantfunc(&quot;patchConstantFunction&quot;)]</span><br><span class="line">vertexInput hull (InputPatch&lt;vertexInput, <span class="number">3</span>&gt; <span class="keyword">patch</span>, <span class="type">uint</span> id : SV_OutputControlPointID)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">patch</span>[id];<span class="comment">//传递给下一阶段的一个数据</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
 
-<p>大概效果：</p>
-<img src="/2021/09/10/%E5%8F%AF%E4%BA%A4%E4%BA%92%E9%9B%AA%E5%9C%B0%E8%BD%A8%E8%BF%B9%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/2.png" class="">
+<p>设置细分因子：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">struct TessellationFactors </span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">float</span> edge[<span class="number">3</span>] : SV_TessFactor;</span><br><span class="line">	<span class="type">float</span> inside : SV_InsideTessFactor;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="type">float</span> _TessellationUniform;</span><br><span class="line"></span><br><span class="line"><span class="comment">//hull shader需要的细分控制函数</span></span><br><span class="line">TessellationFactors patchConstantFunction (InputPatch&lt;vertexInput, <span class="number">3</span>&gt; <span class="keyword">patch</span>)</span><br><span class="line">&#123;</span><br><span class="line">	TessellationFactors f;</span><br><span class="line">	f.edge[<span class="number">0</span>] = _TessellationUniform;</span><br><span class="line">	f.edge[<span class="number">1</span>] = _TessellationUniform;</span><br><span class="line">	f.edge[<span class="number">2</span>] = _TessellationUniform;</span><br><span class="line">	f.inside = _TessellationUniform;</span><br><span class="line">	<span class="keyword">return</span> f;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
 
+<p>计算顶点，插值操作，确定新顶点位置：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[UNITY_domain(&quot;tri&quot;)]</span><br><span class="line">vertexOutput custom_domain(TessellationFactors factors, OutputPatch&lt;vertexInput, <span class="number">3</span>&gt; <span class="keyword">patch</span>, float3 barycentricCoordinates : SV_DomainLocation)</span><br><span class="line">&#123;</span><br><span class="line">	vertexInput v;</span><br><span class="line"></span><br><span class="line">	<span class="meta">#define MY_DOMAIN_PROGRAM_INTERPOLATE(fieldName) v.fieldName = \</span></span><br><span class="line">		<span class="keyword">patch</span>[<span class="number">0</span>].fieldName * barycentricCoordinates.x + \</span><br><span class="line">		<span class="keyword">patch</span>[<span class="number">1</span>].fieldName * barycentricCoordinates.y + \</span><br><span class="line">		<span class="keyword">patch</span>[<span class="number">2</span>].fieldName * barycentricCoordinates.z;</span><br><span class="line"></span><br><span class="line">	MY_DOMAIN_PROGRAM_INTERPOLATE(vertex)</span><br><span class="line">	MY_DOMAIN_PROGRAM_INTERPOLATE(normal)</span><br><span class="line">	MY_DOMAIN_PROGRAM_INTERPOLATE(tangent)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> tessVertTransformed(v);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
+
+<p>这样就从最基础的层面实现了曲面细分shader，也就知道了surfaceshader是如何帮我们打包的了。</p>
 
                 
             </div>
@@ -527,7 +524,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://higashisan.github.io/2021/09/10/%E5%8F%AF%E4%BA%A4%E4%BA%92%E9%9B%AA%E5%9C%B0%E8%BD%A8%E8%BF%B9%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/">https://higashisan.github.io/2021/09/10/%E5%8F%AF%E4%BA%A4%E4%BA%92%E9%9B%AA%E5%9C%B0%E8%BD%A8%E8%BF%B9%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/</a>
+                    <a href="https://higashisan.github.io/2020/03/08/%E5%AF%B9Tessellaion%E5%92%8CGeometryShader%E7%9A%84%E5%BA%94%E7%94%A8%E7%A0%94%E7%A9%B6/">https://higashisan.github.io/2020/03/08/%E5%AF%B9Tessellaion%E5%92%8CGeometryShader%E7%9A%84%E5%BA%94%E7%94%A8%E7%A0%94%E7%A9%B6/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -565,8 +562,8 @@
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/RenderTexture%E3%80%81%E9%9B%AA%E5%9C%B0%E4%BA%A4%E4%BA%92/">
-                                    <span class="chip bg-color">RenderTexture、雪地交互</span>
+                                <a href="/tags/Tessellation-Shader/">
+                                    <span class="chip bg-color">Tessellation Shader</span>
                                 </a>
                             
                         </div>
@@ -740,13 +737,13 @@
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;Previous</div>
             <div class="card">
-                <a href="/2021/10/06/Ray-Marching/">
+                <a href="/2020/03/19/OpenGL-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="Ray Marching">
+                        <img src="/medias/featureimages/21.jpg" class="responsive-img" alt="OpenGL学习记录--入门章节">
                         
-                        <span class="card-title">Ray Marching</span>
+                        <span class="card-title">OpenGL学习记录--入门章节</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -757,7 +754,7 @@
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2021-10-06
+                            <i class="far fa-clock fa-fw icon-date"></i>2020-03-19
                         </span>
                         <span class="publish-author">
                             
@@ -770,8 +767,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/Ray-Marching-Shadow/">
-                        <span class="chip bg-color">Ray Marching Shadow</span>
+                    <a href="/tags/OpenGL/">
+                        <span class="chip bg-color">OpenGL</span>
                     </a>
                     
                 </div>
@@ -782,16 +779,16 @@
         
         <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge right-badge text-color">
-                Next&nbsp;<i class="fas fa-chevron-right"></i>
+                Current&nbsp;<i class="far fa-dot-circle"></i>
             </div>
             <div class="card">
-                <a href="/2021/05/16/Unity-SRP-%E4%B8%89-BRDF-Lighting/">
+                <a href="/2020/03/08/%E5%AF%B9Tessellaion%E5%92%8CGeometryShader%E7%9A%84%E5%BA%94%E7%94%A8%E7%A0%94%E7%A9%B6/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/5.jpg" class="responsive-img" alt="Unity-SRP(三)BRDF Lighting">
+                        <img src="/medias/featureimages/1.jpg" class="responsive-img" alt="Tessellation Shader的底层实现">
                         
-                        <span class="card-title">Unity-SRP(三)BRDF Lighting</span>
+                        <span class="card-title">Tessellation Shader的底层实现</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -802,7 +799,7 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2021-05-16
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-03-08
                             </span>
                         <span class="publish-author">
                             
@@ -812,11 +809,12 @@
                         </span>
                     </div>
                 </div>
+
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/SRP/">
-                        <span class="chip bg-color">SRP</span>
+                    <a href="/tags/Tessellation-Shader/">
+                        <span class="chip bg-color">Tessellation Shader</span>
                     </a>
                     
                 </div>

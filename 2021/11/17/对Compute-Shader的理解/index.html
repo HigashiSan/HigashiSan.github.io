@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="草地渲染, YoKuYou">
+    <meta name="keywords" content="对Compute Shader的理解, YoKuYou">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>草地渲染 | YoKuYou</title>
+    <title>对Compute Shader的理解 | YoKuYou</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -310,12 +310,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/0.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/14.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">草地渲染</h1>
+                    <h1 class="description center-align post-title">对Compute Shader的理解</h1>
                 </div>
             </div>
         </div>
@@ -431,8 +431,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/Grass-Render/">
-                                <span class="chip bg-color">Grass Render</span>
+                            <a href="/tags/Compute-Shader/">
+                                <span class="chip bg-color">Compute Shader</span>
                             </a>
                         
                     </div>
@@ -447,7 +447,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>Publish Date:&nbsp;&nbsp;
-                    2021-07-11
+                    2021-11-17
                 </div>
                 
 
@@ -468,7 +468,15 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h3 id="Grass"><a href="#Grass" class="headerlink" title="Grass"></a>Grass</h3><p>最近看了下</p>
+                <h3 id="Compute-Shader"><a href="#Compute-Shader" class="headerlink" title="Compute Shader"></a>Compute Shader</h3><p>总结一下自己对Compute Shader的理解，虽然不属于渲染管线的任何一个步骤，但是可以与CPU去做数据交换，可以使用GPU去并行计算复杂的东西。</p>
+<p>它的核心思想就是分组，每一组分别去并行计算。</p>
+<p>比较难理解的就是numthread的概念，它是一个三维的id号，对应着每个需要执行的线程，在computeshader里定义的（8，8，1）就是一个执行的线程组，它一共有64个线程。我们需要在cs里面dispatch的就是需要多少个线程组。对于一个256×256的texture，x方向上需要256/8个线程组，y方向上同理，所以一共需要32×32个线程组，一共就是32 × 32 × 64个线程。而且完全可以自定义numthread是怎样的，比如（2，2，4），这样一来它处理的就是一个三维的输入。</p>
+<p>假如对于一个256×128的2D Texture，就有以下的配置方式：</p>
+<img src="/2021/11/17/%E5%AF%B9Compute-Shader%E7%9A%84%E7%90%86%E8%A7%A3/1.png" class="">
+
+<p>只要Dispatch * numthreads 是图片大小，那么图片就能完全显示，不会漏像素。</p>
+<p>在指定某个kernel的线程组数的时候先得到它的入口函数ID号就行，kernel在NVIDA的说法里是CUDA core。这个入口函数的input就是一个uint3的变量，代表着马上要执行的线程的编号。</p>
+<p>对于数据的传输，就是用RWStructBuffer去实现，这个需要注意的就是在cs里new的时候要准确给出一个struct buffer的大小以及有几个这样的structure，它就是GPU为了存数据开的一个buffer。我们需要在cs和shader里面struct一样的结构，然后cs里面用setbuffer把ComputeBuffer指定給Compute Shader中的RWStructuredBuffer，这样就可以把数据交给compute shader计算。</p>
 
                 
             </div>
@@ -495,7 +503,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://higashisan.github.io/2021/07/11/%E8%8D%89%E5%9C%B0%E6%B8%B2%E6%9F%93/">https://higashisan.github.io/2021/07/11/%E8%8D%89%E5%9C%B0%E6%B8%B2%E6%9F%93/</a>
+                    <a href="https://higashisan.github.io/2021/11/17/%E5%AF%B9Compute-Shader%E7%9A%84%E7%90%86%E8%A7%A3/">https://higashisan.github.io/2021/11/17/%E5%AF%B9Compute-Shader%E7%9A%84%E7%90%86%E8%A7%A3/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -533,8 +541,8 @@
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/Grass-Render/">
-                                    <span class="chip bg-color">Grass Render</span>
+                                <a href="/tags/Compute-Shader/">
+                                    <span class="chip bg-color">Compute Shader</span>
                                 </a>
                             
                         </div>
@@ -704,17 +712,18 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;Previous</div>
+                <i class="far fa-dot-circle"></i>&nbsp;Current
+            </div>
             <div class="card">
-                <a href="/2021/09/10/%E5%8F%AF%E4%BA%A4%E4%BA%92%E9%9B%AA%E5%9C%B0%E8%BD%A8%E8%BF%B9%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/">
+                <a href="/2021/11/17/%E5%AF%B9Compute-Shader%E7%9A%84%E7%90%86%E8%A7%A3/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="可交互雪地轨迹实现思路">
+                        <img src="/medias/featureimages/14.jpg" class="responsive-img" alt="对Compute Shader的理解">
                         
-                        <span class="card-title">可交互雪地轨迹实现思路</span>
+                        <span class="card-title">对Compute Shader的理解</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -724,9 +733,9 @@
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2021-09-10
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2021-11-17
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -735,11 +744,12 @@
                         </span>
                     </div>
                 </div>
+
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/RenderTexture%E3%80%81%E9%9B%AA%E5%9C%B0%E4%BA%A4%E4%BA%92/">
-                        <span class="chip bg-color">RenderTexture、雪地交互</span>
+                    <a href="/tags/Compute-Shader/">
+                        <span class="chip bg-color">Compute Shader</span>
                     </a>
                     
                 </div>
@@ -753,13 +763,13 @@
                 Next&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2021/05/16/Unity-SRP-%E4%B8%89-BRDF-Lighting/">
+                <a href="/2021/11/16/%E6%8A%80%E6%9C%AF%E7%BE%8E%E6%9C%AF%E9%9D%A2%E8%AF%95%E5%87%86%E5%A4%87-%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/5.jpg" class="responsive-img" alt="Unity-SRP(三)BRDF Lighting">
+                        <img src="/medias/featureimages/16.jpg" class="responsive-img" alt="技术美术面试准备,知识点总结">
                         
-                        <span class="card-title">Unity-SRP(三)BRDF Lighting</span>
+                        <span class="card-title">技术美术面试准备,知识点总结</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -770,7 +780,7 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2021-05-16
+                                <i class="far fa-clock fa-fw icon-date"></i>2021-11-16
                             </span>
                         <span class="publish-author">
                             
@@ -783,8 +793,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/SRP/">
-                        <span class="chip bg-color">SRP</span>
+                    <a href="/tags/%E6%8A%80%E6%9C%AF%E7%BE%8E%E6%9C%AF%E9%9D%A2%E7%BB%8F/">
+                        <span class="chip bg-color">技术美术面经</span>
                     </a>
                     
                 </div>
