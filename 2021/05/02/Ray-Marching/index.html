@@ -447,7 +447,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>Publish Date:&nbsp;&nbsp;
-                    2021-10-06
+                    2021-05-02
                 </div>
                 
 
@@ -470,17 +470,17 @@
             <div id="articleContent">
                 <h3 id="Ray-Marching"><a href="#Ray-Marching" class="headerlink" title="Ray Marching"></a>Ray Marching</h3><p>思想就是光线前进，从摄像机到屏幕的一个像素发射一条射线，它以一定的步长前进，直到与物体发生相交，然后就计算这个像素的颜色。为了得到从摄像机到屏幕上像素的所有射线，要用到Camera Frustum。我们需要计算出视锥体四条棱对应的四个方向向量，raymarching实际做的也是后处理，把图像渲染到指定的Quad上，它的四个顶点就对应了我们求出来的四条视锥体向量，射线的方向就是摄像机到这个平面上某一点的向量，它是这四个向量的线性组合。</p>
 <p>求这个Camera Frustum的过程比较简单，求出来之后把它存在一个矩阵里面：</p>
-<img src="/2021/10/06/Ray-Marching/3.png" class="">
+<img src="/2021/05/02/Ray-Marching/3.png" class="">
 
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> Matrix4x4 <span class="title">CamFrustum</span>(<span class="params">Camera cam</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        Matrix4x4 frustum = Matrix4x4.identity;</span><br><span class="line">        <span class="built_in">float</span> halfHeight = Mathf.Tan((cam.fieldOfView * <span class="number">0.5f</span>) * Mathf.Deg2Rad);</span><br><span class="line"></span><br><span class="line">        Vector3 goUp = Vector3.up * halfHeight;</span><br><span class="line">        Vector3 goRight = Vector3.right * halfHeight * cam.aspect;</span><br><span class="line"></span><br><span class="line">        Vector3 TL = (-Vector3.forward - goRight + goUp);</span><br><span class="line">        Vector3 TR = (-Vector3.forward + goRight + goUp);</span><br><span class="line">        Vector3 BR = (-Vector3.forward + goRight - goUp);</span><br><span class="line">        Vector3 BL = (-Vector3.forward - goRight - goUp);</span><br><span class="line"></span><br><span class="line">        frustum.SetRow(<span class="number">0</span>, TL);</span><br><span class="line">        frustum.SetRow(<span class="number">1</span>, TR);</span><br><span class="line">        frustum.SetRow(<span class="number">2</span>, BR);</span><br><span class="line">        frustum.SetRow(<span class="number">3</span>, BL);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> frustum;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>我们根据像素的位置选择对应的向量，经过插值后传给片元着色器就能得到射线的方向:</p>
-<img src="/2021/10/06/Ray-Marching/5.png" class="">
+<img src="/2021/05/02/Ray-Marching/5.png" class="">
 
 
 
 <p>物体表面的定义则是通过Signed Distance Functions实现，它可以告诉光线走到某一点时离它最近的表面的距离。</p>
-<img src="/2021/10/06/Ray-Marching/1.png" class="">
+<img src="/2021/05/02/Ray-Marching/1.png" class="">
 
 <p>比如对一个球面的定义：</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">float</span> <span class="title">sdSphere</span>(<span class="params">float3 p, <span class="built_in">float</span> s</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> length(p) - s;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -489,7 +489,7 @@
 <p>对于两个或者多个物体，我们还可以把他们合并，或者取共同部分，比如：</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Union</span></span><br><span class="line"><span class="function"><span class="built_in">float</span> <span class="title">opU</span>(<span class="params"><span class="built_in">float</span> d1, <span class="built_in">float</span> d2</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> min(d1, d2);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Subtraction</span></span><br><span class="line"><span class="function"><span class="built_in">float</span> <span class="title">opS</span>(<span class="params"><span class="built_in">float</span> d1, <span class="built_in">float</span> d2</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> max(-d1, d2);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Intersection</span></span><br><span class="line"><span class="function"><span class="built_in">float</span> <span class="title">opI</span>(<span class="params"><span class="built_in">float</span> d1, <span class="built_in">float</span> d2</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> max(d1, d2);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<img src="/2021/10/06/Ray-Marching/2.png" class="">
+<img src="/2021/05/02/Ray-Marching/2.png" class="">
 
 
 
@@ -503,7 +503,7 @@
 <figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">fixed4 RayMarching(float3 ro, float3 rd, <span class="type">float</span> depth)</span><br><span class="line">&#123;</span><br><span class="line">	fixed4 result = fixed4(<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">const</span> <span class="type">int</span> maxIteration = _MaxIterations;</span><br><span class="line">	<span class="type">float</span> t = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; maxIteration; i++)</span><br><span class="line">	&#123;</span><br><span class="line">        <span class="comment">//只判断深度这个深度前面的</span></span><br><span class="line">		<span class="keyword">if</span>(t &gt; _maxDst || t &gt;= depth)</span><br><span class="line">		&#123;</span><br><span class="line">			result = fixed4(<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		float3 p = ro + rd * t;</span><br><span class="line">		<span class="type">float</span> d = DstField(p);</span><br><span class="line">		<span class="keyword">if</span>(d &lt; _Accuracy)</span><br><span class="line">		&#123;</span><br><span class="line">			float3 n = GetNormal(p);<span class="comment">//近似方法获取这个点的法向量</span></span><br><span class="line">			float3 s = Shading(p, n);</span><br><span class="line"></span><br><span class="line">			result = fixed4(s,<span class="number">1</span>);</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		t += d;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>用梯度的方法去近似求一个点的法向量：</p>
-<img src="/2021/10/06/Ray-Marching/4.png" class="">
+<img src="/2021/05/02/Ray-Marching/4.png" class="">
 
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">float3 <span class="title">GetNormal</span>(<span class="params">float3 p</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">const</span> <span class="built_in">float</span> offset = <span class="number">0.0001</span>;</span><br><span class="line">	float3 normal = float3(</span><br><span class="line">	DstField(float3(p.x + offset, p.y, p.z)) - DstField(float3(p.x - offset, p.y, p.z)),</span><br><span class="line">	DstField(float3(p.x, p.y + offset, p.z)) - DstField(float3(p.x, p.y - offset, p.z)),</span><br><span class="line">	DstField(float3(p.x, p.y, p.z + offset)) - DstField(float3(p.x, p.y, p.z - offset)));</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> normalize(normal);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -525,7 +525,7 @@
 
 
 <p>最后用实现的效果：</p>
-<img src="/2021/10/06/Ray-Marching/6.png" class="">
+<img src="/2021/05/02/Ray-Marching/6.png" class="">
 
 
 
@@ -558,7 +558,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://higashisan.github.io/2021/10/06/Ray-Marching/">https://higashisan.github.io/2021/10/06/Ray-Marching/</a>
+                    <a href="https://higashisan.github.io/2021/05/02/Ray-Marching/">https://higashisan.github.io/2021/05/02/Ray-Marching/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -771,13 +771,13 @@
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;Previous</div>
             <div class="card">
-                <a href="/2021/10/08/%E7%A8%8B%E5%BA%8F%E5%8C%96%E7%94%9F%E6%88%90%E5%BC%80%E6%94%BE%E4%B8%96%E7%95%8C%E6%97%A0%E5%B0%BD%E5%9C%B0%E5%BD%A2/">
+                <a href="/2021/05/10/Unity-SRP-%E4%B8%80-Create-a-pipeline/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/17.jpg" class="responsive-img" alt="程序化生成开放世界地形一">
+                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="Unity SRP(一) Create a pipeline">
                         
-                        <span class="card-title">程序化生成开放世界地形一</span>
+                        <span class="card-title">Unity SRP(一) Create a pipeline</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -788,7 +788,7 @@
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2021-10-08
+                            <i class="far fa-clock fa-fw icon-date"></i>2021-05-10
                         </span>
                         <span class="publish-author">
                             
@@ -801,8 +801,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/%E7%A8%8B%E5%BA%8F%E5%8C%96%E7%94%9F%E6%88%90/">
-                        <span class="chip bg-color">程序化生成</span>
+                    <a href="/tags/SRP/">
+                        <span class="chip bg-color">SRP</span>
                     </a>
                     
                 </div>
@@ -816,13 +816,13 @@
                 Next&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2021/09/10/%E5%8F%AF%E4%BA%A4%E4%BA%92%E9%9B%AA%E5%9C%B0%E8%BD%A8%E8%BF%B9%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/">
+                <a href="/2021/04/28/%E9%9B%A8%E6%BB%B4%E7%8E%BB%E7%92%83Shader%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="可交互雪地轨迹实现思路">
+                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="雨滴玻璃Shader实现思路">
                         
-                        <span class="card-title">可交互雪地轨迹实现思路</span>
+                        <span class="card-title">雨滴玻璃Shader实现思路</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -833,7 +833,7 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2021-09-10
+                                <i class="far fa-clock fa-fw icon-date"></i>2021-04-28
                             </span>
                         <span class="publish-author">
                             
@@ -846,8 +846,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/RenderTexture%E3%80%81%E9%9B%AA%E5%9C%B0%E4%BA%A4%E4%BA%92/">
-                        <span class="chip bg-color">RenderTexture、雪地交互</span>
+                    <a href="/tags/%E9%9B%A8%E6%BB%B4%E7%8E%BB%E7%92%83Shader/">
+                        <span class="chip bg-color">雨滴玻璃Shader</span>
                     </a>
                     
                 </div>
