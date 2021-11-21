@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="对Compute Shader的理解, YoKuYo">
+    <meta name="keywords" content="Unity屏幕特效知识总结, YoKuYo">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>对Compute Shader的理解 | YoKuYo</title>
+    <title>Unity屏幕特效知识总结 | YoKuYo</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -310,12 +310,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/14.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/13.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">对Compute Shader的理解</h1>
+                    <h1 class="description center-align post-title">Unity屏幕特效知识总结</h1>
                 </div>
             </div>
         </div>
@@ -431,8 +431,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/Compute-Shader/">
-                                <span class="chip bg-color">Compute Shader</span>
+                            <a href="/tags/Image-Effect/">
+                                <span class="chip bg-color">Image Effect</span>
                             </a>
                         
                     </div>
@@ -447,7 +447,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>Publish Date:&nbsp;&nbsp;
-                    2021-11-17
+                    2020-04-13
                 </div>
                 
 
@@ -468,15 +468,47 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h3 id="Compute-Shader"><a href="#Compute-Shader" class="headerlink" title="Compute Shader"></a>Compute Shader</h3><p>总结一下自己对Compute Shader的理解，虽然不属于渲染管线的任何一个步骤，但是可以与CPU去做数据交换，可以使用GPU去并行计算复杂的东西。</p>
-<p>它的核心思想就是分组，每一组分别去并行计算。</p>
-<p>比较难理解的就是numthread的概念，它是一个三维的id号，对应着每个需要执行的线程，在computeshader里定义的（8，8，1）就是一个执行的线程组，它一共有64个线程。我们需要在cs里面dispatch的就是需要多少个线程组。对于一个256×256的texture，x方向上需要256/8个线程组，y方向上同理，所以一共需要32×32个线程组，一共就是32 × 32 × 64个线程。而且完全可以自定义numthread是怎样的，比如（2，2，4），这样一来它处理的就是一个三维的输入。</p>
-<p>假如对于一个256×128的2D Texture，就有以下的配置方式：</p>
-<img src="/2021/11/17/%E5%AF%B9Compute-Shader%E7%9A%84%E7%90%86%E8%A7%A3/1.png" class="">
+                <h3 id="屏幕后处理特效"><a href="#屏幕后处理特效" class="headerlink" title="屏幕后处理特效"></a>屏幕后处理特效</h3><p>最近看了看Unity一种专门的Shader类别，Image Effect，一般有两种：GrabPass和Post-Processing</p>
+<h4 id="GrabPass"><a href="#GrabPass" class="headerlink" title="GrabPass"></a>GrabPass</h4><p>用来抓取物体所在屏幕位置的渲染图像，然后把这张Texture传递给接下来的Pass进行图像处理。它也是写在SubShader中的，使用时可以采用默认方式或者指定方式：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GrabPass &#123;“TextureName”&#125;</span><br><span class="line"><span class="comment">//Default: _GrabTexture</span></span><br></pre></td></tr></table></figure>
 
-<p>只要Dispatch * numthreads 是图片大小，那么图片就能完全显示，不会漏像素。</p>
-<p>在指定某个kernel的线程组数的时候先得到它的入口函数ID号就行，kernel在NVIDA的说法里是CUDA core。这个入口函数的input就是一个uint3的变量，代表着马上要执行的线程的编号。</p>
-<p>对于数据的传输，就是用RWStructBuffer去实现，这个需要注意的就是在cs里new的时候要准确给出一个struct buffer的大小以及有几个这样的structure，它就是GPU为了存数据开的一个buffer。我们需要在cs和shader里面struct一样的结构，然后cs里面用setbuffer把ComputeBuffer指定給Compute Shader中的RWStructuredBuffer，这样就可以把数据交给compute shader计算。</p>
+<p>需要注意的是，当我们抓取好grabPos后，使用这个纹理坐标对抓取的图像进行采样时，要使用tex2Dproj函数，它是将坐标从正交投影转换为透视投影，返回一个0~1的值。</p>
+<h4 id="Post-Processing"><a href="#Post-Processing" class="headerlink" title="Post-Processing"></a>Post-Processing</h4><p>后处理效果本质就是对要显示在屏幕前面的那个四边形面片进行处理，相当于把经过了渲染管线之后的照片拿到ps里面做最后的处理。实现后处理需要C#与shader共同作用，这个C#脚本需要把摄像机的RenderImage以RenderTexture的方式传递给关联Shader，shader处理完之后再传回脚本。</p>
+<p>这个机制在Unity中是使用OnRenderImage实现的，它的source参数是摄像机渲染完的那个texture，destination是经过shader处理之后将要输出到屏幕上的texture。整个流程大概是：摄像机在这一帧渲染好的暂时储存在source中，然后显卡调用shader对它进行处理，处理完成之后的图像通过Graphics.Blit（source，destination，material，-1）转移到destination，等待输出到屏幕。source则会继续接收下一帧摄像机渲染好的图像。最后一个参数默认-1，会依次调用各个pass，如果指定了具体的数字，那就会调用对应的pass。</p>
+<p>在shader中，_MainTex是一个固定的名字，用于接收摄像机的RenderTexture，不能改变它。而且在pass中为了避免对场景中的物体产生影响，要关闭几何体剔除和深度写入（避免挡住后面要渲染的物体），并且深度测试必须总是通过。</p>
+<p>后处理标配的状态标志：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Cull Off</span><br><span class="line">ZTest Always</span><br><span class="line">ZWrite Off</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                 
             </div>
@@ -503,7 +535,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://higashisan.github.io/2021/11/17/%E5%AF%B9Compute-Shader%E7%9A%84%E7%90%86%E8%A7%A3/">https://higashisan.github.io/2021/11/17/%E5%AF%B9Compute-Shader%E7%9A%84%E7%90%86%E8%A7%A3/</a>
+                    <a href="https://higashisan.github.io/2020/04/13/Unity%E5%B1%8F%E5%B9%95%E5%90%8E%E5%A4%84%E7%90%86%E5%85%A5%E9%97%A8/">https://higashisan.github.io/2020/04/13/Unity%E5%B1%8F%E5%B9%95%E5%90%8E%E5%A4%84%E7%90%86%E5%85%A5%E9%97%A8/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -541,8 +573,8 @@
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/Compute-Shader/">
-                                    <span class="chip bg-color">Compute Shader</span>
+                                <a href="/tags/Image-Effect/">
+                                    <span class="chip bg-color">Image Effect</span>
                                 </a>
                             
                         </div>
@@ -712,18 +744,17 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="far fa-dot-circle"></i>&nbsp;Current
-            </div>
+                <i class="fas fa-chevron-left"></i>&nbsp;Previous</div>
             <div class="card">
-                <a href="/2021/11/17/%E5%AF%B9Compute-Shader%E7%9A%84%E7%90%86%E8%A7%A3/">
+                <a href="/2020/04/19/%E5%AE%9E%E4%BE%8B%E5%8C%96-%E9%AB%98%E6%95%88%E7%BB%98%E5%88%B6%E5%A4%A7%E9%87%8F%E7%89%A9%E4%BD%93/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/14.jpg" class="responsive-img" alt="对Compute Shader的理解">
+                        <img src="/medias/featureimages/14.jpg" class="responsive-img" alt="实例化(高效绘制大量物体)">
                         
-                        <span class="card-title">对Compute Shader的理解</span>
+                        <span class="card-title">实例化(高效绘制大量物体)</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -733,9 +764,9 @@
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2021-11-17
-                            </span>
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2020-04-19
+                        </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -744,12 +775,11 @@
                         </span>
                     </div>
                 </div>
-
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/Compute-Shader/">
-                        <span class="chip bg-color">Compute Shader</span>
+                    <a href="/tags/%E5%AE%9E%E4%BE%8B%E5%8C%96/">
+                        <span class="chip bg-color">实例化</span>
                     </a>
                     
                 </div>
@@ -763,13 +793,13 @@
                 Next&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2021/10/20/Unity-Shader-%E5%A4%9C%E8%A7%86%E4%BB%AA%E6%95%88%E6%9E%9C%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/">
+                <a href="/2020/04/11/%E7%AB%8B%E6%96%B9%E4%BD%93%E8%B4%B4%E5%9B%BE/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="Unity Shader 夜视仪效果实现思路">
+                        <img src="/medias/featureimages/9.jpg" class="responsive-img" alt="立方体贴图">
                         
-                        <span class="card-title">Unity Shader 夜视仪效果实现思路</span>
+                        <span class="card-title">立方体贴图</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -780,7 +810,7 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2021-10-20
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-04-11
                             </span>
                         <span class="publish-author">
                             
@@ -793,8 +823,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/Post-Screen/">
-                        <span class="chip bg-color">Post-Screen</span>
+                    <a href="/tags/%E7%AB%8B%E6%96%B9%E4%BD%93%E8%B4%B4%E5%9B%BE/">
+                        <span class="chip bg-color">立方体贴图</span>
                     </a>
                     
                 </div>
