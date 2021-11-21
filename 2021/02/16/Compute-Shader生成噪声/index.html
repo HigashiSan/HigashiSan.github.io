@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="雨滴玻璃Shader实现思路, YoKuYo">
+    <meta name="keywords" content="Compute Shader生成噪声, YoKuYo">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>雨滴玻璃Shader实现思路 | YoKuYo</title>
+    <title>Compute Shader生成噪声 | YoKuYo</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -310,12 +310,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/11.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/21.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">雨滴玻璃Shader实现思路</h1>
+                    <h1 class="description center-align post-title">Compute Shader生成噪声</h1>
                 </div>
             </div>
         </div>
@@ -431,8 +431,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/%E9%9B%A8%E6%BB%B4%E7%8E%BB%E7%92%83Shader/">
-                                <span class="chip bg-color">雨滴玻璃Shader</span>
+                            <a href="/tags/Compute-Shader/">
+                                <span class="chip bg-color">Compute Shader</span>
                             </a>
                         
                     </div>
@@ -447,7 +447,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>Publish Date:&nbsp;&nbsp;
-                    2021-04-28
+                    2021-02-16
                 </div>
                 
 
@@ -468,123 +468,13 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h3 id="最终效果"><a href="#最终效果" class="headerlink" title="最终效果"></a>最终效果</h3><img src="/2021/04/28/%E9%9B%A8%E6%BB%B4%E7%8E%BB%E7%92%83Shader%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/18.png" class="">
+                <h3 id="噪声生成工具"><a href="#噪声生成工具" class="headerlink" title="噪声生成工具"></a>噪声生成工具</h3><p>尝试一下ta的另一个方向：写Tools，因为学了compute shader，正好也练练手 ，去做一个噪声生成工具。</p>
+<h4 id="Window、GUI布局"><a href="#Window、GUI布局" class="headerlink" title="Window、GUI布局"></a>Window、GUI布局</h4><p>脚本继承自EditorWindow之后，使用一些API去把窗口需要的选项做出来就好。</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">MenuItem(<span class="meta-string">&quot;Tools/Noise Tool&quot;</span>)</span>]</span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">CreateWindow</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Rect size = <span class="keyword">new</span> Rect(<span class="number">0</span>, <span class="number">0</span>, <span class="number">400</span>, <span class="number">600</span>);</span><br><span class="line">	NoiseGenTool window = 	(NoiseGenTool)EditorWindow.GetWindowWithRect(<span class="keyword">typeof</span>(NoiseGenTool), size, <span class="literal">true</span>);</span><br><span class="line">	window.Show();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h3 id="实现思路"><a href="#实现思路" class="headerlink" title="实现思路"></a>实现思路</h3><h4 id="网格"><a href="#网格" class="headerlink" title="网格"></a>网格</h4><p>首先使用一个Unlitshader，为了限制雨滴的移动范围，需要先定义出网格，首先将采样得到的纹理坐标乘一个数，然后取小数部分，就可以得到重复的网格：</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">fixed4 frag (v2f i) : SV_Target</span><br><span class="line">&#123;</span><br><span class="line">	float4 col = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	float2 aspect = float2(<span class="number">2</span>,<span class="number">1</span>);</span><br><span class="line">	float2 uv = i.uv * _GridSize * aspect;</span><br><span class="line">	float2 grid_uv = frac(uv) - <span class="number">0.5</span>;<span class="comment">//把原点移到中间</span></span><br><span class="line">	</span><br><span class="line">    <span class="comment">//定义网格边界线</span></span><br><span class="line">	<span class="keyword">if</span>(grid_uv.x &gt; <span class="number">0.48</span> || grid_uv.y &gt; <span class="number">0.49</span>) col = float4(<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> col;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>窗口中的选择选项布局：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="built_in">enum</span> NoiseType &#123; Worley, Perlin, Simplex&#125;;</span><br><span class="line"><span class="keyword">public</span> <span class="built_in">enum</span> TextureSize &#123; x64 = <span class="number">64</span>, x128 = <span class="number">128</span>, x256 = <span class="number">256</span>, x512 = <span class="number">512</span>, x1024 = <span class="number">1024</span>, x2048 = <span class="number">2048</span> &#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> ComputeShader noiseShader;</span><br><span class="line"><span class="keyword">private</span> NoiseType noiseType = NoiseType.Perlin;</span><br><span class="line"><span class="keyword">private</span> RenderTextureFormat format = RenderTextureFormat.ARGB32;</span><br><span class="line"><span class="keyword">private</span> TextureSize size = TextureSize.x512;</span><br><span class="line"><span class="keyword">private</span> <span class="built_in">float</span> noiseScale = <span class="number">10f</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//在OnGUI里面</span></span><br><span class="line">noiseShader = EditorGUILayout.ObjectField(<span class="string">&quot;Compute Noise Shader:&quot;</span>, noiseShader, <span class="keyword">typeof</span>(ComputeShader), <span class="literal">true</span>) <span class="keyword">as</span> ComputeShader;</span><br><span class="line">noiseType = (NoiseType)EditorGUILayout.EnumPopup(<span class="string">&quot;Noise Type：&quot;</span>, noiseType);</span><br><span class="line">format = (RenderTextureFormat)EditorGUILayout.EnumPopup(<span class="string">&quot;Texture Format：&quot;</span>, format);</span><br><span class="line">size = (TextureSize)EditorGUILayout.EnumPopup(<span class="string">&quot;Texture Size：&quot;</span>, size);</span><br><span class="line">noiseScale = EditorGUILayout.Slider(<span class="string">&quot;Noise Scale:&quot;</span>, noiseScale, <span class="number">20f</span>, <span class="number">200f</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (GUILayout.Button(<span class="string">&quot;Generate Noise Texture&quot;</span>))</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span> (noiseShader == <span class="literal">null</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		ShowNotification(<span class="keyword">new</span> GUIContent(<span class="string">&quot;Noise Shader is null!!&quot;</span>));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		Generate();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (GUILayout.Button(<span class="string">&quot;Save Texture&quot;</span>))</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span> (renderTexture == <span class="literal">null</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		ShowNotification(<span class="keyword">new</span> GUIContent(<span class="string">&quot;Texture is null!!&quot;</span>));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		SaveTexture();</span><br><span class="line">		AssetDatabase.Refresh();</span><br><span class="line">		ShowNotification(<span class="keyword">new</span> GUIContent(<span class="string">&quot;Successfully saved!!&quot;</span>));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<img src="/2021/04/28/%E9%9B%A8%E6%BB%B4%E7%8E%BB%E7%92%83Shader%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/1.png" class="">
-
-
-
-<h4 id="雨滴"><a href="#雨滴" class="headerlink" title="雨滴"></a>雨滴</h4><p>使用smoothstep，通过计算到网格中心的距离来画出雨滴：</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> drop = <span class="built_in">smoothstep</span>(<span class="number">0.05</span>, <span class="number">0.03</span>, <span class="built_in">length</span>(grid_uv / aspect));</span><br><span class="line">col += drop;</span><br></pre></td></tr></table></figure>
-
-<img src="/2021/04/28/%E9%9B%A8%E6%BB%B4%E7%8E%BB%E7%92%83Shader%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/2.png" class="">
-
-
-
-<h4 id="移动逻辑"><a href="#移动逻辑" class="headerlink" title="移动逻辑"></a>移动逻辑</h4><p>额外定义两个变量来控制雨滴偏移的量，通过改变这个两个变量来实现雨滴的移动，直接对网格坐标做加减即可：</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> x = <span class="number">0</span>;</span><br><span class="line"><span class="type">float</span> y = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">float2 dropPos = (grid_uv - float2(x, y)) / aspect;</span><br><span class="line"></span><br><span class="line"><span class="type">float</span> drop = <span class="built_in">smoothstep</span>(<span class="number">0.05</span>, <span class="number">0.03</span>, <span class="built_in">length</span>(dropPos));</span><br><span class="line">col += drop;</span><br></pre></td></tr></table></figure>
-
-
-
-<p>然后就是最重要的，正常情况下雨滴落在窗户上，会先缓慢下滑，然后快速下滑，先使用一个函数模拟这个过程：</p>
-<img src="/2021/04/28/%E9%9B%A8%E6%BB%B4%E7%8E%BB%E7%92%83Shader%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/3.png" class="">
-
-<p>为了避免雨滴出现上滑，所以再同时把网格的y往下移，就可以做出这样的视觉效果：不断有雨滴从缓慢下滑到快速下滑：</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">float2 uv = i.uv * _GridSize * aspect;</span><br><span class="line">uv.y += t * <span class="number">0.25</span>;<span class="comment">//下移网格</span></span><br><span class="line"></span><br><span class="line"><span class="type">float</span> y = -<span class="built_in">sin</span>(t + <span class="built_in">sin</span>(t + <span class="built_in">sin</span>(t) * <span class="number">.5</span>)) * <span class="number">0.45</span>;</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="雨滴轨迹"><a href="#雨滴轨迹" class="headerlink" title="雨滴轨迹"></a>雨滴轨迹</h4><p>思路就是同样在生成drop的同时生成几个比它小的drop：</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">float2 trailPos = (grid_uv - float2(x, t * <span class="number">0.25</span>)) / aspect;</span><br><span class="line">trailPos.y = (frac(trailPos.y * <span class="number">8</span>) - <span class="number">0.5</span>) / <span class="number">8</span>;<span class="comment">//重复的轨迹个数</span></span><br><span class="line"><span class="type">float</span> trail = <span class="built_in">smoothstep</span>(<span class="number">0.03</span>, <span class="number">0.01</span>, <span class="built_in">length</span>(trailPos));<span class="comment">//更小的drop</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//舍弃掉在drop下面的小drop</span></span><br><span class="line">trail *= dropPos.y &gt; <span class="number">0</span> ? <span class="number">1</span> : <span class="number">0</span>;</span><br><span class="line"><span class="comment">//在drop的上面，y大于0，在下面就小于0，所以在下面的直接乘0舍弃</span></span><br></pre></td></tr></table></figure>
-
-<img src="/2021/04/28/%E9%9B%A8%E6%BB%B4%E7%8E%BB%E7%92%83Shader%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/4.png" class="">
-
-<p>在这个基础上再去做颜色的渐变：</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">trail *= <span class="built_in">smoothstep</span>(<span class="number">0.5</span>, y, grid_uv.y);</span><br></pre></td></tr></table></figure>
-
-<img src="/2021/04/28/%E9%9B%A8%E6%BB%B4%E7%8E%BB%E7%92%83Shader%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/5.png" class="">
-
-
-
-<p>然后就是雨滴滑落的过程中的左右摇晃运动，描述函数：</p>
-<img src="/2021/04/28/%E9%9B%A8%E6%BB%B4%E7%8E%BB%E7%92%83Shader%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/6.png" class="">
-
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> w = i.uv.y * <span class="number">10</span>;</span><br><span class="line"><span class="type">float</span> x = <span class="built_in">sin</span>(<span class="number">3</span> * w) * <span class="built_in">pow</span>(<span class="built_in">sin</span>(w), <span class="number">6</span>) * <span class="number">0.45</span>;</span><br></pre></td></tr></table></figure>
-
-<img src="/2021/04/28/%E9%9B%A8%E6%BB%B4%E7%8E%BB%E7%92%83Shader%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/7.png" class="">
-
-
-
-<h4 id="随机化"><a href="#随机化" class="headerlink" title="随机化"></a>随机化</h4><p>为了让每个雨滴的轨迹，下落时间不一样，还需要分离每一个格子，让每个格子都有一个独有的id号，然后就可以针对不同的格子去做随机：</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">float2 grid_id = <span class="built_in">floor</span>(uv);</span><br></pre></td></tr></table></figure>
-
-<img src="/2021/04/28/%E9%9B%A8%E6%BB%B4%E7%8E%BB%E7%92%83Shader%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/8.png" class="">
-
-<p>格子有了不同的颜色，即有了不同的id。然后根据这个float2的id去生成一个随机数：</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> GetRandom(float2 p)</span><br><span class="line">&#123;</span><br><span class="line">	p = frac(p * float2(<span class="number">123.33</span>, <span class="number">233.233</span>));</span><br><span class="line">	p += <span class="built_in">dot</span>(p, p + <span class="number">34.33</span>);</span><br><span class="line">	<span class="keyword">return</span> frac(p.x * p.y);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">col += GetRandom(grid_id);</span><br></pre></td></tr></table></figure>
-
-<p>成功给每个格子生成了一个随机数：</p>
-<img src="/2021/04/28/%E9%9B%A8%E6%BB%B4%E7%8E%BB%E7%92%83Shader%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/9.png" class="">
-
-<p>然后就能用每个格子生成的随机数去设置这个格子里水滴的移动（左右和上下）：</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"> <span class="type">float</span> gridValue = GetRandom(grid_id);</span><br><span class="line">t += gridValue * <span class="number">6.28</span>;<span class="comment">//sin函数是2PI</span></span><br><span class="line"></span><br><span class="line"><span class="type">float</span> w = i.uv.y * <span class="number">10</span>;</span><br><span class="line"><span class="type">float</span> x = (gridValue - <span class="number">0.5</span>) * <span class="number">0.8</span>;<span class="comment">//一个-0.4 ~ 0.4的数</span></span><br><span class="line">x += (<span class="number">0.4</span> - <span class="built_in">abs</span>(x)) * <span class="built_in">sin</span>(<span class="number">3</span> * w) * <span class="built_in">pow</span>(<span class="built_in">sin</span>(w), <span class="number">6</span>) * <span class="number">0.45</span>;<span class="comment">//越靠近格子边缘的雨滴左右移动的幅度越小，避免雨滴滑到格子外面</span></span><br><span class="line"><span class="type">float</span> y = -<span class="built_in">sin</span>(t + <span class="built_in">sin</span>(t + <span class="built_in">sin</span>(t) * <span class="number">.5</span>)) * <span class="number">0.45</span>;</span><br><span class="line">y -= (grid_uv.x - x) * (grid_uv.x - x);</span><br></pre></td></tr></table></figure>
-
-<img src="/2021/04/28/%E9%9B%A8%E6%BB%B4%E7%8E%BB%E7%92%83Shader%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/10.png" class="">
-
-<p>这样就已经有了水滴随机下滑的效果。</p>
-<h4 id="雾气效果"><a href="#雾气效果" class="headerlink" title="雾气效果"></a>雾气效果</h4><figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> fogTrail = dropPos.y &gt; <span class="number">0</span> ? <span class="number">1</span> : <span class="number">0</span>;</span><br><span class="line">fogTrail *= <span class="built_in">smoothstep</span>(<span class="number">0.5</span>, y, grid_uv.y);</span><br><span class="line">trail *= fogTrail;</span><br><span class="line">fogTrail *= <span class="built_in">smoothstep</span>(<span class="number">0.05</span>, <span class="number">0.04</span>, <span class="built_in">abs</span>(dropPos.x));</span><br></pre></td></tr></table></figure>
-
-<img src="/2021/04/28/%E9%9B%A8%E6%BB%B4%E7%8E%BB%E7%92%83Shader%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/11.png" class="">
-
-
-
-<h4 id="采样"><a href="#采样" class="headerlink" title="采样"></a>采样</h4><p>然后就是拿这个图去对窗户后面的景色进行采样：</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">float2 offsets = drop * dropPos + trail * trailPos;</span><br><span class="line"></span><br><span class="line">col = tex2D(_MainTex, i.uv + offsets * _Distortion);</span><br></pre></td></tr></table></figure>
-
-<p>然后就已经可以得到很棒的效果了：</p>
-<img src="/2021/04/28/%E9%9B%A8%E6%BB%B4%E7%8E%BB%E7%92%83Shader%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/12.png" class="">
-
-<p>为了做到模糊的效果，使用tex2Dlod进行采样：</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">float2 offsets = drop * dropPos + trail * trailPos;</span><br><span class="line"></span><br><span class="line"><span class="type">float</span> blur = _Blur * <span class="number">7</span> * (<span class="number">1</span> - fogTrail);</span><br><span class="line"></span><br><span class="line">col = tex2Dlod(_MainTex, float4(i.uv + offsets * _Distortion,<span class="number">0</span>,blur));</span><br></pre></td></tr></table></figure>
-
-<img src="/2021/04/28/%E9%9B%A8%E6%BB%B4%E7%8E%BB%E7%92%83Shader%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/13.png" class="">
-
-
-
-<h4 id="雨滴层级"><a href="#雨滴层级" class="headerlink" title="雨滴层级"></a>雨滴层级</h4><p>使用一个for循环去控制多层级的雨滴，数值越大，雨滴越多：</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">float3 drops = DrawDrop(i.uv, t);</span><br><span class="line"><span class="keyword">for</span>(<span class="type">int</span> k = <span class="number">1</span>; k &lt;= _RainLayers; k++)</span><br><span class="line">&#123;</span><br><span class="line">	drops += DrawDrop(i.uv * (<span class="number">1.13</span> + <span class="number">0.012</span> * k) + <span class="number">0.98</span> * k, t);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="窗户效果"><a href="#窗户效果" class="headerlink" title="窗户效果"></a>窗户效果</h4><p>要真正有着透过窗户看到外面的效果，可以使用grabpass实现。为了正确得到镜子后面的效果，必须让它最后渲染，所以把它的队列为Transparent，在不透明物体渲染完之后再渲染它。计算出抓取texture的坐标后用tex2Dproj进行采样，就可以得到正确的透视效果：</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">struct v2f</span><br><span class="line">&#123;</span><br><span class="line">	float2 uv : TEXCOORD0;</span><br><span class="line">	float4 grab_uv : TEXCOORD1;</span><br><span class="line">	UNITY_FOG_COORDS(<span class="number">1</span>)</span><br><span class="line">	float4 vertex : SV_POSITION;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">col = tex2Dproj(_GrabTexture, i.grab_uv);</span><br></pre></td></tr></table></figure>
-
-<img src="/2021/04/28/%E9%9B%A8%E6%BB%B4%E7%8E%BB%E7%92%83Shader%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/14.png" class="">
-
-
-
-<h4 id="模糊效果"><a href="#模糊效果" class="headerlink" title="模糊效果"></a>模糊效果</h4><p>模糊效果的思路和做高斯模糊相似，直接在采样的时候对坐标进行偏移，然后采样后做均值就行：</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">proj_uv += drops.xy * _Distortion;<span class="comment">//控制雨滴程度</span></span><br><span class="line"></span><br><span class="line"><span class="type">float</span> a = GetRandom(i.uv) * <span class="number">6.283</span>;</span><br><span class="line"><span class="keyword">for</span>(<span class="type">float</span> j = <span class="number">0</span>; j &lt; _SampleNum; j++)</span><br><span class="line">&#123;</span><br><span class="line">	float2 sampleOffset = float2(<span class="built_in">sin</span>(a),<span class="built_in">cos</span>(a)) * blur * <span class="number">0.01</span>;</span><br><span class="line">	<span class="type">float</span> d = <span class="built_in">sqrt</span>(frac(<span class="built_in">sin</span>((j + <span class="number">1</span>) * <span class="number">546.</span>) * <span class="number">5489.</span>));</span><br><span class="line">	col += tex2D(_GrabTexture, proj_uv + sampleOffset * d);</span><br><span class="line">	a++;</span><br><span class="line">&#125;</span><br><span class="line">col /= _SampleNum; </span><br></pre></td></tr></table></figure>
-
-<img src="/2021/04/28/%E9%9B%A8%E6%BB%B4%E7%8E%BB%E7%92%83Shader%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/15.png" class="">
-
-<p>现在已经是挺不错的效果了。</p>
-<h4 id="Mipmap-Level"><a href="#Mipmap-Level" class="headerlink" title="Mipmap Level"></a>Mipmap Level</h4><p>现在有一个比较明显的问题是当距离比较远的时候，水滴看起来会很像闪烁着的点：</p>
-<img src="/2021/04/28/%E9%9B%A8%E6%BB%B4%E7%8E%BB%E7%92%83Shader%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/16.png" class="">
-
-<p>这是因为当相机离目标物体比较远时，目标物体只占屏幕很小一块区域(pixels),但我们还是用了正常尺寸的texture对目标物体进行渲染，此时一个pixel对应多个texel，采样就会不足。所以要基于距离的远近去做细节的程度，于是使用<strong>fwidth</strong>函数，会返回这个值在当前像素和它的下一个相邻像素之间的差值（与X和Y方向上的下一个像素上该值差的绝对值和）。</p>
-<p>我们可以把这个差值放大，然后把它限制在0~1之间，把它作为一个系数去控制雨滴的细节程度：</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> fade = <span class="number">1</span> - saturate(<span class="built_in">fwidth</span>(i.uv) * <span class="number">50</span>);</span><br><span class="line">                </span><br><span class="line"><span class="type">float</span> blur = _Blur * <span class="number">7</span> * (<span class="number">1</span> - drops.z * fade);</span><br><span class="line"></span><br><span class="line">float2 proj_uv = i.grab_uv.xy / i.grab_uv.w;</span><br><span class="line">proj_uv += drops.xy * _Distortion * fade;</span><br></pre></td></tr></table></figure>
-
-<p>这样就不会出现很远的距离还能看见一个一个的雨滴了：</p>
-<img src="/2021/04/28/%E9%9B%A8%E6%BB%B4%E7%8E%BB%E7%92%83Shader%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/17.png" class="">
-
-
-
-<p>OVER！</p>
 
                 
             </div>
@@ -611,7 +501,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://higashisan.github.io/2021/04/28/%E9%9B%A8%E6%BB%B4%E7%8E%BB%E7%92%83Shader%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/">https://higashisan.github.io/2021/04/28/%E9%9B%A8%E6%BB%B4%E7%8E%BB%E7%92%83Shader%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/</a>
+                    <a href="https://higashisan.github.io/2021/02/16/Compute-Shader%E7%94%9F%E6%88%90%E5%99%AA%E5%A3%B0/">https://higashisan.github.io/2021/02/16/Compute-Shader%E7%94%9F%E6%88%90%E5%99%AA%E5%A3%B0/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -649,8 +539,8 @@
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/%E9%9B%A8%E6%BB%B4%E7%8E%BB%E7%92%83Shader/">
-                                    <span class="chip bg-color">雨滴玻璃Shader</span>
+                                <a href="/tags/Compute-Shader/">
+                                    <span class="chip bg-color">Compute Shader</span>
                                 </a>
                             
                         </div>
@@ -824,13 +714,13 @@
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;Previous</div>
             <div class="card">
-                <a href="/2021/05/02/Ray-Marching/">
+                <a href="/2021/04/28/%E9%9B%A8%E6%BB%B4%E7%8E%BB%E7%92%83Shader%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="Ray Marching">
+                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="雨滴玻璃Shader实现思路">
                         
-                        <span class="card-title">Ray Marching</span>
+                        <span class="card-title">雨滴玻璃Shader实现思路</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -841,7 +731,7 @@
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2021-05-02
+                            <i class="far fa-clock fa-fw icon-date"></i>2021-04-28
                         </span>
                         <span class="publish-author">
                             
@@ -854,8 +744,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/Ray-Marching-Shadow/">
-                        <span class="chip bg-color">Ray Marching Shadow</span>
+                    <a href="/tags/%E9%9B%A8%E6%BB%B4%E7%8E%BB%E7%92%83Shader/">
+                        <span class="chip bg-color">雨滴玻璃Shader</span>
                     </a>
                     
                 </div>
@@ -869,13 +759,13 @@
                 Next&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2021/02/16/Compute-Shader%E7%94%9F%E6%88%90%E5%99%AA%E5%A3%B0/">
+                <a href="/2020/05/30/Unity%E5%B1%8F%E5%B9%95%E5%90%8E%E5%A4%84%E7%90%86%E5%85%A5%E9%97%A8/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/21.jpg" class="responsive-img" alt="Compute Shader生成噪声">
+                        <img src="/medias/featureimages/13.jpg" class="responsive-img" alt="Unity屏幕特效知识总结">
                         
-                        <span class="card-title">Compute Shader生成噪声</span>
+                        <span class="card-title">Unity屏幕特效知识总结</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -886,7 +776,7 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2021-02-16
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-05-30
                             </span>
                         <span class="publish-author">
                             
@@ -899,8 +789,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/Compute-Shader/">
-                        <span class="chip bg-color">Compute Shader</span>
+                    <a href="/tags/Image-Effect/">
+                        <span class="chip bg-color">Image Effect</span>
                     </a>
                     
                 </div>
