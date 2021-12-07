@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Compute Shader生成噪声, YoKuYo">
+    <meta name="keywords" content="深度缓冲重建到世界空间总结, YoKuYo">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>Compute Shader生成噪声 | YoKuYo</title>
+    <title>深度缓冲重建到世界空间总结 | YoKuYo</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -310,12 +310,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/21.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/7.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Compute Shader生成噪声</h1>
+                    <h1 class="description center-align post-title">深度缓冲重建到世界空间总结</h1>
                 </div>
             </div>
         </div>
@@ -431,8 +431,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/Compute-Shader/">
-                                <span class="chip bg-color">Compute Shader</span>
+                            <a href="/tags/%E6%B7%B1%E5%BA%A6%E7%BC%93%E5%86%B2/">
+                                <span class="chip bg-color">深度缓冲</span>
                             </a>
                         
                     </div>
@@ -447,7 +447,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>Publish Date:&nbsp;&nbsp;
-                    2021-11-12
+                    2021-10-30
                 </div>
                 
 
@@ -468,13 +468,20 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h3 id="噪声生成工具"><a href="#噪声生成工具" class="headerlink" title="噪声生成工具"></a>噪声生成工具</h3><p>尝试一下ta的另一个方向：写Tools，因为学了compute shader，正好也练练手 ，去做一个噪声生成工具。</p>
-<h4 id="Window、GUI布局"><a href="#Window、GUI布局" class="headerlink" title="Window、GUI布局"></a>Window、GUI布局</h4><p>脚本继承自EditorWindow之后，使用一些API去把窗口需要的选项做出来就好。</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">MenuItem(<span class="meta-string">&quot;Tools/Noise Tool&quot;</span>)</span>]</span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">CreateWindow</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Rect size = <span class="keyword">new</span> Rect(<span class="number">0</span>, <span class="number">0</span>, <span class="number">400</span>, <span class="number">600</span>);</span><br><span class="line">	NoiseGenTool window = 	(NoiseGenTool)EditorWindow.GetWindowWithRect(<span class="keyword">typeof</span>(NoiseGenTool), size, <span class="literal">true</span>);</span><br><span class="line">	window.Show();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+                <h3 id="Depth-Value-Return-To-WorldSpace"><a href="#Depth-Value-Return-To-WorldSpace" class="headerlink" title="Depth Value Return To WorldSpace"></a>Depth Value Return To WorldSpace</h3><p>在很多SS（屏幕空间）算法中，都需要用到深度缓冲这个东西，在前向渲染或者延迟渲染中得到深度信息，然后重建它在世界空间的位置。这里就总结一下重建方法，免得时间久了后搞忘。</p>
+<h4 id="通过屏幕坐标还原"><a href="#通过屏幕坐标还原" class="headerlink" title="通过屏幕坐标还原"></a>通过屏幕坐标还原</h4><p>屏幕坐标是通过NDC坐标经过屏幕映射得到的，NDC一个[-1,1]的三维立方体，所以第一步就是从屏幕转换回NDC坐标：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NDCPos = (ScreenPos / ScreenPos.w) * <span class="number">2</span> <span class="number">-1</span>;</span><br></pre></td></tr></table></figure>
 
-<p>窗口中的选择选项布局：</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="built_in">enum</span> NoiseType &#123; Worley, Perlin, Simplex&#125;;</span><br><span class="line"><span class="keyword">public</span> <span class="built_in">enum</span> TextureSize &#123; x64 = <span class="number">64</span>, x128 = <span class="number">128</span>, x256 = <span class="number">256</span>, x512 = <span class="number">512</span>, x1024 = <span class="number">1024</span>, x2048 = <span class="number">2048</span> &#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> ComputeShader noiseShader;</span><br><span class="line"><span class="keyword">private</span> NoiseType noiseType = NoiseType.Perlin;</span><br><span class="line"><span class="keyword">private</span> RenderTextureFormat format = RenderTextureFormat.ARGB32;</span><br><span class="line"><span class="keyword">private</span> TextureSize size = TextureSize.x512;</span><br><span class="line"><span class="keyword">private</span> <span class="built_in">float</span> noiseScale = <span class="number">10f</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//在void OnGUI里面</span></span><br><span class="line">noiseShader = EditorGUILayout.ObjectField(<span class="string">&quot;Compute Noise Shader:&quot;</span>, noiseShader, <span class="keyword">typeof</span>(ComputeShader), <span class="literal">true</span>) <span class="keyword">as</span> ComputeShader;</span><br><span class="line">noiseType = (NoiseType)EditorGUILayout.EnumPopup(<span class="string">&quot;Noise Type：&quot;</span>, noiseType);</span><br><span class="line">format = (RenderTextureFormat)EditorGUILayout.EnumPopup(<span class="string">&quot;Texture Format：&quot;</span>, format);</span><br><span class="line">size = (TextureSize)EditorGUILayout.EnumPopup(<span class="string">&quot;Texture Size：&quot;</span>, size);</span><br><span class="line">noiseScale = EditorGUILayout.Slider(<span class="string">&quot;Noise Scale:&quot;</span>, noiseScale, <span class="number">20f</span>, <span class="number">200f</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (GUILayout.Button(<span class="string">&quot;Generate Noise Texture&quot;</span>))</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span> (noiseShader == <span class="literal">null</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		ShowNotification(<span class="keyword">new</span> GUIContent(<span class="string">&quot;Noise Shader is null!!&quot;</span>));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		Generate();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (GUILayout.Button(<span class="string">&quot;Save Texture&quot;</span>))</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span> (renderTexture == <span class="literal">null</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		ShowNotification(<span class="keyword">new</span> GUIContent(<span class="string">&quot;Texture is null!!&quot;</span>));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		SaveTexture();</span><br><span class="line">		AssetDatabase.Refresh();</span><br><span class="line">		ShowNotification(<span class="keyword">new</span> GUIContent(<span class="string">&quot;Successfully saved!!&quot;</span>));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意视口坐标和屏幕坐标是不一样的，渲染管线中的屏幕映射是指从NDC转换到屏幕空间ScreenSpace，是指游戏窗口的坐标，以像素为单位，视口坐标是一个从（0，0）到（1，1）的二维坐标，是单位化的屏幕坐标。一般会通过ComputeScreenPos去得到一个齐次坐标，然后除以w分量再得到视口坐标。</p>
+<p>首先组建一个到这个点的方向向量，然后因为NDC坐标是通过剪裁空间做透视除法得到的，所以直接逆向做一个变换，乘一个远平面的值就行了：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ClipPos = float3(NDCPos.x,NDCPos.y,<span class="number">1.0</span>) * _ProjectionParams.z</span><br></pre></td></tr></table></figure>
 
+<p>然后乘投影矩阵的逆矩阵就可以转换到观察空间，观察空间摄像机在原点，所以原点指向这个点的向量乘线性深度值，就得到了深度缓冲中存的值在观察空间的位置。</p>
+<p>最后乘viewmatrix的逆矩阵，就到了世界空间。</p>
+<h4 id="视锥体插值重建"><a href="#视锥体插值重建" class="headerlink" title="视锥体插值重建"></a>视锥体插值重建</h4><p>核心：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">float3 worldPos &#x3D; _WorldSpaceC eraPos + linearDepth * interpolaedRay;</span><br></pre></td></tr></table></figure>
+
+<p>得到视锥体四个角的向量，通过插值得到摄像机到某个像素的方向向量，用它乘线性深度，然后再加上摄像机在世界空间的坐标，就得到在世界空间的坐标。</p>
 
                 
             </div>
@@ -501,7 +508,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://higashisan.github.io/2021/11/12/Compute-Shader%E7%94%9F%E6%88%90%E5%99%AA%E5%A3%B0/">https://higashisan.github.io/2021/11/12/Compute-Shader%E7%94%9F%E6%88%90%E5%99%AA%E5%A3%B0/</a>
+                    <a href="https://higashisan.github.io/2021/10/30/%E6%B7%B1%E5%BA%A6%E7%BC%93%E5%86%B2%E9%87%8D%E5%BB%BA%E5%88%B0%E4%B8%96%E7%95%8C%E7%A9%BA%E9%97%B4%E6%80%BB%E7%BB%93/">https://higashisan.github.io/2021/10/30/%E6%B7%B1%E5%BA%A6%E7%BC%93%E5%86%B2%E9%87%8D%E5%BB%BA%E5%88%B0%E4%B8%96%E7%95%8C%E7%A9%BA%E9%97%B4%E6%80%BB%E7%BB%93/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -539,8 +546,8 @@
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/Compute-Shader/">
-                                    <span class="chip bg-color">Compute Shader</span>
+                                <a href="/tags/%E6%B7%B1%E5%BA%A6%E7%BC%93%E5%86%B2/">
+                                    <span class="chip bg-color">深度缓冲</span>
                                 </a>
                             
                         </div>
@@ -710,10 +717,9 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="far fa-dot-circle"></i>&nbsp;Current
-            </div>
+                <i class="fas fa-chevron-left"></i>&nbsp;Previous</div>
             <div class="card">
                 <a href="/2021/11/12/Compute-Shader%E7%94%9F%E6%88%90%E5%99%AA%E5%A3%B0/">
                     <div class="card-image">
@@ -731,9 +737,9 @@
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2021-11-12
-                            </span>
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2021-11-12
+                        </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -742,7 +748,6 @@
                         </span>
                     </div>
                 </div>
-
                 
                 <div class="card-action article-tags">
                     
@@ -761,13 +766,13 @@
                 Next&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2021/10/30/%E6%B7%B1%E5%BA%A6%E7%BC%93%E5%86%B2%E9%87%8D%E5%BB%BA%E5%88%B0%E4%B8%96%E7%95%8C%E7%A9%BA%E9%97%B4%E6%80%BB%E7%BB%93/">
+                <a href="/2021/10/20/Unity-Shader-%E5%A4%9C%E8%A7%86%E4%BB%AA%E6%95%88%E6%9E%9C%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/7.jpg" class="responsive-img" alt="深度缓冲重建到世界空间总结">
+                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="Unity Shader 夜视仪效果实现思路">
                         
-                        <span class="card-title">深度缓冲重建到世界空间总结</span>
+                        <span class="card-title">Unity Shader 夜视仪效果实现思路</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -778,7 +783,7 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2021-10-30
+                                <i class="far fa-clock fa-fw icon-date"></i>2021-10-20
                             </span>
                         <span class="publish-author">
                             
@@ -791,8 +796,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/%E6%B7%B1%E5%BA%A6%E7%BC%93%E5%86%B2/">
-                        <span class="chip bg-color">深度缓冲</span>
+                    <a href="/tags/Post-Screen/">
+                        <span class="chip bg-color">Post-Screen</span>
                     </a>
                     
                 </div>

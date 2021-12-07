@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Compute Shader生成噪声, YoKuYo">
+    <meta name="keywords" content="造一个PBR轮子, YoKuYo">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>Compute Shader生成噪声 | YoKuYo</title>
+    <title>造一个PBR轮子 | YoKuYo</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -310,12 +310,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/21.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/8.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Compute Shader生成噪声</h1>
+                    <h1 class="description center-align post-title">造一个PBR轮子</h1>
                 </div>
             </div>
         </div>
@@ -431,8 +431,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/Compute-Shader/">
-                                <span class="chip bg-color">Compute Shader</span>
+                            <a href="/tags/PBR/">
+                                <span class="chip bg-color">PBR</span>
                             </a>
                         
                     </div>
@@ -447,7 +447,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>Publish Date:&nbsp;&nbsp;
-                    2021-11-12
+                    2020-06-01
                 </div>
                 
 
@@ -468,13 +468,47 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h3 id="噪声生成工具"><a href="#噪声生成工具" class="headerlink" title="噪声生成工具"></a>噪声生成工具</h3><p>尝试一下ta的另一个方向：写Tools，因为学了compute shader，正好也练练手 ，去做一个噪声生成工具。</p>
-<h4 id="Window、GUI布局"><a href="#Window、GUI布局" class="headerlink" title="Window、GUI布局"></a>Window、GUI布局</h4><p>脚本继承自EditorWindow之后，使用一些API去把窗口需要的选项做出来就好。</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">MenuItem(<span class="meta-string">&quot;Tools/Noise Tool&quot;</span>)</span>]</span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">CreateWindow</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Rect size = <span class="keyword">new</span> Rect(<span class="number">0</span>, <span class="number">0</span>, <span class="number">400</span>, <span class="number">600</span>);</span><br><span class="line">	NoiseGenTool window = 	(NoiseGenTool)EditorWindow.GetWindowWithRect(<span class="keyword">typeof</span>(NoiseGenTool), size, <span class="literal">true</span>);</span><br><span class="line">	window.Show();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+                <h3 id="PBR理论"><a href="#PBR理论" class="headerlink" title="PBR理论"></a>PBR理论</h3><p>完全理解了PBR之后就感觉发明出来这个东西的人真的是天才，之前广泛应用的Blinn-Phone仅仅只是经验总结的光照模型，并不是物理上的准确。引入了PBR之后就是总结出了真实世界里光与物体交互的方式，把对于物体表面的影响参数都用数学式子来表达，影响参数可以由贴图直接控制，只要这些数据是正确的，那么结果就可以认为是绝对正确的。</p>
+<p>这里就基于自己的理解总结一下，然后仿照standard shader的源码仿造一个pbr轮子，基于金属度-粗糙度工作流。</p>
+<p>主要就是要实现这个式子：</p>
+<img src="/2020/06/01/Unity-PBR-Shader%E5%AE%9E%E7%8E%B0/2.png" class="">
 
-<p>窗口中的选择选项布局：</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="built_in">enum</span> NoiseType &#123; Worley, Perlin, Simplex&#125;;</span><br><span class="line"><span class="keyword">public</span> <span class="built_in">enum</span> TextureSize &#123; x64 = <span class="number">64</span>, x128 = <span class="number">128</span>, x256 = <span class="number">256</span>, x512 = <span class="number">512</span>, x1024 = <span class="number">1024</span>, x2048 = <span class="number">2048</span> &#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> ComputeShader noiseShader;</span><br><span class="line"><span class="keyword">private</span> NoiseType noiseType = NoiseType.Perlin;</span><br><span class="line"><span class="keyword">private</span> RenderTextureFormat format = RenderTextureFormat.ARGB32;</span><br><span class="line"><span class="keyword">private</span> TextureSize size = TextureSize.x512;</span><br><span class="line"><span class="keyword">private</span> <span class="built_in">float</span> noiseScale = <span class="number">10f</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//在void OnGUI里面</span></span><br><span class="line">noiseShader = EditorGUILayout.ObjectField(<span class="string">&quot;Compute Noise Shader:&quot;</span>, noiseShader, <span class="keyword">typeof</span>(ComputeShader), <span class="literal">true</span>) <span class="keyword">as</span> ComputeShader;</span><br><span class="line">noiseType = (NoiseType)EditorGUILayout.EnumPopup(<span class="string">&quot;Noise Type：&quot;</span>, noiseType);</span><br><span class="line">format = (RenderTextureFormat)EditorGUILayout.EnumPopup(<span class="string">&quot;Texture Format：&quot;</span>, format);</span><br><span class="line">size = (TextureSize)EditorGUILayout.EnumPopup(<span class="string">&quot;Texture Size：&quot;</span>, size);</span><br><span class="line">noiseScale = EditorGUILayout.Slider(<span class="string">&quot;Noise Scale:&quot;</span>, noiseScale, <span class="number">20f</span>, <span class="number">200f</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (GUILayout.Button(<span class="string">&quot;Generate Noise Texture&quot;</span>))</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span> (noiseShader == <span class="literal">null</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		ShowNotification(<span class="keyword">new</span> GUIContent(<span class="string">&quot;Noise Shader is null!!&quot;</span>));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		Generate();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (GUILayout.Button(<span class="string">&quot;Save Texture&quot;</span>))</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span> (renderTexture == <span class="literal">null</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		ShowNotification(<span class="keyword">new</span> GUIContent(<span class="string">&quot;Texture is null!!&quot;</span>));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		SaveTexture();</span><br><span class="line">		AssetDatabase.Refresh();</span><br><span class="line">		ShowNotification(<span class="keyword">new</span> GUIContent(<span class="string">&quot;Successfully saved!!&quot;</span>));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>PBR的效果可以分为直接光照和间接光照，直接光照和间接光照都能再分为漫反射和镜面反射两个部分。</p>
+<h4 id="直接光照"><a href="#直接光照" class="headerlink" title="直接光照"></a>直接光照</h4><p>直接光照分为镜面反射和漫反射两个部分</p>
+<img src="/2020/06/01/Unity-PBR-Shader%E5%AE%9E%E7%8E%B0/1.png" class="">
 
+<p>对于漫反射部分，可以使用Lambert模型，或者整体上更亮一些的Disney漫反射模型。镜面反射的部分可以用另外三个式子决定：微平面分布函数、几何遮蔽函数、菲涅尔函数。</p>
+<p>镜面高光在光滑的物体表面出现，当物体越粗糙时，镜面高光的颜色就更加平均，越光滑时，就越倾向于变成一个高光点。几何遮蔽在运算中会和微平面函数相乘，它的作用是限制高光光点出现的位置。</p>
+<p>菲涅尔由金属度参数控制，金属度越强，反射越强烈，而且反射的光线会带有金属的本身的颜色。当金属度越低时，反射越弱，反射的颜色就越倾向于环境本身的颜色。区分金属和非金属特性的一个重要的视觉差异就是看反光是否带有物体本身的颜色，金属的反光会带有金属本身的颜色，而非金属物体的反光并不会带有物体颜色。</p>
+<p>对于分母的4 * vn * ln，试了一下它的作用就是做一个柔和化处理，让非常亮的部分变暗一点，然后让非常暗的部分变亮一点。</p>
+<p>总结：</p>
+<p><strong>在金属粗糙度这个流程的直接光照部分，粗糙度的作用是控制高光的范围，金属度的作用是控制高光是否带有材质本身的颜色，非金属的物体反射的高光是白色的，而金属物体的高光点会带有物体本身的颜色。</strong></p>
+<h4 id="间接光照"><a href="#间接光照" class="headerlink" title="间接光照"></a>间接光照</h4><img src="/2020/06/01/Unity-PBR-Shader%E5%AE%9E%E7%8E%B0/3.png" class="">
+
+<p>间接光照也分成直接漫反射和镜面反射两个部分。</p>
+<p>间接光漫反射本质上是对光照探针进行采样，光照探针里存了环境的光照信息，unity内部就是用球谐函数去进行计算。球谐光照的的作用是为非金属的材质添加间接光照，它只受到金属度这一个参数的影响，当物体是金属时，不受到漫反射间接光照（球谐光照）的影响。</p>
+<p>间接光照的镜面反射是采样了一张立方体贴图，这张立方体贴图把周边的环境记录下来，然后再作为反射信息显示到物体的表面。因为实时渲染中如果真的去求间接光照的积分，耗能实在是太高了。</p>
+<p>镜面反射的显示收到两个参数的影响：Metallic和Roughness 。</p>
+<p>Metallic 数值越高，镜面反射会带有物体本身的颜色。金属物体反射的光线会带有金属本身的颜色，而非金属物体不论本身是什么颜色，它们反射的光线都是光线原本的颜色。Roughness则控制CubeMap的Mip等级，Mip等级越高，贴图就越模糊。</p>
+<p>总结：</p>
+<p>金属度的作用：1.控制漫反射和镜面反射的比例；2.控制反射颜色和材质本身颜色相乘；</p>
+<p>粗糙度的作用：1.控制直接光照高光点的扩散；2.控制CubeMap的模糊程度；3.控制镜面反射颜色的强度；</p>
+<h3 id="PBR实现"><a href="#PBR实现" class="headerlink" title="PBR实现"></a>PBR实现</h3><h4 id="直接光照-1"><a href="#直接光照-1" class="headerlink" title="直接光照"></a>直接光照</h4><p>计算镜面反射项和漫反射项的相关函数：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Geometry function</span></span><br><span class="line">half SmithJointGGX(half nl, half nv, half roughness)</span><br><span class="line">&#123;<span class="comment">//在我的理解里，镜面反射的分母(n·l)(n·v)就是对可见性影响做的一个补充，直接把它归类在几何遮蔽函数里一起算了</span></span><br><span class="line">	half ag = roughness * roughness;</span><br><span class="line">	half lambdaV = nl * (nv * (<span class="number">1</span> - ag) + ag);</span><br><span class="line">	half lambdaL = nv * (nl * (<span class="number">1</span> - ag) + ag);</span><br><span class="line">			</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0.25</span>f/(lambdaV + lambdaL + <span class="number">1e-5</span>f);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//Normal Distribution Function</span></span><br><span class="line">half NormalDistribution(half nh,half roughness)</span><br><span class="line">&#123;</span><br><span class="line">	half a = roughness * roughness;</span><br><span class="line">	half a2 = a * a;</span><br><span class="line">	half d = (a2 - <span class="number">1.0</span>f) * nh * nh + <span class="number">1.0</span>f;</span><br><span class="line">	<span class="keyword">return</span> a2 * UNITY_INV_PI / (d * d + <span class="number">1e-5</span>f);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//Fresnel effect</span></span><br><span class="line">half3 ComputeFresnelTerm(half3 F0,half cosA)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">return</span> F0 + (<span class="number">1</span> - F0) * <span class="built_in">pow</span>(<span class="number">1</span> - cosA, <span class="number">5</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">half3 ComputeDisneyDiffuseTerm(half nv,half nl,half lh,half roughness,half3 baseColor)</span><br><span class="line">&#123;</span><br><span class="line">	half Fd90 = <span class="number">0.5</span>f + <span class="number">2</span> * roughness * lh * lh;</span><br><span class="line">	<span class="keyword">return</span> baseColor * UNITY_INV_PI * (<span class="number">1</span> + (Fd90 - <span class="number">1</span>) * <span class="built_in">pow</span>(<span class="number">1</span>-nl,<span class="number">5</span>)) * (<span class="number">1</span> + (Fd90 - <span class="number">1</span>) * <span class="built_in">pow</span>(<span class="number">1</span>-nv,<span class="number">5</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>计算镜面反射和漫反射的比例：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">half3 specColor = lerp(unity_ColorSpaceDielectricSpec.rgb,albedo,metallic);</span><br><span class="line">half oneMinusReflectivity = (<span class="number">1</span>- metallic) * unity_ColorSpaceDielectricSpec.a;</span><br><span class="line">half3 diffColor = albedo * oneMinusReflectivity;</span><br></pre></td></tr></table></figure>
+
+<p>然后直接计算好各项加起来就行：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">half G = SmithJointGGX(nl,nv,roughness);</span><br><span class="line">half D = NormalDistribution(nh,roughness);</span><br><span class="line">half3 F = ComputeFresnelTerm(specColor,vh);</span><br><span class="line">half3 specularTerm = F * D * G;</span><br><span class="line"></span><br><span class="line">half3 diffuseTerm = ComputeDisneyDiffuseTerm(nv,nl,lh,roughness,diffColor);</span><br><span class="line"></span><br><span class="line">half3 color = UNITY_PI * (diffuseTerm + specularTerm) * _LightColor0.rgb * nl;</span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> half4(color, <span class="number">1.0</span>);</span><br></pre></td></tr></table></figure>
+
+<p>下面是没有添加间接光照的效果：</p>
+<img src="/2020/06/01/Unity-PBR-Shader%E5%AE%9E%E7%8E%B0/3.png" class="">
+
+
+
+<h4 id="间接光照-1"><a href="#间接光照-1" class="headerlink" title="间接光照"></a>间接光照</h4><p>首先在顶点数据中新增两个texcoord，用于计算动态和静态光照贴图。</p>
+<p>在计算间接光漫反射时，要判断物体是否是动态物体，如果是动态物体，则计算非重要的光源(包含顶点光照和球谐光照，光照探头存储的光照数据在球谐光照中)，对于静态物体，则是对其进行计算采样静态和动态光照贴图的采样坐标，然后在片元函数中进行采样。</p>
 
                 
             </div>
@@ -501,7 +535,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://higashisan.github.io/2021/11/12/Compute-Shader%E7%94%9F%E6%88%90%E5%99%AA%E5%A3%B0/">https://higashisan.github.io/2021/11/12/Compute-Shader%E7%94%9F%E6%88%90%E5%99%AA%E5%A3%B0/</a>
+                    <a href="https://higashisan.github.io/2020/06/01/Unity-PBR-Shader%E5%AE%9E%E7%8E%B0/">https://higashisan.github.io/2020/06/01/Unity-PBR-Shader%E5%AE%9E%E7%8E%B0/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -539,8 +573,8 @@
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/Compute-Shader/">
-                                    <span class="chip bg-color">Compute Shader</span>
+                                <a href="/tags/PBR/">
+                                    <span class="chip bg-color">PBR</span>
                                 </a>
                             
                         </div>
@@ -710,18 +744,17 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="far fa-dot-circle"></i>&nbsp;Current
-            </div>
+                <i class="fas fa-chevron-left"></i>&nbsp;Previous</div>
             <div class="card">
-                <a href="/2021/11/12/Compute-Shader%E7%94%9F%E6%88%90%E5%99%AA%E5%A3%B0/">
+                <a href="/2021/04/05/%E5%AF%B9unitySRP%E7%9A%84%E7%90%86%E8%A7%A3/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/21.jpg" class="responsive-img" alt="Compute Shader生成噪声">
+                        <img src="/medias/featureimages/4.jpg" class="responsive-img" alt="对unitySRP的理解">
                         
-                        <span class="card-title">Compute Shader生成噪声</span>
+                        <span class="card-title">对unitySRP的理解</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -731,9 +764,9 @@
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2021-11-12
-                            </span>
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2021-04-05
+                        </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -742,12 +775,11 @@
                         </span>
                     </div>
                 </div>
-
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/Compute-Shader/">
-                        <span class="chip bg-color">Compute Shader</span>
+                    <a href="/tags/SRP/">
+                        <span class="chip bg-color">SRP</span>
                     </a>
                     
                 </div>
@@ -761,13 +793,13 @@
                 Next&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2021/10/30/%E6%B7%B1%E5%BA%A6%E7%BC%93%E5%86%B2%E9%87%8D%E5%BB%BA%E5%88%B0%E4%B8%96%E7%95%8C%E7%A9%BA%E9%97%B4%E6%80%BB%E7%BB%93/">
+                <a href="/2020/04/20/%E6%B7%B7%E5%90%88-%E9%9D%A2%E5%89%94%E9%99%A4/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/7.jpg" class="responsive-img" alt="深度缓冲重建到世界空间总结">
+                        <img src="/medias/featureimages/5.jpg" class="responsive-img" alt="混合&amp;面剔除">
                         
-                        <span class="card-title">深度缓冲重建到世界空间总结</span>
+                        <span class="card-title">混合&amp;面剔除</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -778,7 +810,7 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2021-10-30
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-04-20
                             </span>
                         <span class="publish-author">
                             
@@ -791,8 +823,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/%E6%B7%B1%E5%BA%A6%E7%BC%93%E5%86%B2/">
-                        <span class="chip bg-color">深度缓冲</span>
+                    <a href="/tags/%E6%B7%B7%E5%90%88-%E9%9D%A2%E5%89%94%E9%99%A4/">
+                        <span class="chip bg-color">混合&amp;面剔除</span>
                     </a>
                     
                 </div>

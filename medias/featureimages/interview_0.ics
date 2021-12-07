@@ -1,0 +1,53 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:icalendar-ruby
+CALSCALE:GREGORIAN
+BEGIN:VTIMEZONE
+TZID:Asia/Shanghai
+BEGIN:STANDARD
+DTSTART:19910915T010000
+TZOFFSETFROM:+0900
+TZOFFSETTO:+0800
+TZNAME:CST
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+DTSTAMP:20211122T072232Z
+UID:8a74b1ee-9266-46be-a580-7bddbe2fade5
+DTSTART;TZID=Asia/Shanghai:20211123T153000
+DTEND;TZID=Asia/Shanghai:20211123T160000
+DESCRIPTION:( https://unity.com?elqTrackId=5eae4c967ed9480fa5925c1d49db425a
+  )\nHi 东灿\,\n\nThanks for submitting your availability for the Technic
+ al Artist Intern position.\n\nPlease see below for your interview confirma
+ tion:\n\nDate/Time: Nov 23\, 2021 3:30pm-4:00pm CST\nInterviewers: Holic Z
+ hou\, APAC University Recruiter\n\nJoin from PC\, Mac\, Linux\, iOS or And
+ roid:\nhttps://unity3d.zoom.us/j/99467307798?pwd=WTg4Wk01UGdqcUdzWXIxZ2VhV
+ E5adz09 ( https://www.google.com/url?q=https://unity3d.zoom.us/j/994673077
+ 98?pwd%3DWTg4Wk01UGdqcUdzWXIxZ2VhVE5adz09&sa=D&source=calendar&ust=1637997
+ 707485583&usg=AOvVaw1xJVWi2tu5ogpJUFJJCf4A )\nPassword: 797418\nMeeting ID
+ : 994 6730 7798\n\nLet me know if you have any questions before your inter
+ view.\n\nBest\,\nHolic\n\n--------------\nBelow are the video conferencing
+  details for this specific calendar invite\n--------------\n\nHolic Zhou i
+ s inviting you to a scheduled Zoom meeting. \n\nTopic: Zoom Interview - 
+ 东灿 陈\, Technical Artist Intern  Candidate\nTime: Nov 23\, 2021 03:30
+  PM Beijing\, Shanghai\n\nJoin from PC\, Mac\, Linux\, iOS or Android: \nh
+ ttps://unity3d.zoom.us/j/99467307798?pwd=WTg4Wk01UGdqcUdzWXIxZ2VhVE5adz09\
+ n    Password: 797418\n\n    Meeting ID: 994 6730 7798\n\nOr iPhone one-ta
+ p :\n    US: +16513728299\,\,99467307798#  or \n+17866351003\,\,9946730779
+ 8# \n\nOr Telephone:\n        US: +1 651 372 8299  or +1 786 635 1003  or 
+ +1 470 250 9358  or +1 646 558 8656  or +1 669 219 2599  or +1 669 900 683
+ 3  or +1 971 247 1195  or +1 213 338 8477  or +1 602 753 0140 \n        Ca
+ nada: +1 647 374 4685  or +1 647 558 0588  or +1 778 907 2071  or +1 438 8
+ 09 7799  or +1 587 328 1099 \n        Denmark: +45 32 70 12 06  or +45 32 
+ 71 31 57  or +45 89 88 37 88 \n        Finland: +358 3 4109 2129  or +358 
+ 9 4245 1488 \n        Japan: +81 3 4578 1488  or +81 524 564 439 \n       
+  Lithuania: +370 3799 9260  or +370 5214 1488 \n        Singapore: +65 315
+ 8 7288  or +65 3165 1065 \n        Sweden: +46 8 4468 2488  or +46 8 5052 
+ 0017  or +46 850 539 728 \n        United Kingdom: +44 131 460 1196  or +4
+ 4 203 481 5237  or +44 203 481 5240 \n\n\n    International numbers availa
+ ble: https://unity3d.zoom.us/u/acSu8qS20u
+LOCATION:https://unity3d.zoom.us/j/99467307798?pwd=WTg4Wk01UGdqcUdzWXIxZ2Vh
+ VE5adz09
+SUMMARY:Interview with Unity Technologies
+END:VEVENT
+END:VCALENDAR
