@@ -475,13 +475,26 @@
 <p>OnRenderImage的后处理其实就是commandBuffer的一个应用而已。</p>
 <h4 id="ScriptableRenderContext"><a href="#ScriptableRenderContext" class="headerlink" title="ScriptableRenderContext"></a>ScriptableRenderContext</h4><p>要创建一个自定义管线，首先需要一个CustomRenderPipelineAsset资源，重写RenderPipeline方法，然后返回我们创建的管线实例，然后创建CustomRenderPipeline，这就是要创建的管线资源，在这个脚本的Render方法就是去渲染每个摄像机的地方，它的输入参数一个是当前要渲染的Camera，另一个是ScriptableRenderContex，渲染上下文。通过重写这个方法，使用CommandBuffer把渲染的指令添加到ScriptableRenderContex中，然后用Submit提交渲染指令。</p>
 <h4 id="ScriptableRenderPass"><a href="#ScriptableRenderPass" class="headerlink" title="ScriptableRenderPass"></a>ScriptableRenderPass</h4><p>自定义的pass类，在这个类里就可以写自己想进行的渲染逻辑，需要复写三个方法：OnCameraSetup、Excute、OnCameraCleanup。然后创建出的实例就能够作为RenderFeature插入到渲染流程中去。</p>
-<h3 id="实际操作"><a href="#实际操作" class="headerlink" title="实际操作"></a>实际操作</h3><p>现在看看如何编写一个自己的RenderFeature，然后插入到渲染流程里去。</p>
-<p>首先创建一个RenderFeature，使用RenderFeature主要就是使用两个类：ScriptableRendererFeature（负责配置Renderer面板）</p>
-<p>ScriptableRenderPass（负责具体渲染流程）</p>
-<p>在这两个class里面分别去重写各自必须重写的函数。</p>
-<p>在ScriptableRendererFeature里面，需要重写Create类，在这里创建RenderPass实例，然后可以给面板里的变量赋值，然后要指定这个renderpass插入的渲染阶段，</p>
-<p>在AddRenderPasses里面就是按照刚刚的设置把这个pass插入到渲染队列里面去。</p>
-<p>ScriptableRenderPass就是实际编写我们的renderfeature的地方，需要重写Execute方法，这里就是通过创建CommandBuffer去实现渲染指令。</p>
+<h3 id="实际操作"><a href="#实际操作" class="headerlink" title="实际操作"></a>实际操作</h3><p>现在看看如何编写一个自己的RenderFeature，然后插入到URP的后处理组件Volume中去。懒得贴代码了，直接记录一下操作逻辑，以及拓展Volume。</p>
+<p>首先要创建一个继承自VolumeComponent，IPostProcessComponent的脚本，VolumeComponent的作用就是可以在volume组件里添加一个override，即我们自己的一个后处理效果，它没有必须要复写的函数，只需要在里面定义我们需要曝露出去的控制变量就行。IPostProcessComponent主要是将新加的后处理功能集成到Volume Framework的规范管理中，是不是必须要我也不知道，而且它必须有两个需要复写的函数：分别是IsActive和IsTileCompatible，对于IsActive你可以通过它给一些条件，如果不满足这个条件就关闭这个后处理特效，不过好像你自己写一个函数也行。</p>
+<p>这个脚本写完之后你就可以在Volume里面添加自己的一个override。</p>
+<p>然后就是定义我们的renderfeature的脚本，这个脚本要继承ScriptableRendererFeature，它有两个需要复写的函数：Create、AddRenderPasses。</p>
+<p>在Create里要具体创建出一个pass实例，即初始化我们要用的pass。然后在AddRenderPasses里面要把这个创建好的pass给插入到renderer里面去。</p>
+<p>这个pass就是我们需要定义的，它继承自ScriptableRenderPass，主要的渲染逻辑都是在这里写的，它会被我们插入到renderer中去。这个类必须要实现的是Excute方法：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Execute</span>(<span class="params">ScriptableRenderContext context, <span class="keyword">ref</span> RenderingData renderingData</span>)</span></span><br></pre></td></tr></table></figure>
+
+<p>首先是如何把刚刚自定义的volume和这个renderfeature关联起来，通过VolumeManager.instance.stack，我们可以取得当前场景中的Volume组件，它被定义成一个VolumeStack，通过它使用GetComponent方法，可以得到我们刚刚创建的Volume override。</p>
+<p>对于renderingData，他就是定义了渲染的相关数据，Unity里的定义是这样的：</p>
+<img src="/2021/04/05/%E5%AF%B9unitySRP%E7%9A%84%E7%90%86%E8%A7%A3/1.png" class="">
+
+
+
+<p>在execute里面我们就可以创建我们的commandbuffer，然后写渲染指令，写完之后通过ExecuteCommandBuffer去执行就行，执行完之后release掉。</p>
+<p>由于没有了OnrenderImage方法，就需要我们通过SetGlobalTexture、GetTemporaryRT这些api，去与shader交互，然后实现后处理特效。Blit方法还是和之前在buildin里实现的一样，主要是需要通过PropertyToID去获得shader里的变量名字，然后在execute里面使用这些ID号去给这些变量赋值。</p>
+<img src="/2021/04/05/%E5%AF%B9unitySRP%E7%9A%84%E7%90%86%E8%A7%A3/2.png" class="">
+
+<p>如果需要一个空的rendertexture去暂存一个东西，那么就需要RenderTargetIdentifier去定义，可以通过cmd.GetTemporaryRT去获得当前摄像机的texture，然后存到我们指定的rendertexture里。</p>
+<p>除此之外的后处理特效方法就和在buildin里面一摸一样了。</p>
 
                 
             </div>
