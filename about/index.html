@@ -364,7 +364,7 @@
                     <div class="post-statis col l4 hide-on-med-and-down" data-aos="zoom-in-right">
                         
 <div class="statis">
-    <span class="count"><a href="/">21</a></span>
+    <span class="count"><a href="/">20</a></span>
     <span class="name">Posts</span>
 </div>
 
@@ -389,7 +389,7 @@
                                 <div class="post-statis hide-on-large-only" data-aos="zoom-in-right">
                                     
 <div class="statis">
-    <span class="count"><a href="/">21</a></span>
+    <span class="count"><a href="/">20</a></span>
     <span class="name">Posts</span>
 </div>
 
@@ -542,7 +542,7 @@
                 name: 'Number of posts',
                 type: 'line',
                 color: ['#6772e5'],
-                data: [0,0,0,0,2,3,0,2,0,1,4,1,0],
+                data: [0,0,0,0,2,3,0,2,0,1,4,0,0],
                 markPoint: {
                     symbolSize: 45,
                     color: ['#fa755a','#3ecf8e','#82d3f4'],
@@ -608,7 +608,7 @@
         xAxis: [
             {
                 type: 'category',
-                data: ["SRP","Compute Shader","Ray Marching Shadow","PBR","Post-Screen","Image Effect","RenderTexture、雪地交互","Tessellation Shader","实例化","无缝大地形、多线程优化"]
+                data: ["SRP","Ray Marching Shadow","PBR","Post-Screen","Image Effect","RenderTexture、雪地交互","实例化","Compute Shader","Tessellation Shader","深度缓冲"]
             }
         ],
         yAxis: [
@@ -621,7 +621,7 @@
                 type: 'bar',
                 color: ['#82d3f4'],
                 barWidth : 18,
-                data: [3,2,1,1,1,1,1,1,1,1],
+                data: [3,1,1,1,1,1,1,1,1,1],
                 markPoint: {
                     symbolSize: 45,
                     data: [{
@@ -769,26 +769,20 @@
         <div class="tag-chips center-align">
             
             
-            <a href="/tags/Compute-Shader/">
-                <span class="chip center-align waves-effect waves-light chip-default">Compute Shader</span>
-            </a>
-            
-            
-            
             <a href="/tags/Ray-Marching-Shadow/">
                 <span class="chip center-align waves-effect waves-light chip-default">Ray Marching Shadow</span>
             </a>
             
             
             
-            <a href="/tags/SRP/">
-                <span class="chip center-align waves-effect waves-light chip-default">SRP</span>
+            <a href="/tags/PBR/">
+                <span class="chip center-align waves-effect waves-light chip-default">PBR</span>
             </a>
             
             
             
-            <a href="/tags/PBR/">
-                <span class="chip center-align waves-effect waves-light chip-default">PBR</span>
+            <a href="/tags/SRP/">
+                <span class="chip center-align waves-effect waves-light chip-default">SRP</span>
             </a>
             
             
@@ -811,20 +805,20 @@
             
             
             
-            <a href="/tags/Tessellation-Shader/">
-                <span class="chip center-align waves-effect waves-light chip-default">Tessellation Shader</span>
-            </a>
-            
-            
-            
             <a href="/tags/%E5%AE%9E%E4%BE%8B%E5%8C%96/">
                 <span class="chip center-align waves-effect waves-light chip-default">实例化</span>
             </a>
             
             
             
-            <a href="/tags/%E6%97%A0%E7%BC%9D%E5%A4%A7%E5%9C%B0%E5%BD%A2%E3%80%81%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%BC%98%E5%8C%96/">
-                <span class="chip center-align waves-effect waves-light chip-default">无缝大地形、多线程优化</span>
+            <a href="/tags/Compute-Shader/">
+                <span class="chip center-align waves-effect waves-light chip-default">Compute Shader</span>
+            </a>
+            
+            
+            
+            <a href="/tags/Tessellation-Shader/">
+                <span class="chip center-align waves-effect waves-light chip-default">Tessellation Shader</span>
             </a>
             
             
@@ -841,14 +835,14 @@
             
             
             
-            <a href="/tags/%E7%A8%8B%E5%BA%8F%E5%8C%96%E7%94%9F%E6%88%90/">
-                <span class="chip center-align waves-effect waves-light chip-default">程序化生成</span>
+            <a href="/tags/%E6%97%A0%E7%BC%9D%E5%A4%A7%E5%9C%B0%E5%BD%A2%E3%80%81%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%BC%98%E5%8C%96/">
+                <span class="chip center-align waves-effect waves-light chip-default">无缝大地形、多线程优化</span>
             </a>
             
             
             
-            <a href="/tags/%E9%9B%A8%E6%BB%B4%E7%8E%BB%E7%92%83Shader/">
-                <span class="chip center-align waves-effect waves-light chip-default">雨滴玻璃Shader</span>
+            <a href="/tags/%E7%A8%8B%E5%BA%8F%E5%8C%96%E7%94%9F%E6%88%90/">
+                <span class="chip center-align waves-effect waves-light chip-default">程序化生成</span>
             </a>
             
             
@@ -859,20 +853,26 @@
             
             
             
+            <a href="/tags/%E9%9B%A8%E6%BB%B4%E7%8E%BB%E7%92%83Shader/">
+                <span class="chip center-align waves-effect waves-light chip-default">雨滴玻璃Shader</span>
+            </a>
+            
+            
+            
             <a href="/tags/OpenGL%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%9A%E5%85%89%E7%85%A7/">
                 <span class="chip center-align waves-effect waves-light chip-default">OpenGL学习记录：光照</span>
             </a>
             
             
             
-            <a href="/tags/OpenGL/">
-                <span class="chip center-align waves-effect waves-light chip-default">OpenGL</span>
+            <a href="/tags/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95-%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/">
+                <span class="chip center-align waves-effect waves-light chip-default">深度测试&模板测试</span>
             </a>
             
             
             
-            <a href="/tags/%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95-%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95/">
-                <span class="chip center-align waves-effect waves-light chip-default">深度测试&模板测试</span>
+            <a href="/tags/OpenGL/">
+                <span class="chip center-align waves-effect waves-light chip-default">OpenGL</span>
             </a>
             
             
