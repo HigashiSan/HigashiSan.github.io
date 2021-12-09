@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="深度缓冲重建到世界空间总结, YoKuYo">
+    <meta name="keywords" content="对渲染管线空间变换的理解, YoKuYo">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>深度缓冲重建到世界空间总结 | YoKuYo</title>
+    <title>对渲染管线空间变换的理解 | YoKuYo</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -310,12 +310,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/7.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/3.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">深度缓冲重建到世界空间总结</h1>
+                    <h1 class="description center-align post-title">对渲染管线空间变换的理解</h1>
                 </div>
             </div>
         </div>
@@ -431,8 +431,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/%E6%B7%B1%E5%BA%A6%E7%BC%93%E5%86%B2/">
-                                <span class="chip bg-color">深度缓冲</span>
+                            <a href="/tags/Space-Transform/">
+                                <span class="chip bg-color">Space Transform</span>
                             </a>
                         
                     </div>
@@ -447,7 +447,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>Publish Date:&nbsp;&nbsp;
-                    2021-10-30
+                    2020-03-03
                 </div>
                 
 
@@ -468,20 +468,23 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h3 id="Depth-Value-Return-To-WorldSpace"><a href="#Depth-Value-Return-To-WorldSpace" class="headerlink" title="Depth Value Return To WorldSpace"></a>Depth Value Return To WorldSpace</h3><p>在很多SS（屏幕空间）算法中，都需要用到深度缓冲这个东西，在前向渲染或者延迟渲染中得到深度信息，然后重建它在世界空间的位置。这里就总结一下重建方法，免得时间久了后搞忘。</p>
-<h4 id="通过屏幕坐标还原"><a href="#通过屏幕坐标还原" class="headerlink" title="通过屏幕坐标还原"></a>通过屏幕坐标还原</h4><p>屏幕坐标是通过NDC坐标经过屏幕映射得到的，NDC一个[-1,1]的三维立方体，所以第一步就是从屏幕转换回NDC坐标：</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NDCPos = (ScreenPos / ScreenPos.w) * <span class="number">2</span> <span class="number">-1</span>;</span><br></pre></td></tr></table></figure>
+                <h3 id="Space-Transform"><a href="#Space-Transform" class="headerlink" title="Space  Transform"></a>Space  Transform</h3><p>刚刚踏进图形学的大门，记录一下我对于空间变换的理解。为了把3D世界里的各种数据变换到一张2D的图像上，先辈提出了渲染管线这个东西，它会依次地进行空间变换，最终把物体的顶点数据变换到设备的显示器上。</p>
 
-<p>注意视口坐标和屏幕坐标是不一样的，渲染管线中的屏幕映射是指从NDC转换到屏幕空间ScreenSpace，是指游戏窗口的坐标，以像素为单位，视口坐标是一个从（0，0）到（1，1）的二维坐标，是单位化的屏幕坐标。一般会通过ComputeScreenPos去得到一个齐次坐标，然后除以w分量再得到视口坐标。</p>
-<p>首先组建一个到这个点的方向向量，然后因为NDC坐标是通过剪裁空间做透视除法得到的，所以直接逆向做一个变换，乘一个远平面的值就行了：</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ClipPos = float3(NDCPos.x,NDCPos.y,<span class="number">1.0</span>) * _ProjectionParams.z</span><br></pre></td></tr></table></figure>
 
-<p>然后乘投影矩阵的逆矩阵就可以转换到观察空间，观察空间摄像机在原点，所以原点指向这个点的向量乘线性深度值，就得到了深度缓冲中存的值在观察空间的位置。</p>
-<p>最后乘viewmatrix的逆矩阵，就到了世界空间。</p>
-<h4 id="视锥体插值重建"><a href="#视锥体插值重建" class="headerlink" title="视锥体插值重建"></a>视锥体插值重建</h4><p>核心：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">float3 worldPos &#x3D; _WorldSpaceC eraPos + linearDepth * interpolaedRay;</span><br></pre></td></tr></table></figure>
+<p>这张图就比较容易让人理解整个过程。</p>
+<p>其实大部分都比较容易让人理解，其实最让我感到疑惑的，还是转换到剪裁空间开始，看了好久才终于明白了那一段变换。</p>
+<p>首先是从世界转换到摄像机空间，我理解的一种思路就是对顶点做摄像机如何从世界坐标原点移动到目前位置的变换的逆变换。比如摄像机在世界空间中的变换是先按(30, 0, 0)进行旋转，然后按(0, 10, -10)进行了平移。那么，为了把摄像机重新移回到原点，需要进行逆向变换， 即先按(0, -10, 10)平移，以便将摄像机移回到原点，再按(-30, 0, 0)进行旋转。这样一来变换矩阵就是：</p>
+<img src="/2020/03/03/%E5%AF%B9%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF%E7%A9%BA%E9%97%B4%E5%8F%98%E6%8D%A2%E7%9A%84%E7%90%86%E8%A7%A3/2.png" class="">
 
-<p>得到视锥体四个角的向量，通过插值得到摄像机到某个像素的方向向量，用它乘线性深度，然后再加上摄像机在世界空间的坐标，就得到在世界空间的坐标。</p>
+<p>于是任何一个世界空间下的点左乘这个变换矩阵，就可以变换到一个以摄像机为原点的世界空间，即摄像机空间。但观察空间是右手坐标系，所以还需要对z分量取反。此时xyz都是空间中的位置，w是1。</p>
+<p>然后最重要的就是剪裁空间，ClipSpace，就是要把顶点再变换到剪裁视锥体内，如果不在这个视锥体内，就不去渲染它，这里使用的矩阵是投影矩阵，但是它又不能叫投影矩阵，因为它没有做投影，就有点误导人，所以另外一种叫法是剪裁矩阵。而对于视锥体又有两种类型，一种是正交投影 (orthographic projection)，一种是透视投影 (perspective projection)，区别就是是否有近大远小的效果。</p>
+<p>这个变换矩阵是通过摄像机的一些参数来确定：</p>
+<img src="/2020/03/03/%E5%AF%B9%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF%E7%A9%BA%E9%97%B4%E5%8F%98%E6%8D%A2%E7%9A%84%E7%90%86%E8%A7%A3/3.png" class="">
+
+<p>一个View Space的顶点左乘这个矩阵，就能变换到剪裁空间。这里就是最最重要的，之前的w分量仅仅只是起到区分点和矢量的作用，而现在这个w分量就是之前的z值取反，它实际上就表示了这个点到摄像机的距离，也就是深度，值越大，离摄像机越远。对于xyz分量则是做了真正的透视效果，进行了不同程度缩放，当它在-w和w之间，才说明这个点在剪裁视锥体以内，就不会被减裁掉。</p>
+<p>这样就完完全全理解了这整个过程，也就理解这个深度值是怎样储存下来的。</p>
+<p>在顶点着色器结束之后，才会进行真正的投影操作，在进入光栅化阶段之前，把顶点从剪裁空间投影到屏幕空间：首先是进行齐次除法，xyz都去除以w分量，这样就会把视锥体变成一个标准的单位立方体，xyz的范围都在-1~1之间（NDC坐标空间）。然后就可以直接通过屏幕映射得到每个顶点对应的屏幕像素坐标（根据xy分量）。而z分量，通过除以之前存着距离的w值，就变成了深度信息，而通过这步透视操作以后，此时的深度就不是线性的了。</p>
+<p>对于另外一个特殊的东西，即法线，就不能单纯地只是用同样的矩阵去进行变换，因为可能导致法线与原本垂直的平面不垂直。</p>
 
                 
             </div>
@@ -508,7 +511,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://higashisan.github.io/2021/10/30/%E6%B7%B1%E5%BA%A6%E7%BC%93%E5%86%B2%E9%87%8D%E5%BB%BA%E5%88%B0%E4%B8%96%E7%95%8C%E7%A9%BA%E9%97%B4%E6%80%BB%E7%BB%93/">https://higashisan.github.io/2021/10/30/%E6%B7%B1%E5%BA%A6%E7%BC%93%E5%86%B2%E9%87%8D%E5%BB%BA%E5%88%B0%E4%B8%96%E7%95%8C%E7%A9%BA%E9%97%B4%E6%80%BB%E7%BB%93/</a>
+                    <a href="https://higashisan.github.io/2020/03/03/%E5%AF%B9%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF%E7%A9%BA%E9%97%B4%E5%8F%98%E6%8D%A2%E7%9A%84%E7%90%86%E8%A7%A3/">https://higashisan.github.io/2020/03/03/%E5%AF%B9%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF%E7%A9%BA%E9%97%B4%E5%8F%98%E6%8D%A2%E7%9A%84%E7%90%86%E8%A7%A3/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -546,8 +549,8 @@
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/%E6%B7%B1%E5%BA%A6%E7%BC%93%E5%86%B2/">
-                                    <span class="chip bg-color">深度缓冲</span>
+                                <a href="/tags/Space-Transform/">
+                                    <span class="chip bg-color">Space Transform</span>
                                 </a>
                             
                         </div>
@@ -721,13 +724,13 @@
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;Previous</div>
             <div class="card">
-                <a href="/2021/11/12/Compute-Shader%E7%94%9F%E6%88%90%E5%99%AA%E5%A3%B0/">
+                <a href="/2020/03/19/OpenGL-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/21.jpg" class="responsive-img" alt="Compute Shader生成噪声">
+                        <img src="/medias/featureimages/21.jpg" class="responsive-img" alt="OpenGL学习记录--入门章节">
                         
-                        <span class="card-title">Compute Shader生成噪声</span>
+                        <span class="card-title">OpenGL学习记录--入门章节</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -738,7 +741,7 @@
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2021-11-12
+                            <i class="far fa-clock fa-fw icon-date"></i>2020-03-19
                         </span>
                         <span class="publish-author">
                             
@@ -751,8 +754,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/Compute-Shader/">
-                        <span class="chip bg-color">Compute Shader</span>
+                    <a href="/tags/OpenGL/">
+                        <span class="chip bg-color">OpenGL</span>
                     </a>
                     
                 </div>
@@ -763,16 +766,16 @@
         
         <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge right-badge text-color">
-                Next&nbsp;<i class="fas fa-chevron-right"></i>
+                Current&nbsp;<i class="far fa-dot-circle"></i>
             </div>
             <div class="card">
-                <a href="/2021/10/20/Unity-Shader-%E5%A4%9C%E8%A7%86%E4%BB%AA%E6%95%88%E6%9E%9C%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/">
+                <a href="/2020/03/03/%E5%AF%B9%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF%E7%A9%BA%E9%97%B4%E5%8F%98%E6%8D%A2%E7%9A%84%E7%90%86%E8%A7%A3/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="Unity Shader 夜视仪效果实现思路">
+                        <img src="/medias/featureimages/3.jpg" class="responsive-img" alt="对渲染管线空间变换的理解">
                         
-                        <span class="card-title">Unity Shader 夜视仪效果实现思路</span>
+                        <span class="card-title">对渲染管线空间变换的理解</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -783,7 +786,7 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2021-10-20
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-03-03
                             </span>
                         <span class="publish-author">
                             
@@ -793,11 +796,12 @@
                         </span>
                     </div>
                 </div>
+
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/Post-Screen/">
-                        <span class="chip bg-color">Post-Screen</span>
+                    <a href="/tags/Space-Transform/">
+                        <span class="chip bg-color">Space Transform</span>
                     </a>
                     
                 </div>
