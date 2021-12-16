@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="对unitySRP的理解, YoKuYo">
+    <meta name="keywords" content="路径追踪,蒙特卡洛积分方法推导, YoKuYo">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>对unitySRP的理解 | YoKuYo</title>
+    <title>路径追踪,蒙特卡洛积分方法推导 | YoKuYo</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -310,12 +310,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/4.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/5.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">对unitySRP的理解</h1>
+                    <h1 class="description center-align post-title">路径追踪,蒙特卡洛积分方法推导</h1>
                 </div>
             </div>
         </div>
@@ -431,8 +431,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/SRP/">
-                                <span class="chip bg-color">SRP</span>
+                            <a href="/tags/Path-Tracing/">
+                                <span class="chip bg-color">Path Tracing</span>
                             </a>
                         
                     </div>
@@ -447,7 +447,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>Publish Date:&nbsp;&nbsp;
-                    2021-04-05
+                    2020-08-10
                 </div>
                 
 
@@ -468,33 +468,41 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h3 id="SRP"><a href="#SRP" class="headerlink" title="SRP"></a>SRP</h3><p>SRP即unity的可编程渲染管线，我们可以用它来创建自定义的渲染管线。最近看了很多文章，总结一下对它的理解和它的基本使用。也为后面自己重头开始写一条custom SRP做一个准备。</p>
-<p>Scriptable Render Pipeline其实是一个unity抽出来的C#层，它集合了底层的渲染API，让我们可以自己调用，然后我们就可以用这个C#层去创建我们自定义的render pipeline然后插入到unity中。</p>
-<p>为了弥补build-in与SRP之间的差距，unity又提出了两个可以直接使用的渲染方案：URP和HDRP。HDRP主要适用于主机平台的渲染方案，URP则是LWEP的延续，然后加入了一些新的特性。我们可以编写自己的feature，然后插入到pipeline中。</p>
-<h4 id="Command-Buffer"><a href="#Command-Buffer" class="headerlink" title="Command Buffer"></a>Command Buffer</h4><p>这个buffer保存了渲染命令列表，可以设置在一个渲染摄像机的不同渲染阶段执行。在unity里面打开FrameDebugger，就可以看到场景的渲染流程，本质上就是一个一个顺序执行的pass，unity提供commandbuffer就是让我们可以根据自己的需求在不同阶段插入绘制指令，比如DrawRenderer，DrawMesh，DrawProcedure。</p>
-<p>OnRenderImage的后处理其实就是commandBuffer的一个应用而已。</p>
-<h4 id="ScriptableRenderContext"><a href="#ScriptableRenderContext" class="headerlink" title="ScriptableRenderContext"></a>ScriptableRenderContext</h4><p>要创建一个自定义管线，首先需要一个CustomRenderPipelineAsset资源，重写RenderPipeline方法，然后返回我们创建的管线实例，然后创建CustomRenderPipeline，这就是要创建的管线资源，在这个脚本的Render方法就是去渲染每个摄像机的地方，它的输入参数一个是当前要渲染的Camera，另一个是ScriptableRenderContex，渲染上下文。通过重写这个方法，使用CommandBuffer把渲染的指令添加到ScriptableRenderContex中，然后用Submit提交渲染指令。</p>
-<h4 id="ScriptableRenderPass"><a href="#ScriptableRenderPass" class="headerlink" title="ScriptableRenderPass"></a>ScriptableRenderPass</h4><p>自定义的pass类，在这个类里就可以写自己想进行的渲染逻辑，需要复写三个方法：OnCameraSetup、Excute、OnCameraCleanup。然后创建出的实例就能够作为RenderFeature插入到渲染流程中去。</p>
-<h3 id="实际操作"><a href="#实际操作" class="headerlink" title="实际操作"></a>实际操作</h3><p>现在看看如何编写一个自己的RenderFeature，然后插入到URP的后处理组件Volume中去。懒得贴代码了，直接记录一下操作逻辑，以及拓展Volume。</p>
-<p>首先要创建一个继承自VolumeComponent，IPostProcessComponent的脚本，VolumeComponent的作用就是可以在volume组件里添加一个override，即我们自己的一个后处理效果，它没有必须要复写的函数，只需要在里面定义我们需要曝露出去的控制变量就行。IPostProcessComponent主要是将新加的后处理功能集成到Volume Framework的规范管理中，是不是必须要我也不知道，而且它必须有两个需要复写的函数：分别是IsActive和IsTileCompatible，对于IsActive你可以通过它给一些条件，如果不满足这个条件就关闭这个后处理特效，不过好像你自己写一个函数也行。</p>
-<p>这个脚本写完之后你就可以在Volume里面添加自己的一个override。</p>
-<p>然后就是定义我们的renderfeature的脚本，这个脚本要继承ScriptableRendererFeature，它有两个需要复写的函数：Create、AddRenderPasses。</p>
-<p>在Create里要具体创建出一个pass实例，即初始化我们要用的pass。然后在AddRenderPasses里面要把这个创建好的pass给插入到renderer里面去。</p>
-<p>这个pass就是我们需要定义的，它继承自ScriptableRenderPass，主要的渲染逻辑都是在这里写的，它会被我们插入到renderer中去。这个类必须要实现的是Excute方法：</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Execute</span>(<span class="params">ScriptableRenderContext context, <span class="keyword">ref</span> RenderingData renderingData</span>)</span></span><br></pre></td></tr></table></figure>
+                <h3 id="Path-Tracing"><a href="#Path-Tracing" class="headerlink" title="Path Tracing"></a>Path Tracing</h3><p>路径追踪的提出就是为了去解渲染方程的积分项，并且它不是一个准确积分，只是用一种近似的方法去得到近似的积分数值解，它采用了概率论的一些思想，使多次采样的均值去得到一个近似的积分值。</p>
+<p>正常情况下求解一个定积分需要去找它的原函数，但对于渲染方程的积分项，写不出它的解析式，所以使用蒙特卡洛去直接求它的数值解。Whitted-Style光线追踪不是很正确就是因为它无法决定diffuse，当打到一个diffuse表面，它就直接终止，然后做shading计算。真正的漫反射应该会将光线反射到其它物体表面，也就是除了直接光照还应该有间接光照。</p>
+<p>蒙特卡洛积分思想推导：</p>
+<img src="/2020/08/10/%E8%B7%AF%E5%BE%84%E8%BF%BD%E8%B8%AA-%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95%E6%8E%A8%E5%AF%BC/1.png" class="">
 
-<p>首先是如何把刚刚自定义的volume和这个renderfeature关联起来，通过VolumeManager.instance.stack，我们可以取得当前场景中的Volume组件，它被定义成一个VolumeStack，通过它使用GetComponent方法，可以得到我们刚刚创建的Volume override。</p>
-<p>对于renderingData，他就是定义了渲染的相关数据，Unity里的定义是这样的：</p>
-<img src="/2021/04/05/%E5%AF%B9unitySRP%E7%9A%84%E7%90%86%E8%A7%A3/1.png" class="">
+<img src="/2020/08/10/%E8%B7%AF%E5%BE%84%E8%BF%BD%E8%B8%AA-%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95%E6%8E%A8%E5%AF%BC/2.png" class="">
+
+<img src="/2020/08/10/%E8%B7%AF%E5%BE%84%E8%BF%BD%E8%B8%AA-%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95%E6%8E%A8%E5%AF%BC/3.png" class="">
+
+<p>然而这样一根光线打一个物体之后它的思想是发出更多的光线去判断有没有和另外的物体相交，这样递归计算时光线的数量就会过于多，是一个指数级别的增长。解决办法就是对于任何一个着色点，只向任何一个随机的方向打出一条光线：</p>
+<img src="/2020/08/10/%E8%B7%AF%E5%BE%84%E8%BF%BD%E8%B8%AA-%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95%E6%8E%A8%E5%AF%BC/4.png" class="">
+
+<p>这个就是路径追踪，它就是去追踪一条线的路径，每次打到一个物体就随机产生一个方向然后继续追踪，最后累加计算着色。</p>
+<p>但这样的话结果就会很noise，所以为了解决它，就需要对于每一个像素多打一些光线，做多个光线的路径追踪，这样就可以解决这个问题。对于从摄像机产生光线，伪代码如下：</p>
+<img src="/2020/08/10/%E8%B7%AF%E5%BE%84%E8%BF%BD%E8%B8%AA-%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95%E6%8E%A8%E5%AF%BC/5.png" class="">
 
 
 
-<p>在execute里面我们就可以创建我们的commandbuffer，然后写渲染指令，写完之后通过ExecuteCommandBuffer去执行就行，执行完之后release掉。</p>
-<p>由于没有了OnrenderImage方法，就需要我们通过SetGlobalTexture、GetTemporaryRT这些api，去与shader交互，然后实现后处理特效。Blit方法还是和之前在buildin里实现的一样，主要是需要通过PropertyToID去获得shader里的变量名字，然后在execute里面使用这些ID号去给这些变量赋值。</p>
-<img src="/2021/04/05/%E5%AF%B9unitySRP%E7%9A%84%E7%90%86%E8%A7%A3/2.png" class="">
+<p>最后一个需要解决的问题就是如何终止这个递归，通过101的学习，普遍采用的是Russian Roulette的方法，用一个预先设定好的概率去决定要不要打下一个方向的光线。因为他是一个二项分布的离散型随机变量，它最后的结果一定是一个正确的值：</p>
+<img src="/2020/08/10/%E8%B7%AF%E5%BE%84%E8%BF%BD%E8%B8%AA-%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95%E6%8E%A8%E5%AF%BC/6.png" class="">
 
-<p>如果需要一个空的rendertexture去暂存一个东西，那么就需要RenderTargetIdentifier去定义，可以通过cmd.GetTemporaryRT去获得当前摄像机的texture，然后存到我们指定的rendertexture里。</p>
-<p>除此之外的后处理特效方法就和在buildin里面一摸一样了。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                 
             </div>
@@ -521,7 +529,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://higashisan.github.io/2021/04/05/%E5%AF%B9unitySRP%E7%9A%84%E7%90%86%E8%A7%A3/">https://higashisan.github.io/2021/04/05/%E5%AF%B9unitySRP%E7%9A%84%E7%90%86%E8%A7%A3/</a>
+                    <a href="https://higashisan.github.io/2020/08/10/%E8%B7%AF%E5%BE%84%E8%BF%BD%E8%B8%AA-%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95%E6%8E%A8%E5%AF%BC/">https://higashisan.github.io/2020/08/10/%E8%B7%AF%E5%BE%84%E8%BF%BD%E8%B8%AA-%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95%E6%8E%A8%E5%AF%BC/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -559,8 +567,8 @@
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/SRP/">
-                                    <span class="chip bg-color">SRP</span>
+                                <a href="/tags/Path-Tracing/">
+                                    <span class="chip bg-color">Path Tracing</span>
                                 </a>
                             
                         </div>
@@ -734,51 +742,6 @@
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;Previous</div>
             <div class="card">
-                <a href="/2021/04/28/%E9%9B%A8%E6%BB%B4%E7%8E%BB%E7%92%83Shader%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF/">
-                    <div class="card-image">
-                        
-                        
-                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="雨滴玻璃Shader实现思路">
-                        
-                        <span class="card-title">雨滴玻璃Shader实现思路</span>
-                    </div>
-                </a>
-                <div class="card-content article-content">
-                    <div class="summary block-with-text">
-                        
-                            
-                        
-                    </div>
-                    <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2021-04-28
-                        </span>
-                        <span class="publish-author">
-                            
-                            <i class="fas fa-user fa-fw"></i>
-                            cdc
-                            
-                        </span>
-                    </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/%E9%9B%A8%E6%BB%B4%E7%8E%BB%E7%92%83Shader/">
-                        <span class="chip bg-color">雨滴玻璃Shader</span>
-                    </a>
-                    
-                </div>
-                
-            </div>
-        </div>
-        
-        
-        <div class="article col s12 m6" data-aos="fade-up">
-            <div class="article-badge right-badge text-color">
-                Next&nbsp;<i class="fas fa-chevron-right"></i>
-            </div>
-            <div class="card">
                 <a href="/2021/04/03/URP%E5%90%8E%E5%A4%84%E7%90%86%E7%9A%84%E5%AE%9E%E7%8E%B0%EF%BC%9ARenderFeature/">
                     <div class="card-image">
                         
@@ -795,9 +758,9 @@
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2021-04-03
-                            </span>
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2021-04-03
+                        </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -811,6 +774,51 @@
                     
                     <a href="/tags/RenderFeature/">
                         <span class="chip bg-color">RenderFeature</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                Next&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2020/06/01/Unity-PBR-Shader%E5%AE%9E%E7%8E%B0/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="造一个PBR轮子">
+                        
+                        <span class="card-title">造一个PBR轮子</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-06-01
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            cdc
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/PBR/">
+                        <span class="chip bg-color">PBR</span>
                     </a>
                     
                 </div>
