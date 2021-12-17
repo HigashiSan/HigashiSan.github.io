@@ -475,7 +475,7 @@
 <p>OnRenderImage的后处理其实就是commandBuffer的一个应用而已。</p>
 <h4 id="ScriptableRenderContext"><a href="#ScriptableRenderContext" class="headerlink" title="ScriptableRenderContext"></a>ScriptableRenderContext</h4><p>要创建一个自定义管线，首先需要一个CustomRenderPipelineAsset资源，重写RenderPipeline方法，然后返回我们创建的管线实例，然后创建CustomRenderPipeline，这就是要创建的管线资源，在这个脚本的Render方法就是去渲染每个摄像机的地方，它的输入参数一个是当前要渲染的Camera，另一个是ScriptableRenderContex，渲染上下文。通过重写这个方法，使用CommandBuffer把渲染的指令添加到ScriptableRenderContex中，然后用Submit提交渲染指令。</p>
 <h4 id="ScriptableRenderPass"><a href="#ScriptableRenderPass" class="headerlink" title="ScriptableRenderPass"></a>ScriptableRenderPass</h4><p>自定义的pass类，在这个类里就可以写自己想进行的渲染逻辑，需要复写三个方法：OnCameraSetup、Excute、OnCameraCleanup。然后创建出的实例就能够作为RenderFeature插入到渲染流程中去。</p>
-<h3 id="实际操作"><a href="#实际操作" class="headerlink" title="实际操作"></a>实际操作</h3><p>现在看看如何编写一个自己的RenderFeature，然后插入到URP的后处理组件Volume中去。懒得贴代码了，直接记录一下操作逻辑，以及拓展Volume。</p>
+<h4 id="实际操作"><a href="#实际操作" class="headerlink" title="实际操作"></a>实际操作</h4><p>现在看看如何编写一个自己的RenderFeature，然后插入到URP的后处理组件Volume中去。懒得贴代码了，直接记录一下操作逻辑，以及拓展Volume。</p>
 <p>首先要创建一个继承自VolumeComponent，IPostProcessComponent的脚本，VolumeComponent的作用就是可以在volume组件里添加一个override，即我们自己的一个后处理效果，它没有必须要复写的函数，只需要在里面定义我们需要曝露出去的控制变量就行。IPostProcessComponent主要是将新加的后处理功能集成到Volume Framework的规范管理中，是不是必须要我也不知道，而且它必须有两个需要复写的函数：分别是IsActive和IsTileCompatible，对于IsActive你可以通过它给一些条件，如果不满足这个条件就关闭这个后处理特效，不过好像你自己写一个函数也行。</p>
 <p>这个脚本写完之后你就可以在Volume里面添加自己的一个override。</p>
 <p>然后就是定义我们的renderfeature的脚本，这个脚本要继承ScriptableRendererFeature，它有两个需要复写的函数：Create、AddRenderPasses。</p>
@@ -495,6 +495,31 @@
 
 <p>如果需要一个空的rendertexture去暂存一个东西，那么就需要RenderTargetIdentifier去定义，可以通过cmd.GetTemporaryRT去获得当前摄像机的texture，然后存到我们指定的rendertexture里。</p>
 <p>除此之外的后处理特效方法就和在buildin里面一摸一样了。</p>
+<h3 id="URP"><a href="#URP" class="headerlink" title="URP"></a>URP</h3><p>Unity已经帮我们预先创建好了URP，它是一个继承自RenderPipelineAsset的管线资源，在里面可以设置这条管线的各种参数，然后我们也可以创建自己的asset，通过切换asset去实现不同的效果需求。比如unity的URP模板项目里面就有high、mediu和low三种asset，切换它就可以在游戏里面实现不同画质的切换。</p>
+<h4 id="general"><a href="#general" class="headerlink" title="general"></a>general</h4><img src="/2021/04/05/%E5%AF%B9unitySRP%E7%9A%84%E7%90%86%E8%A7%A3/3.png" class="">
+
+<p>对于每一个管线资源都需要给他一个具体的管线，URP默认给的管线是一个前向渲染的管线，这是包含在general里面的设置，然后还有对Depth和Opaque Texture的设置，指定相机是否生成深度纹理和不透明纹理，要在shader里得到的话就是_CameraDepthTexture 和 _CameraOpaqueTexture，后者就是buildin里的grabpass，相当于unity帮我们直接封装好了。不需要再用GrabPass{“name”}去取得了。然后在这里的是默认设置，如果某个摄像机选择了UsePipelineSettings，那就会采用这个默认设置，当然也可以对每个摄像机进行单独的设置：</p>
+<img src="/2021/04/05/%E5%AF%B9unitySRP%E7%9A%84%E7%90%86%E8%A7%A3/4.png" class="">
+
+<h4 id="Quality"><a href="#Quality" class="headerlink" title="Quality"></a>Quality</h4><p>这里参数就是控制渲染的效果，可以设置是否支持HDR，以及使用Multi Sample Anti-aliasing的层级，和摄像机rendertarget的分辨率：</p>
+<img src="/2021/04/05/%E5%AF%B9unitySRP%E7%9A%84%E7%90%86%E8%A7%A3/5.png" class="">
+
+<h4 id="Lighting"><a href="#Lighting" class="headerlink" title="Lighting"></a>Lighting</h4><p>Lighting项主要的参数就是去设置灯光和这些灯光是否阴影</p>
+<img src="/2021/04/05/%E5%AF%B9unitySRP%E7%9A%84%E7%90%86%E8%A7%A3/6.png" class="">
+
+<p>其中Main Light控制的是场景中最重要的平行光，在Lighting面板里面可以人为设置这个，比如指定这个光是目前游戏里面唯一的太阳，如果没有指定，引擎就会把最亮的那个平行光作为Main Light。然后对于Additional Lights，因为在URP里面的光照计算采用的时单Pass，这里可以指定每个物体最多受到多少光照的影响，并且可以选择是逐顶点计算还是逐像素计算。</p>
+<h4 id="Shadows"><a href="#Shadows" class="headerlink" title="Shadows"></a>Shadows</h4><p>这里就是设置阴影的质量</p>
+<img src="/2021/04/05/%E5%AF%B9unitySRP%E7%9A%84%E7%90%86%E8%A7%A3/8.png" class="">
+
+<p>Distance决定从相机开始多远开始产生阴影，Cascades是基于Lod的思想，通过距离决定阴影的质量。</p>
+<h4 id="Advanced"><a href="#Advanced" class="headerlink" title="Advanced"></a>Advanced</h4><p>这里就比较简单，主要就是去设置如何Batching。</p>
+<h4 id="URP渲染流程"><a href="#URP渲染流程" class="headerlink" title="URP渲染流程"></a>URP渲染流程</h4><img src="/2021/04/05/%E5%AF%B9unitySRP%E7%9A%84%E7%90%86%E8%A7%A3/9.png" class="">
+
+<p>unity会去依次渲染场景中的每个相机，每个相机渲染的时候还会执行一个camera loop，Unity官方给出的camera loop如下：</p>
+<img src="/2021/04/05/%E5%AF%B9unitySRP%E7%9A%84%E7%90%86%E8%A7%A3/10.png" class="">
+
+
+
 
                 
             </div>
