@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Compute Shader生成噪声, YoKuYo">
+    <meta name="keywords" content="GPU架构与Shader优化, YoKuYo">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>Compute Shader生成噪声 | YoKuYo</title>
+    <title>GPU架构与Shader优化 | YoKuYo</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -310,12 +310,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/21.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/17.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Compute Shader生成噪声</h1>
+                    <h1 class="description center-align post-title">GPU架构与Shader优化</h1>
                 </div>
             </div>
         </div>
@@ -431,8 +431,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/Compute-Shader/">
-                                <span class="chip bg-color">Compute Shader</span>
+                            <a href="/tags/GPU/">
+                                <span class="chip bg-color">GPU</span>
                             </a>
                         
                     </div>
@@ -447,7 +447,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>Publish Date:&nbsp;&nbsp;
-                    2021-11-12
+                    2021-12-19
                 </div>
                 
 
@@ -468,31 +468,54 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h3 id="噪声生成工具"><a href="#噪声生成工具" class="headerlink" title="噪声生成工具"></a>噪声生成工具</h3><p>尝试一下ta的另一个方向：写Tools，正好也写写computeshader ，去做一个噪声生成工具。</p>
-<h4 id="Window、GUI布局"><a href="#Window、GUI布局" class="headerlink" title="Window、GUI布局"></a>Window、GUI布局</h4><p>脚本继承自EditorWindow之后，使用一些API去把窗口需要的选项做出来就好。</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">MenuItem(<span class="meta-string">&quot;Tools/Noise Tool&quot;</span>)</span>]</span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">CreateWindow</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Rect size = <span class="keyword">new</span> Rect(<span class="number">0</span>, <span class="number">0</span>, <span class="number">400</span>, <span class="number">600</span>);</span><br><span class="line">	NoiseGenTool window = 	(NoiseGenTool)EditorWindow.GetWindowWithRect(<span class="keyword">typeof</span>(NoiseGenTool), size, <span class="literal">true</span>);</span><br><span class="line">	window.Show();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+                <h3 id="GPU架构"><a href="#GPU架构" class="headerlink" title="GPU架构"></a>GPU架构</h3><p>实时渲染的要求：高质量+速度快，要想做到能在质量上逼近离线渲染同时还要能在大多数平台上跑，就必须要优化，要去优化就涉及到shader是如何运行的，所以抽了个时间简单了解了一下GPU的架构以及shader的运行流程，这里做个总结。</p>
+<p>和CPU做对比GPU只有很少的逻辑控制并且没有Cache，简单来说GPU的运行机制就是Raster Engine与SM之间的数据交换。</p>
+<h4 id="GPU大概结构"><a href="#GPU大概结构" class="headerlink" title="GPU大概结构"></a>GPU大概结构</h4><img src="/2021/12/19/GPU%E6%9E%B6%E6%9E%84%E4%B8%8EShader%E4%BC%98%E5%8C%96/1.png" class="">
 
-<p>窗口中的选择选项布局：</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="built_in">enum</span> NoiseType &#123; Worley, Perlin, Simplex&#125;;</span><br><span class="line"><span class="keyword">public</span> <span class="built_in">enum</span> TextureSize &#123; x64 = <span class="number">64</span>, x128 = <span class="number">128</span>, x256 = <span class="number">256</span>, x512 = <span class="number">512</span>, x1024 = <span class="number">1024</span>, x2048 = <span class="number">2048</span> &#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> ComputeShader noiseShader;</span><br><span class="line"><span class="keyword">private</span> NoiseType noiseType = NoiseType.Perlin;</span><br><span class="line"><span class="keyword">private</span> RenderTextureFormat format = RenderTextureFormat.ARGB32;</span><br><span class="line"><span class="keyword">private</span> TextureSize size = TextureSize.x512;</span><br><span class="line"><span class="keyword">private</span> <span class="built_in">float</span> noiseScale = <span class="number">10f</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//在void OnGUI里面</span></span><br><span class="line">noiseShader = EditorGUILayout.ObjectField(<span class="string">&quot;Compute Noise Shader:&quot;</span>, noiseShader, <span class="keyword">typeof</span>(ComputeShader), <span class="literal">true</span>) <span class="keyword">as</span> ComputeShader;</span><br><span class="line">noiseType = (NoiseType)EditorGUILayout.EnumPopup(<span class="string">&quot;Noise Type：&quot;</span>, noiseType);</span><br><span class="line">format = (RenderTextureFormat)EditorGUILayout.EnumPopup(<span class="string">&quot;Texture Format：&quot;</span>, format);</span><br><span class="line">size = (TextureSize)EditorGUILayout.EnumPopup(<span class="string">&quot;Texture Size：&quot;</span>, size);</span><br><span class="line">noiseScale = EditorGUILayout.Slider(<span class="string">&quot;Noise Scale:&quot;</span>, noiseScale, <span class="number">20f</span>, <span class="number">200f</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (GUILayout.Button(<span class="string">&quot;Generate Noise Texture&quot;</span>))</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span> (noiseShader == <span class="literal">null</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		ShowNotification(<span class="keyword">new</span> GUIContent(<span class="string">&quot;Noise Shader is null!!&quot;</span>));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		Generate();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (GUILayout.Button(<span class="string">&quot;Save Texture&quot;</span>))</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span> (renderTexture == <span class="literal">null</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		ShowNotification(<span class="keyword">new</span> GUIContent(<span class="string">&quot;Texture is null!!&quot;</span>));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		SaveTexture();</span><br><span class="line">		AssetDatabase.Refresh();</span><br><span class="line">		ShowNotification(<span class="keyword">new</span> GUIContent(<span class="string">&quot;Successfully saved!!&quot;</span>));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>GPU被划分成多个GPC(Graphics Processing Cluster，图形处理簇)，每个GPC拥有多个SM（SMX、SMM，Streaming Multiprocessor 流式多处理器 是GPU的基础单元，隔壁AMD叫CU）和一个光栅化引擎(Raster Engine)，这些部件通过总线所连接。</p>
+<p>Shader代码就是经过编译之后在SM上运行，一般来说SM越多性能也就越好，因为SM里面就包含着运算的单元：Core</p>
+<p>GPU的数据储存在DRAM中，访问速度慢，CPU、GPU都可以访问。</p>
+<h4 id="SM的结构"><a href="#SM的结构" class="headerlink" title="SM的结构"></a>SM的结构</h4><img src="/2021/12/19/GPU%E6%9E%B6%E6%9E%84%E4%B8%8EShader%E4%BC%98%E5%8C%96/2.png" class="">
 
+<p>里面的结构有：</p>
+<ul>
+<li>PolyMorph Engine：多边形引擎负责属性装配（attribute Setup）、顶点拉取(VertexFetch)、曲面细分、栅格化（这个模块可以理解专门处理顶点相关的东西）。</li>
+<li>指令缓存（Instruction Cache）</li>
+<li>2个Warp Schedulers：这个模块负责warp调度，一个warp由32个线程组成，warp调度器的指令通过Dispatch Units送到Core执行。</li>
+<li>指令调度单元(Dispatch Units) 负责将Warp Schedulers的指令送往Core执行</li>
+<li>128KB Register File（寄存器）</li>
+<li>16个LD/ST（load/store）用来加载和存储数据</li>
+<li>Core （Core，也叫流处理器Stream Processor）</li>
+<li>4个SFU（Special function units 特殊运算单元）执行特殊数学运算（sin、cos、log等）</li>
+<li>内部链接网络（Interconnect Network）</li>
+<li>64KB 共享缓存</li>
+<li>全局内存缓存（Uniform Cache）</li>
+<li>纹理读取单元(Tex)</li>
+<li>纹理缓存（Texture Cache）存rendertexture的地方</li>
+</ul>
+<p>在Shader中的语义，对应的就是GPU中缓存Buffer的位置，在需要计算时，会从固定位置找需要的数据。</p>
+<h4 id="GPU逻辑管线"><a href="#GPU逻辑管线" class="headerlink" title="GPU逻辑管线"></a>GPU逻辑管线</h4><img src="/2021/12/19/GPU%E6%9E%B6%E6%9E%84%E4%B8%8EShader%E4%BC%98%E5%8C%96/3.png" class="">
 
-
-<h4 id="Compute-Shader"><a href="#Compute-Shader" class="headerlink" title="Compute Shader"></a>Compute Shader</h4><p>这里最重要的就是如何使用compute shader，所有的计算逻辑我们都写在Compute shader里面，可以通过传入一个整数来确定具体是生成什么噪声：</p>
-<img src="/2021/11/12/Compute-Shader%E7%94%9F%E6%88%90%E5%99%AA%E5%A3%B0/1.png" class="">
-
-<p>具体生成各种噪声的函数直接写好了直接调用就好，后面可以拓展更多类型的噪声生成，</p>
-<p>关于save的逻辑：</p>
-<img src="/2021/11/12/Compute-Shader%E7%94%9F%E6%88%90%E5%99%AA%E5%A3%B0/2.png" class="">
-
-<p>生成一个RenderTexture，然后启动compute shader计算：</p>
-<img src="/2021/11/12/Compute-Shader%E7%94%9F%E6%88%90%E5%99%AA%E5%A3%B0/3.png" class="">
-
-
-
-<p>后面会继续拓展，做成一个能生2D、3D的各种噪声的噪声生成工具，并且让美术能有更多调变的参数，目前的工作进度：</p>
-<img src="/2021/11/12/Compute-Shader%E7%94%9F%E6%88%90%E5%99%AA%E5%A3%B0/3.png" class="">
-
-<p>后面抽个时间找些Paper来看看，专门研究一下各种噪声的生成，然后完成这个Tool</p>
+<ol>
+<li>程序在图形 API(DirectX 或 openGL）中进行绘图调用（drawcall）然后数据会被GPU可读编码后插入到Pushbuffer中。DC的瓶颈就是在这里出现的。</li>
+<li>一段时间后或者显式刷新（explicit “flush” calls）后，驱动程序已在pushbuffer 中缓冲了足够的work并将其发送给 GPU 进行处理（在操作系统的某些参与下）。GPU 的Host Interface接收通过Front End处理。</li>
+<li>数据完全到达GPU后，在图元分配器(Primitive Distributor)中开始工作分配，处理indexbuffer，将处理得到的三角形分成batch，发送给多个GPC。</li>
+</ol>
+<p>在进入GPC之后：</p>
+<ol>
+<li>在GPC中，每个SM中的Poly Morph Engine负责通过三角形索引(triangle indices)取出三角形的数据(vertex data)，即下图中的Vertex Fetch模块。</li>
+<li>在获取数据之后，在SM中以32个线程为一组的线程束(Warp)来调度，来开始处理顶点数据。</li>
+</ol>
+<p>处理完顶点数据之后：</p>
+<ol>
+<li>运算结果会被Viewport Transform模块处理，三角形会被裁剪然后准备光栅化，GPU会使用L1和L2缓存来进行vertex-shader和pixel-shader的数据通信。</li>
+<li>接下来这些三角形将被分割，再分配给多个GPC，三角形的范围决定着它将被分配到哪个光栅引擎(raster engines)，每个raster engines覆盖了多个屏幕上的tile。</li>
+<li>GPC上的光栅引擎(raster engines)在它接收到的三角形上工作，来负责这些这些三角形的像素信息的生成（同时会处理裁剪Clipping、背面剔除和Early-Z剔除）。</li>
+<li>32个像素线程将被分成一组，或者说8个2x2的像素块，这是在像素着色器上面的最小工作单元，在这个像素线程内，如果没有被三角形覆盖就会被遮掩，SM中的warp调度器会管理像素着色器的任务。</li>
+</ol>
+<p>值得注意的是Wrap中所需要的数据是合并一次生成，所以所有的core都执行完毕之后才会停止这一次的流处理，然后把数据传递给光栅化着色器。这就解释了为什么shader中要少用循环语句，特别是未知循环次数的循环语句，因为所有的core都需要等“运气最不好的那个core”执行完毕，这样一来就有可能会达到长的耗时。对于if else语句也是一样的，这个线程的结束不取决于条件真假，而取决于整个wrap何时结束。</p>
+<p>然后也要少在shader里面做三角函数运算，可以看到SM里面只分配了四个做特殊函数运算的单元，他们和core之间还需要做数据交换。</p>
+<p>GrabPass耗时的原因：GPU可以把当前要渲染的渲染到一个中间缓冲中，这就是一个texture，CPU需要拿到储存在缓冲的这个texture，然后又拷贝到GPU的另一个指定GPC中去参与运算，就是一个非常耗时的过程。（RenderToTexture的实现是：将FBO直接关联到GPU的Texture上，所以数据不需要拷贝回CPU）。</p>
 
                 
             </div>
@@ -519,7 +542,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://higashisan.github.io/2021/11/12/Compute-Shader%E7%94%9F%E6%88%90%E5%99%AA%E5%A3%B0/">https://higashisan.github.io/2021/11/12/Compute-Shader%E7%94%9F%E6%88%90%E5%99%AA%E5%A3%B0/</a>
+                    <a href="https://higashisan.github.io/2021/12/19/GPU%E6%9E%B6%E6%9E%84%E4%B8%8EShader%E4%BC%98%E5%8C%96/">https://higashisan.github.io/2021/12/19/GPU%E6%9E%B6%E6%9E%84%E4%B8%8EShader%E4%BC%98%E5%8C%96/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -557,8 +580,8 @@
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/Compute-Shader/">
-                                    <span class="chip bg-color">Compute Shader</span>
+                                <a href="/tags/GPU/">
+                                    <span class="chip bg-color">GPU</span>
                                 </a>
                             
                         </div>
@@ -732,13 +755,13 @@
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;Previous</div>
             <div class="card">
-                <a href="/2021/12/19/GPU%E6%9E%B6%E6%9E%84%E4%B8%8EShader%E4%BC%98%E5%8C%96/">
+                <a href="/2021/12/20/Paper%E5%A4%8D%E7%8E%B0%EF%BC%8C%E5%AE%9E%E6%97%B6%E4%BD%93%E7%A7%AF%E4%BA%91/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/17.jpg" class="responsive-img" alt="GPU架构与Shader优化">
+                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="Paper复现，实时体积云">
                         
-                        <span class="card-title">GPU架构与Shader优化</span>
+                        <span class="card-title">Paper复现，实时体积云</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -749,7 +772,7 @@
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2021-12-19
+                            <i class="far fa-clock fa-fw icon-date"></i>2021-12-20
                         </span>
                         <span class="publish-author">
                             
@@ -758,14 +781,6 @@
                             
                         </span>
                     </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/GPU/">
-                        <span class="chip bg-color">GPU</span>
-                    </a>
-                    
                 </div>
                 
             </div>
@@ -777,13 +792,13 @@
                 Next&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2021/10/30/%E6%B7%B1%E5%BA%A6%E7%BC%93%E5%86%B2%E9%87%8D%E5%BB%BA%E5%88%B0%E4%B8%96%E7%95%8C%E7%A9%BA%E9%97%B4%E6%80%BB%E7%BB%93/">
+                <a href="/2021/11/12/Compute-Shader%E7%94%9F%E6%88%90%E5%99%AA%E5%A3%B0/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/7.jpg" class="responsive-img" alt="深度缓冲重建到世界空间总结">
+                        <img src="/medias/featureimages/21.jpg" class="responsive-img" alt="Compute Shader生成噪声">
                         
-                        <span class="card-title">深度缓冲重建到世界空间总结</span>
+                        <span class="card-title">Compute Shader生成噪声</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -794,7 +809,7 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2021-10-30
+                                <i class="far fa-clock fa-fw icon-date"></i>2021-11-12
                             </span>
                         <span class="publish-author">
                             
@@ -807,8 +822,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/%E6%B7%B1%E5%BA%A6%E7%BC%93%E5%86%B2/">
-                        <span class="chip bg-color">深度缓冲</span>
+                    <a href="/tags/Compute-Shader/">
+                        <span class="chip bg-color">Compute Shader</span>
                     </a>
                     
                 </div>
